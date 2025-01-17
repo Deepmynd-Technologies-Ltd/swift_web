@@ -57,7 +57,7 @@ export default function Navbar(props) {
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`mx-3 rounded-my ${currentSlide === index ? "bg-green" : "bg-primary-color"}`}
+            className={`mx-3 rounded-my ${currentSlide === index ? "bg-green-500" : "bg-primary-color"}`}
             style={{ width: "120px", height: "2px", padding: "2px" }}
           ></button>
         ))}

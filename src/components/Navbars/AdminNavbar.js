@@ -18,21 +18,38 @@ export default function Navbar() {
   return (
     <>
       {/* Navbar */}
-      <nav className="absolute top-0 left-0 w-full z-10 bg-transparent flex items-center p-4">
+      <nav className=" top-0 left-0 w-full z-10 bg-transparent flex items-center p-4">
         <div className="w-full mx-auto flex justify-between items-center flex-wrap px-4">
           {/* Brand */}
           <a
-            href="#overview"
-            onClick={(e) => e.preventDefault()}
-            className="text-black text-base uppercase lg:inline-block font-bold"
+            className="text-green text-sm lg:inline-block font-bold flex items-center bg-primary-color-4 p-2 rounded-lg"
             style={{
               marginTop: "20px",
-              fontFamily: "Aeonik",
+              // fontFamily: "Aeonik",
               fontWeight: 700,
             }}
-          >
-            Overview
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="true"
+            >
+            <i className="fas fa-wal mr-2"></i>
+            Wallets
+            <i className="fa fa-chevron-down ml-2"></i>
           </a>
+          {/* <div className="absolute z-50 w-full bg-white shadow-lg rounded hidden">
+            <a
+              href="#wallet1"
+              className="text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
+            >
+              Wallet 1
+            </a>
+            <a
+              href="#wallet2"
+              className="text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
+            >
+              Wallet 2
+            </a>
+          </div> */}
 
           {/* Navbar Items */}
           <ul className="flex-col md:flex-row list-none items-center flex mt-4 md:mt-0">

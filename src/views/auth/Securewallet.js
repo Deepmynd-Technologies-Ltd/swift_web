@@ -100,7 +100,7 @@ export default function SecureWallet() {
                     </div>
 
                     <button
-                        className="w-full mt-6 bg-green text-white font-semibold p-3 rounded-my"
+                        className="w-full mt-6 bg-green-500 text-white font-semibold p-3 rounded-my"
                         onClick={handleNext}
                     >
                         Secure my Wallet

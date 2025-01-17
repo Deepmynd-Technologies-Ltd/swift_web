@@ -21,19 +21,23 @@ export default function Index() {
                   Swift<span style={{color: "#006A4E"}}>Aza</span>
               </Link>
 
-              {/* <p className="mt-4 text-lg leading-relaxed text-blueGray-500">
-                SwiftAza is your one-stop platform for all things cryptocurrency. 
-                Stay updated with the latest news, trends, and market analysis. 
-                Join our community and start your crypto journey today.
+              <p className="mt-4 text-lg leading-relaxed text-blueGray-500">
+              Create a wallet or add an existing wallet
               </p>
-              <div className="mt-12">
+              <div className="mt-48"></div>
+              <div className="mt-16 justify-between flex ">
                 <a
-                  href="/auth/register"
-                  className="get-started text-white font-bold px-6 py-4 rounded outline-none focus:outline-none mr-1 mb-1 bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  href="/admin/dashboard"
+                  className=" text-white w-full font-bold px-6 py-4 mr-9 rounded-my outline-none focus:outline-none bg-green-500 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
                 >
-                  Get Started
+                  Create Wallet
                 </a>
-              </div> */}
+                <a href="#"
+                  className=" text-green w-full font-bold px-6 py-4 ml-9 rounded-my outline-none focus:outline-none bg-primary-color-3 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  >
+                    Import Wallet
+                  </a>
+              </div>
             </div>
           </div>
         </div>

@@ -19,7 +19,7 @@ const transactions = [
     source: "External Bank Account",
     destination: "Naira Wallet",
     amount: "5,000",
-    typeImage: require("../../assets/img/deposit_icon.png"),
+    typeImage: require("../../assets/img/transaction_icon_1.png"),
   },
   
   {
@@ -29,7 +29,7 @@ const transactions = [
     source: "Naira Wallet",
     destination: "External Bank Account",
     amount: "200,000",
-    typeImage: require("../../assets/img/purchase_icon.png"), 
+    typeImage: require("../../assets/img/transaction_icon_2.png"), 
   },
 
   {
@@ -39,7 +39,7 @@ const transactions = [
     source: "Naira Wallet",
     destination: "External Bank Account",
     amount: "20,000",
-    typeImage: require("../../assets/img/withdraw_icon.png"), 
+    typeImage: require("../../assets/img/transaction_icon_1.png"), 
   },
 
   {
@@ -49,14 +49,14 @@ const transactions = [
     source: "Naira Wallet",
     destination: "External Bank Account",
     amount: "100,000",
-    typeImage: require("../../assets/img/purchase_icon.png"), 
+    typeImage: require("../../assets/img/transaction_icon_2.png"), 
   },
 ];
 
 export default function CardPageVisits() {
   return (
     <>
-      <div className="relative flex flex-col min-w-0 break-words w-full mb-6 rounded">
+      <div className="relative flex flex-col min-w-0 break-words w-2/3 mb-6 rounded mx-auto">
         <div className="rounded-t mb-0 px-4 py-3 border-0">
           <div className="flex flex-wrap items-center">
             <div className="relative w-full px-4 max-w-full flex-grow flex-1">

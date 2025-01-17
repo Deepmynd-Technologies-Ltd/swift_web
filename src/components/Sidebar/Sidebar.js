@@ -6,13 +6,13 @@ const NavigationItem = ({ to, icon, text, isActive, onClick }) => (
     <Link
       className={`text-xs py-2 font-bold block rounded-md ${
         isActive
-          ? "text-[#006A4E] hover:text-[#006A4E] bg-[#E5F4F0]"
+          ? "text-[#006A4E] hover:text-[#006A4E] bg-[#E5F4F0] active:bg-[#E5F4F0]"
           : "text-blueGray-500 hover:text-blueGray-700 hover:bg-gray-100"
       } transition-all duration-200 px-3`}
       to={to}
       onClick={onClick}
     >
-      <i className={`fas ${icon} mr-1 text-xs ${isActive ? "active" : ""}`}></i>
+      <i className={`fas ${icon} mr-1 text-xs ${isActive ? "active active:bg-[#E5F4F0]" : ""}`}></i>
       {text}
     </Link>
   </li>
@@ -24,14 +24,16 @@ export default function Sidebar() {
   const location = useLocation();
 
   const navigationItems = [
-    { to: "/admin/dashboard", icon: "fa-hm", text: "Home" },
-    { to: "/admin/business", icon: "fa-busns", text: "Business" },
-    { to: "/admin/wallet", icon: "fa-wal", text: "Wallet" },
-    { to: "/admin/swap_funds", icon: "fa-swp", text: "Swap Funds" },
-    { to: "/admin/cards", icon: "fa-crd", text: "Cards" },
-    { to: "/admin/p2p", icon: "fa-p2p", text: "P2P" },
-    { to: "/admin/investments", icon: "fa-inv", text: "Investments" },
-    { to: "/prof", icon: "fa-prf", text: "Profile" }
+    { to: "/admin/dashbord", icon: "fa-wal", text: "Wallet", isAlwaysActive: true },
+    { to: "/admin/history", icon: "fa-his", text: "History"},
+    { to: "/admin/browser", icon: "fa-brw", text: "Browser" },
+    // { to: "/admin/dashboard", icon: "fa-hm", text: "Home" },
+    // { to: "/admin/business", icon: "fa-busns", text: "Business" },
+    // { to: "/admin/swap_funds", icon: "fa-swp", text: "Swap Funds" },
+    // { to: "/admin/cards", icon: "fa-crd", text: "Cards" },
+    // { to: "/admin/p2p", icon: "fa-p2p", text: "P2P" },
+    // { to: "/admin/investments", icon: "fa-inv", text: "Investments" },
+    // { to: "/prof", icon: "fa-prf", text: "Profile" }
   ];
 
   return (

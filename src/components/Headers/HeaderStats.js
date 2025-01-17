@@ -3,6 +3,10 @@ import React from "react";
 // components
 
 import CardStats from "components/Cards/CardStats.js";
+import CardBarChart from "components/Cards/CardBarChart";
+import CardSocialTraffic from "components/Cards/CardSocialTraffic";
+import CardLineChart from "components/Cards/CardLineChart";
+import CardTable from "components/Cards/CardTable";
 
 export default function HeaderStats() {
   return (
@@ -13,15 +17,7 @@ export default function HeaderStats() {
             {/* Card stats */}
             <div className="flex flex-wrap">
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
-                <CardStats
-                  statTitle="$350,875.90"
-                  statArrow="up"
-                  // statPercent="3.48"
-                  statPercentColor="text-emerald-500"
-                  statDescription="Since last month"
-                  statIconName="far fa-chart-bar"
-                  statIconColor="bg-red-500"
-                />
+                
               </div>
             </div>
           </div>

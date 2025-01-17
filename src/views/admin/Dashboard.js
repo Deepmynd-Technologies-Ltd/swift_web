@@ -3,26 +3,23 @@ import React from "react";
 // components
 
 import CardLineChart from "components/Cards/CardLineChart.js";
-import CardBarChart from "components/Cards/CardBarChart.js";
-import CardPageVisits from "components/Cards/CardPageVisits.js";
-import CardSocialTraffic from "components/Cards/CardSocialTraffic.js";
+import CardStats from "components/Cards/CardStats";
+import CardTransactionTrack from "components/Cards/CardTransactionTrack";
+import CardWalletOverview from "components/Cards/CardWalletOverview.js";
 
 export default function Dashboard() {
   return (
     <>
-      {/* <div className="flex flex-wrap">
-        <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
+      <div className="flex ">
+        <div className="w-full xl:w-7/12 mb-12 xl:mb-0 px-4" style={{ flex: "0 0 60%" }}>
+          <CardStats />
+          <CardWalletOverview />
+        </div>
+        <div className="w-full xl:w-5/12 px-4" style={{ flex: "0 0 40%" }}>
           <CardLineChart />
+          <CardTransactionTrack />
         </div>
-        <div className="w-full xl:w-4/12 px-4">
-          <CardBarChart />
-        </div>
-      </div> */}
-
-      <div className="bread w-full  mb-12 xl:mb-0 px-4">
-        <CardPageVisits />
       </div>
-
       <div className="flex flex-wrap mt-4">
         {/* <div className="w-full xl:w-4/12 px-4">
           <CardSocialTraffic />

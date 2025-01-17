@@ -34,7 +34,7 @@ Use a better box model (opinionated).
 .fa-hm { mask-image: url('../img/home_icon.png'); -webkit-mask-image: url('../img/home_icon.png'); }
 .fa-busns { mask-image: url('../img/business_icon.png'); -webkit-mask-image: url('../img/business_icon.png'); }
 .fa-wal { mask-image: url('../img/wallet_icon.png'); -webkit-mask-image: url('../img/wallet_icon.png'); }
-.fa-swp { mask-image: url('../img/swap_funds_icon.png'); -webkit-mask-image: url('../img/swap_funds_icon.png'); }
+.fa-swp { mask-image: url('../img/transaction_icon_4.png'); -webkit-mask-image: url('../img/transaction_icon_4.png'); }
 .fa-crd { mask-image: url('../img/cards_icon.png'); -webkit-mask-image: url('../img/cards_icon.png'); }
 .fa-p2p { mask-image: url('../img/p2p_icon.png'); -webkit-mask-image: url('../img/p2p_icon.png'); }
 .fa-inv { mask-image: url('../img/investment_icon.png'); -webkit-mask-image: url('../img/investment_icon.png'); }
@@ -46,7 +46,53 @@ Use a better box model (opinionated).
 .fa-darkmode { mask-image: url('../img/dark_mode_switch_icon.png'); -webkit-mask-image: url('../img/dark_mode_switch_icon.png'); width: 40px; height: 24px;}
 .fa-bell { mask-image: url('../img/bell_icon.png'); -webkit-mask-image: url('../img/bell_icon.png'); }
 
+.fa-send { 
+  mask-image: url('../img/send_icon.png'); 
+  -webkit-mask-image: url('../img/send_icon.png'); 
+  background-color: rgba(239, 68, 68); 
+  display: block; 
+  margin: 0 auto; 
+}
+.fa-receive { 
+  mask-image: url('../img/receive_icon.png'); 
+  -webkit-mask-image: url('../img/receive_icon.png'); 
+  background-color: #006A4E; 
+  display: block; 
+  margin: 0 auto; 
+}
+.fa-scan { 
+  mask-image: url('../img/scan_icon.png'); 
+  -webkit-mask-image: url('../img/scan_icon.png'); 
+  background-color: rgba(168, 85, 247); 
+  display: block; 
+  margin: 0 auto; 
+}
+.fa-swap { 
+  mask-image: url('../img/swap_icon.png'); 
+  -webkit-mask-image: url('../img/swap_icon.png'); 
+  background-color: rgba(249, 115, 22); 
+  display: block; 
+  margin: 0 auto; 
+}
+.fa-bAs { 
+  mask-image: url('../img/dollar_icon.png'); 
+  -webkit-mask-image: url('../img/dollar_icon.png'); 
+  background-color: rgba(2, 132, 199); 
+  display: block; 
+  margin: 0 auto; 
+}
+.fa-p2p { 
+  mask-image: url('../img/p2p_icon.png'); 
+  -webkit-mask-image: url('../img/p2p_icon.png'); 
+  background-color: #678809; 
+  display: block; 
+  margin: 0 auto; 
+}
 
+
+.gap-4 {
+  gap: 1.5rem;
+}
 *,
 *::before,
 *::after {
@@ -84,7 +130,33 @@ Remove the margin in all browsers.
 body {
   margin: 0;
 }
+/* body {
+  font-family: 'Poppins', sans-serif;
+} */
+.hover\:w-full:hover {
+  width: 100%;
+}
+.group:hover .group-hover\:w-full {
+  width: 100%;
+}
+.group:hover .group-hover\:inline-block {
+  display: inline-block;
+}
+.group:hover .group-hover\:flex-grow {
+  flex-grow: 1;
+}
 
+.wallet-row {
+  background-color: #f9fafb;
+  transition: background-color 0.2s ease;
+}
+
+.wallet-row:hover {
+  background-color: #006A4E;
+}
+.wallet-row.active {
+  background-color: #006A4E;
+}
 /**
 Improve consistency of default fonts in all browsers. (https://github.com/sindresorhus/modern-normalize/issues/3)
 */
@@ -428,18 +500,6 @@ hr {
 img {
   border-style: solid;
 }
-
-/* .responsive-wrap {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 4%;
-}
-
-@media (max-width: 640px) {
-  .responsive-wrap {
-    flex-wrap: wrap;
-  }
-} */
 
 textarea {
   resize: vertical;
@@ -1133,6 +1193,8 @@ select {
   }
 }
 
+
+
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
@@ -1145,10 +1207,20 @@ select {
 
 .bg-primary-color {
   --tw-bg-opacity: 1;
-  background-color: #F4F4F4
+  background-color: #F4F4F4;
 }
 
-.bg-green {
+.bg-primary-color-3 {
+  --tw-bg-opacity: 1;
+  background-color: #e0f5ef;
+}
+
+.bg-primary-color-4 {
+  --tw-bg-opacity: 1;
+  background-color: #e7e7e7;
+}
+
+.bg-green-500 {
   --tw-bg-opacity: 1;
   background-color: #006A4E;
 }
@@ -1807,6 +1879,9 @@ select {
   margin-left: 0.75rem;
 }
 
+.ml-4 {
+  margin-left: 0.85rem;
+}
 .mt-4 {
   margin-top: 1rem;
 }
@@ -2505,6 +2580,11 @@ select {
   color: rgba(20, 184, 166, var(--tw-text-opacity));
 }
 
+.text-more-teal-500 {
+  --tw-text-opacity: 1;
+  color: #678809;
+}
+
 .text-emerald-500 {
   --tw-text-opacity: 1;
   color: rgba(16, 185, 129, var(--tw-text-opacity));
@@ -2513,6 +2593,11 @@ select {
 .text-orange-500 {
   --tw-text-opacity: 1;
   color: rgba(249, 115, 22, var(--tw-text-opacity));
+}
+
+.text-purple-500 {
+  --tw-text-opacity: 1;
+  color: rgba(168, 85, 247, var(--tw-text-opacity));
 }
 
 .text-red-500 {

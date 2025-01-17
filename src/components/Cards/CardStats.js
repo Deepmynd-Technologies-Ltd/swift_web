@@ -88,100 +88,129 @@ export default function CardStats({
   const [hidden, setHidden] = useState(isHidden);
 
   return (
-    <div className="relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0">
+    <div className="relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 min-h-[300px]">
       <div className="flex-auto p-4">
-        {/* Container with responsive flex behavior */}
-        <div
-          className="container flex flex-col lg:flex-row lg:justify-between gap-4"
-          style={{ maxWidth: "100%", width: "100%", minHeight: "170px", height: "100%", gap: "30px" }}
-        >
-          {/* Portfolio Section */}
-                <div className="relative flex-grow flex-1 " style={{ marginLeft: "-15px" }}>
-                <h5 className="text-black font-semibold test-sm">
-                  Portfolio
-                </h5>
-                <div className="relative flex flex-col bg-white rounded-my shadow-lg p-4 mb-8 xl:mb-0 w-full mt-2" style={{ width: "100%", minHeight: "150px" }}>
-                  <div className="flex items-center w-full" style={{ height: "20px", marginLeft: "1%", marginTop: "8%" }}>
-                  <p className="text-sm text-blueGray-400 whitespace-nowrap overflow-hidden text-ellipsis">
-                    {walletAddress}
-                  </p>
-                  <div className="flex ml-auto items-center space-x-2">
-                    <Copya walletAddress={walletAddress} />
-                    <WalletIcon />
-                  </div>
-                  </div>
-                  <div className="relative mt-4" style={{ width: "100%", height: "28%", marginLeft: "1%", marginTop: "10%" }}>
-                  <span className="absolute top-0 left-0 text-sm">$</span>
-                  <span className="font-semibold text-2xl text-blueGray-700 ml-4" style={{ marginLeft: "10px" }}>
-                    {hidden ? "••••••••" : walletBalance}
+        <div className="container flex flex-col lg:flex-row lg:justify-between gap-4 w-full">
+          {/* Balance Card */}
+          <div className="relative flex flex-col bg-white rounded-my shadow-lg p-4 mb-4 xl:mb-0 w-full lg:w-auto max-h-[300px]" style={{ maxHeight: "120px", minWidth: "220px" }}>
+            <div className="relative mt-4">
+              <p className="font-semibold text-3xl text-blueGray-700">
+                {hidden ? `$${walletBalance}` : "••••••••"}
+              </p>
+              <p className="text-sm mt-2 text-blueGray-400 whitespace-nowrap overflow-hidden text-ellipsis">
+                {walletAddress.slice(0, 4)}...{walletAddress.slice(-4)}
+                <button className="text-xs bg-primary-color-3 text-green ml-3 w-8 rounded">WS</button>
+              </p>
+            </div>
+          </div>
+
+          {/* Transaction Grid Card */}
+          <div className="relative bg-white rounded-my shadow-lg p-4 w-full lg:w-2/3" style={{ minHeight: "170px" }}>
+            <div className="flex grid grid-cols-1 lg:grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="flex-1 group flex justify-center">
+                <a href="#" className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                  <span className="block px-1 pt-1 pb-1 text-red-500">
+                    <i className="fas fa-send text-red-500 text-2xl pt-1 mb-1 block text-center group-hover:text-red-500"></i>
+                    <span className="block text-xs font-semibold text-red-500 pb-2">Send</span>
+                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
                   </span>
-                  <VisibilityToggle hidden={hidden} onToggle={() => setHidden(!hidden)} />
-                  </div>
-                </div>
-                </div>
-            
-                {/* Assets Section */}
-                <div className="relative flex-initial md:w-1/2">
-                <h5 className="text-black font-semibold text-sm">Your Assets</h5>
-                <a
-                  href="#"
-                  className="absolute text-xs text-purple-500 font-semibold"
-                  style={{ right: 0, top: 0 }}
-                >
-                  View All
                 </a>
-                <div className="relative overflow-x-auto mt-2">
-                  <div className="flex flex-nowrap lg:flex-row gap-4">
-                  {assets.slice(0, 3).map((asset, index) => (
-                    <AssetCard key={index} {...asset} />
-                  ))}
-                  </div>
-                </div>
-                </div>
               </div>
+              <div className="flex-1 group flex justify-center">
+                <a href="#" className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                  <span className="block px-1 pt-1 pb-1">
+                    <i className="fas fa-receive text-2xl pt-1 mb-1 block text-center group-hover:text-green"></i>
+                    <span className="block text-xs font-semibold pb-2 text-green">Receive</span>
+                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
+                  </span>
+                </a>
+              </div>
+              <div className="flex-1 group flex justify-center">
+                <a href="#" className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                  <span className="block px-1 pt-1 pb-1">
+                    <i className="fas fa-scan text-2xl pt-1 mb-1 block text-center group-hover:text-purple-500"></i>
+                    <span className="block text-xs font-semibold pb-2 text-purple-500">Scan</span>
+                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
+                  </span>
+                </a>
               </div>
             </div>
-            );
-          }
 
-          CardStats.defaultProps = {
-            walletAddress: "0x734hdyeh............ef27fhc64hbs5e54",
-            walletBalance: "1,898.45",
-            isHidden: true,
-            statDescription: "Since last month",
-            assets: [
-            {
-              title: "0.1 BTC",
-              amount: "4,375.22",
-              description: "-0.49%",
-              image: require("../../assets/img/bitcoin_icon.png"),
-            },
-            {
-              title: "2.5 ETH",
-              amount: "4,375.22",
-              description: "-0.49%",
-              image: require("../../assets/img/bitcoin_icon.png"),
-            },
-            {
-              title: "0.1 BTC",
-              amount: "4,375.22",
-              description: "-0.49%",
-              image: require("../../assets/img/bitcoin_icon.png"),
-            },
-            ],
-          };
+            <div className="flex grid grid-cols-1 lg:grid-cols-2 md:grid-cols-3 gap-6 mt-4">
+              <div className="flex-1 group flex justify-center">
+                <a href="#" className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                  <span className="block px-1 pt-1 pb-1">
+                    <i className="fas fa-swap text-2xl pt-1 mb-1 block text-center group-hover:text-orange-500"></i>
+                    <span className="block text-xs font-semibold pb-2 text-orange-500">Swap</span>
+                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
+                  </span>
+                </a>
+              </div>
+              <div className="flex-1 group flex justify-center">
+                <a href="#" className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                  <span className="block px-1 pt-1 pb-1">
+                    <i className="fas fa-bAs text-2xl pt-1 mb-1 block text-center group-hover:text-lightBlue-500"></i>
+                    <span className="block text-xs font-semibold pb-2 text-lightBlue-500 whitespace-nowrap">Buy & Sell</span>
+                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
+                  </span>
+                </a>
+              </div>
+              <div className="flex-1 group flex justify-center">
+                <a href="#" className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                  <span className="block px-1 pt-1 pb-1">
+                    <i className="fas fa-p2p text-2xl pt-1 mb-1 block text-center group-hover:text-more-teal-500"></i>
+                    <span className="block text-xs font-semibold pb-2 text-more-teal-500">P2P</span>
+                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-          CardStats.propTypes = {
-            walletAddress: PropTypes.string,
-            walletBalance: PropTypes.string,
-            isHidden: PropTypes.bool,
-            statDescription: PropTypes.string,
-            assets: PropTypes.arrayOf(
-            PropTypes.shape({
-              title: PropTypes.string.isRequired,
-              amount: PropTypes.string.isRequired,
-              description: PropTypes.string.isRequired,
-              image: PropTypes.string.isRequired,
-            })
-            ),
-          };
+
+  CardStats.defaultProps = {
+    walletAddress: "0x734hdyeh............ef27fhc64hbs5e54",
+    walletBalance: "1,898.45",
+    isHidden: true,
+    statDescription: "Since last month",
+    assets: [
+    {
+      title: "0.1 BTC",
+      amount: "4,375.22",
+      description: "-0.49%",
+      image: require("../../assets/img/bitcoin_icon.png"),
+    },
+    {
+      title: "2.5 ETH",
+      amount: "4,375.22",
+      description: "-0.49%",
+      image: require("../../assets/img/bitcoin_icon.png"),
+    },
+    {
+      title: "0.1 BTC",
+      amount: "4,375.22",
+      description: "-0.49%",
+      image: require("../../assets/img/bitcoin_icon.png"),
+    },
+    ],
+  };
+
+  CardStats.propTypes = {
+    walletAddress: PropTypes.string,
+    walletBalance: PropTypes.string,
+    isHidden: PropTypes.bool,
+    statDescription: PropTypes.string,
+    assets: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      amount: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      image: PropTypes.string.isRequired,
+    })
+    ),
+  };
