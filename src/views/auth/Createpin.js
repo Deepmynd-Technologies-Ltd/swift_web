@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { PinContext } from "../../context/PinContext";
 
@@ -8,11 +8,21 @@ export default function CreatePin() {
     const history = useHistory();
     const { setPin: setContextPin } = useContext(PinContext);
 
+    useEffect(() => {
+        const savedPin = localStorage.getItem("walletPin");
+        console.log("Saved PIN:", savedPin);
+        if (savedPin) {
+            setPin(savedPin.split(""));
+        }
+    }, []);
+
     const handleNext = () => {
         const pinCode = pin.join("");
-        // Optional: Additional client-side validation can be added here
+        // Save pin to local storage
+        localStorage.setItem("walletPin", pinCode);
         setContextPin(pinCode);
         history.push("/auth/confirmpin");
+        console.log("PIN:", pinCode);
     };
 
     const handleChange = (value, index) => {

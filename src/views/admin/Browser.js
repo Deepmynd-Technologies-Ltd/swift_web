@@ -2,13 +2,13 @@ import React from "react";
 
 // components
 
-import CardPageVisits from "components/Cards/CardPageVisits.js";
+import CardSearch from "components/Cards/CardSearch";
 
-export default function History() {
+export default function Browser() {
   return (
     <>
       <div className="align-center" style={{ width: "90%", margin: "0 auto" }}>
-        <CardPageVisits />
+        <CardSearch />
       </div>
     </>
   );

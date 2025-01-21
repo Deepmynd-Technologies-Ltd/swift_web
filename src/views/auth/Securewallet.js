@@ -1,10 +1,18 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { PinContext } from "../../context/PinContext";
 
 export default function SecureWallet() {
-    const { walletDetails } = useContext(PinContext);
+    const [walletDetails, setWalletDetails] = useState(null);
     const history = useHistory();
+
+    useEffect(() => {
+        const details = JSON.parse(localStorage.getItem("walletDetails"));
+        if (details) {
+            setWalletDetails(details);
+        } else {
+            console.error("No wallet details found in localStorage.");
+        }
+    }, []);
 
     const copyToClipboard = (text) => {
         navigator.clipboard
@@ -15,14 +23,10 @@ export default function SecureWallet() {
 
     const handleNext = () => {
         alert("Wallet secured!");
-        history.push("/admin/dashboard");  // Adjust the path as needed
+        history.push("/admin/dashboard");
     };
 
-    if (!walletDetails) {
-        return <div className="text-center mt-20 text-red-500">No wallet details found.</div>;
-    }
-
-    const { walletAddress, seedWords } = walletDetails;
+    const { walletAddress = "", seedWords = [] } = walletDetails || {};
 
     return (
         <div
@@ -81,7 +85,7 @@ export default function SecureWallet() {
                                 gridTemplateColumns: "repeat(5, 1fr)",
                             }}
                         >
-                            {seedWords.map((word, index) => (
+                            {Array.isArray(seedWords) && seedWords.map((word, index) => (
                                 <div
                                     key={index}
                                     className="p-2 text-center bg-gray-50 rounded"
@@ -110,3 +114,4 @@ export default function SecureWallet() {
         </div>
     );
 }
+

@@ -92,16 +92,25 @@ export default function CardLineChart() {
             {
               label: "Mobile apps",
               tension: 0.4,
-              borderWidth: 0,
-              pointRadius: 0,
-              borderColor: "#5e72e4",
-              backgroundColor: gradientStroke1,
               borderWidth: 3,
+              pointRadius: 0,
+              borderColor: "green",
+              backgroundColor: gradientStroke1,
               fill: true,
               data: [50, 40, 300, 220, 500],
               maxBarThickness: 6,
             },
           ],
+        },
+        options: {
+          scales: {
+            x: {
+              display: false,
+            },
+            y: {
+              display: false,
+            },
+          },
         },
       });
     }

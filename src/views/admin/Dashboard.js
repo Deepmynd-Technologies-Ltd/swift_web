@@ -4,7 +4,7 @@ import React from "react";
 
 import CardLineChart from "components/Cards/CardLineChart.js";
 import CardStats from "components/Cards/CardStats";
-import CardTransactionTrack from "components/Cards/CardTransactionTrack";
+import CombinedComponent from "components/Cards/CardTransactionTrack";
 import CardWalletOverview from "components/Cards/CardWalletOverview.js";
 
 export default function Dashboard() {
@@ -16,8 +16,7 @@ export default function Dashboard() {
           <CardWalletOverview />
         </div>
         <div className="w-full xl:w-5/12 px-4" style={{ flex: "0 0 40%" }}>
-          <CardLineChart />
-          <CardTransactionTrack />
+          <CombinedComponent />
         </div>
       </div>
       <div className="flex flex-wrap mt-4">

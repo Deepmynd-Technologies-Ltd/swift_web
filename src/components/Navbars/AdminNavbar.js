@@ -21,35 +21,42 @@ export default function Navbar() {
       <nav className=" top-0 left-0 w-full z-10 bg-transparent flex items-center p-4">
         <div className="w-full mx-auto flex justify-between items-center flex-wrap px-4">
           {/* Brand */}
-          <a
-            className="text-green text-sm lg:inline-block font-bold flex items-center bg-primary-color-4 p-2 rounded-lg"
-            style={{
-              marginTop: "20px",
-              // fontFamily: "Aeonik",
-              fontWeight: 700,
-            }}
-            type="button"
-            aria-haspopup="true"
-            aria-expanded="true"
-            >
-            <i className="fas fa-wal mr-2"></i>
-            Wallets
-            <i className="fa fa-chevron-down ml-2"></i>
-          </a>
-          {/* <div className="absolute z-50 w-full bg-white shadow-lg rounded hidden">
+          {window.location.pathname === "/admin/dashboard" && (
             <a
-              href="#wallet1"
-              className="text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
+              className="text-green text-sm lg:inline-block font-bold flex items-center bg-primary-color-4 p-2 rounded-lg"
+              style={{
+                marginTop: "20px",
+                // fontFamily: "Aeonik",
+                fontWeight: 700,
+              }}
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="true"
             >
-              Wallet 1
+              <i className="fas fa-wal mr-2"></i>
+              Wallets
+              <i className="fa fa-chevron-down ml-2"></i>
             </a>
-            <a
-              href="#wallet2"
-              className="text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
-            >
-              Wallet 2
-            </a>
-          </div> */}
+          )}
+
+          {window.location.pathname === "/admin/history" && (
+            <h2
+              className="text-black text-2xl lg:inline-block font-bold flex items-center  p-2 "
+              style={{
+                marginTop: "20px",
+                // fontFamily: "Aeonik",
+                fontWeight: 700,
+              }}
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="true">
+                History
+              </h2>
+          )}
+
+          {/* {window.location.pathname === "/admin/browser" && (
+            <div className="text-black text-2xl lg:inline-block font-bold flex items-center p-2" style={{ flexGrow: 1 }}></div>
+          )} */}
 
           {/* Navbar Items */}
           <ul className="flex-col md:flex-row list-none items-center flex mt-4 md:mt-0">

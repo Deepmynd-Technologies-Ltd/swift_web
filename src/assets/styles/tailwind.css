@@ -40,11 +40,33 @@ Use a better box model (opinionated).
 .fa-inv { mask-image: url('../img/investment_icon.png'); -webkit-mask-image: url('../img/investment_icon.png'); }
 .fa-prf { mask-image: url('../img/profile_icon.png'); -webkit-mask-image: url('../img/profile_icon.png'); }
 .fa-ghelp { mask-image: url('../img/get_help_icon.png'); -webkit-mask-image: url('../img/get_help_icon.png'); }
+.fa-set { mask-image: url('../img/settings_icon.png'); -webkit-mask-image: url('../img/settings_icon.png'); }
 .fa-lgout { mask-image: url('../img/logout_icon.png'); -webkit-mask-image: url('../img/logout_icon.png'); }
 .fa-bars { mask-image: url('../img/landing.jpg'); -webkit-mask-image: url('../img/landing.jpg'); }
 .fa-lightmode { mask-image: url('../img/light_mode_switch_icon.png'); -webkit-mask-image: url('../img/light_mode_switch_icon.png'); width: 40px; height: 24px;}
 .fa-darkmode { mask-image: url('../img/dark_mode_switch_icon.png'); -webkit-mask-image: url('../img/dark_mode_switch_icon.png'); width: 40px; height: 24px;}
 .fa-bell { mask-image: url('../img/bell_icon.png'); -webkit-mask-image: url('../img/bell_icon.png'); }
+
+.fa-his { 
+  mask-image: url('../img/history_icon.png'); 
+  -webkit-mask-image: url('../img/history_icon.png'); 
+  width: 15px; 
+  height: 20px; 
+}
+
+.fa-brw { 
+  mask-image: url('../img/browser_icon.png'); 
+  -webkit-mask-image: url('../img/browser_icon.png'); 
+  width: 20px; 
+  height: 20px; 
+}
+
+.fa-srh { 
+  mask-image: url('../img/search_icon.png'); 
+  -webkit-mask-image: url('../img/search_icon.png'); 
+  /* width: 24px; 
+  height: 24px;  */
+}
 
 .fa-send { 
   mask-image: url('../img/send_icon.png'); 
@@ -88,7 +110,6 @@ Use a better box model (opinionated).
   display: block; 
   margin: 0 auto; 
 }
-
 
 .gap-4 {
   gap: 1.5rem;
@@ -442,6 +463,24 @@ html {
 body {
   font-family: inherit;
   line-height: inherit;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 700ms linear;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 700ms linear;
 }
 
 /**

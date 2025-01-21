@@ -4,16 +4,31 @@ import { Link, useLocation } from "react-router-dom";
 const NavigationItem = ({ to, icon, text, isActive, onClick }) => (
   <li className="items-center">
     <Link
-      className={`text-xs py-2 font-bold block rounded-md ${
-        isActive
-          ? "text-[#006A4E] hover:text-[#006A4E] bg-[#E5F4F0] active:bg-[#E5F4F0]"
-          : "text-blueGray-500 hover:text-blueGray-700 hover:bg-gray-100"
-      } transition-all duration-200 px-3`}
+      style={{
+        fontSize: "12px",
+        padding: "8px 12px",
+        maxWidth: "70%",
+        fontWeight: "bold",
+        display: "block",
+        borderRadius: "0.375rem",
+        color: isActive ? "#006A4E" : "#6B7280",
+        backgroundColor: isActive ? "#e7e7e7" : "transparent",
+        transition: "all 0.2s",
+      }}
       to={to}
       onClick={onClick}
     >
-      <i className={`fas ${icon} mr-1 text-xs ${isActive ? "active active:bg-[#E5F4F0]" : ""}`}></i>
-      {text}
+      <ul
+        className={`fas ${icon}`}
+        style={{
+          marginRight: "4px",
+          fontSize: "12px",
+          color: isActive ? "#006A4E" : "#6B7280",
+          backgroundColor: isActive ? "#006A4E" : "#6B7280",
+          transition: "color 0.2s",
+        }}
+      ></ul>
+      <span style={{ transition: "color 0.2s" }}>{text}</span>
     </Link>
   </li>
 );
@@ -24,17 +39,21 @@ export default function Sidebar() {
   const location = useLocation();
 
   const navigationItems = [
-    { to: "/admin/dashbord", icon: "fa-wal", text: "Wallet", isAlwaysActive: true },
-    { to: "/admin/history", icon: "fa-his", text: "History"},
+    { to: "/admin/dashboard", icon: "fa-wal", text: "Wallet", isAlwaysActive: true },
+    { to: "/admin/history", icon: "fa-his", text: "History" },
     { to: "/admin/browser", icon: "fa-brw", text: "Browser" },
-    // { to: "/admin/dashboard", icon: "fa-hm", text: "Home" },
-    // { to: "/admin/business", icon: "fa-busns", text: "Business" },
-    // { to: "/admin/swap_funds", icon: "fa-swp", text: "Swap Funds" },
-    // { to: "/admin/cards", icon: "fa-crd", text: "Cards" },
-    // { to: "/admin/p2p", icon: "fa-p2p", text: "P2P" },
-    // { to: "/admin/investments", icon: "fa-inv", text: "Investments" },
-    // { to: "/prof", icon: "fa-prf", text: "Profile" }
-  ];
+  ].map(item => ({
+    ...item,
+    text: <span style={{ marginLeft: "20px" }}>{item.text}</span>
+  }));
+
+  const helpAndSettingsItems = [
+    { to: "#", icon: "fa-ghelp", text: "Get Help", key: "help" },
+    { to: "#", icon: "fa-set", text: "Settings", key: "settings" },
+  ].map(item => ({
+    ...item,
+    text: <span style={{ marginLeft: "20px" }}>{item.text}</span>
+  }));
 
   return (
     <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-hidden md:flex-row md:flex-nowrap shadow-xl bg-primary-color-2 flex flex-wrap items-center justify-between relative md:w-64 z-10 py-2 px-4" style={{ height: "100%" }}>
@@ -47,7 +66,7 @@ export default function Sidebar() {
         </button>
         
         <Link
-          className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-base font-bold p-2 px-0"
+          className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-lg font-bold p-2 px-0"
           to="/"
           style={{ margin: "10%" }}
         >
@@ -78,23 +97,17 @@ export default function Sidebar() {
             ))}
           </ul>
 
-          <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-2" style={{ margin: "10%", marginTop: "25%", marginLeft: "12%", gap: "6px" }}>
-            <li className="inline-flex">
-              <a href="#" className="text-blueGray-700 hover:text-blueGray-500 text-xs block mb-2 no-underline font-semibold">
-                <i className={`fas fa-ghelp mr-1 text-xs ${activeItem === 'help' ? 'active' : ''}`} onClick={() => setActiveItem('help')}></i>
-                Get Help
-              </a>
-            </li>
-            <li className="items-center">
-              <Link
-                className="text-xs py-2 font-bold block text-blueGray-700 hover:text-blueGray-500"
-                to="/logout"
-                onClick={() => setActiveItem('logout')}
-              >
-                <i className={`fas fa-lgout mr-1 text-xs ${activeItem === 'logout' ? 'active' : ''}`}></i>
-                Logout
-              </Link>
-            </li>
+          <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-2" style={{ margin: "10%", marginTop: "120%", marginLeft: "6%", gap: "6px" }}>
+            {helpAndSettingsItems.map((item, index) => (
+              <NavigationItem
+                key={index}
+                to={item.to}
+                icon={item.icon}
+                text={item.text}
+                isActive={activeItem === item.key}
+                onClick={() => setActiveItem(item.key)}
+              />
+            ))}
           </ul>
         </div>
       </div>

@@ -27,7 +27,7 @@ export default function Index() {
               <div className="mt-48"></div>
               <div className="mt-16 justify-between flex ">
                 <a
-                  href="/admin/dashboard"
+                  href="/auth/createpin"
                   className=" text-white w-full font-bold px-6 py-4 mr-9 rounded-my outline-none focus:outline-none bg-green-500 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
                 >
                   Create Wallet

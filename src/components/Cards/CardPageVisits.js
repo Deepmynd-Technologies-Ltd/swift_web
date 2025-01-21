@@ -57,44 +57,26 @@ export default function CardPageVisits() {
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words w-2/3 mb-6 rounded mx-auto">
-        <div className="rounded-t mb-0 px-4 py-3 border-0">
-          <div className="flex flex-wrap items-center">
-            <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-              <h3 className="font-semibold text-sm text-blueGray-700">
-                Recent Transactions
-              </h3>
-            </div>
-            <div className="relative w-full px-4 max-w-full flex-grow flex-1 text-right">
-              <button
-                className="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                type="button"
-              >
-                See all
-              </button>
-            </div>
-          </div>
-        </div>
-
         <div className="block w-full overflow-x-auto">
           <table className="items-center w-full bg-transparent border-collapse">
             <thead>
             <tr>
-                <th className="px-6 text-blueGray-500 align-middle border border-solid py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                <th className="px-6 text-blueGray-500 align-middle  py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                   Transaction Type
                 </th>
-                <th className="px-6 text-blueGray-500 align-middle border border-solid py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                <th className="px-6 text-blueGray-500 align-middle  py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                   Description
                 </th>
-                <th className="px-6 text-blueGray-500 align-middle border border-solid py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                <th className="px-6 text-blueGray-500 align-middle  py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                   Date
                 </th>
-                <th className="px-6 text-blueGray-500 align-middle border border-solid py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                <th className="px-6 text-blueGray-500 align-middle  py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                   Source
                 </th>
-                <th className="px-6 text-blueGray-500 align-middle border border-solid py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                <th className="px-6 text-blueGray-500 align-middle  py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                   Destination
                 </th>
-                <th className="px-6 text-blueGray-500 align-middle border border-solid py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                <th className="px-6 text-blueGray-500 align-middle  py-3 text-xs border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                   Amount
                 </th>
               </tr>

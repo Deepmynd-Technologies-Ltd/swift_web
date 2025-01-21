@@ -1,63 +1,91 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { PinContext } from "../../context/PinContext";
+// import { generateMnemonic } from 'bip39'; // Import generateMnemonic from bip39
 
 export default function ConfirmPin() {
     const [confirmPin, setConfirmPin] = useState(["", "", "", ""]);
     const [error, setError] = useState(null);
     const history = useHistory();
-    const userId = history.location.state?.userId;
-    const { pin, setWalletDetails } = useContext(PinContext);
+    const { setWalletDetails } = useContext(PinContext);
 
-    const handleConfirm = async () => {
-        const confirmPinCode = confirmPin.join("");
-        const userId = localStorage.getItem("userId");
-        if (!userId) {
-            setError("User ID is missing.");
+    const generateWalletDetails = () => {
+        const walletAddress = `0x${Math.random().toString(36).substring(2, 15)}`;
+        const seedWords = Array.from({ length: 12 }, () =>
+            Math.random().toString(36).substring(2, 8)
+        );
+        return { walletAddress, seedWords };
+    };
+
+
+    // const generateWalletDetails = async () => {
+    //     const walletResponse = await fetch('/api/generate_wallet/', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //     });
+
+    //     if (!walletResponse.ok) {
+    //         throw new Error('Failed to generate wallet details');
+    //     }
+
+    //     const walletData = await walletResponse.json();
+    //     const phraseResponse = await fetch('/api/phrase/', {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //     });
+
+    //     if (!phraseResponse.ok) {
+    //         throw new Error('Failed to generate wallet phrase');
+    //     }
+
+    //     const phraseData = await phraseResponse.json();
+    //     return {
+    //         walletAddress: walletData[0].address,
+    //         seedWords: phraseData.phrase.split(' '),
+    //     };
+    // };
+
+    const handleConfirm = () => {
+        const confirmPinCode = confirmPin.join("");  
+        const pin = localStorage.getItem("walletPin");  
+
+        if (!pin) {
+            setError("PIN is missing.");
             return;
         }
-        console.log("Retrieved User ID:", userId);
 
-        // Optional: Client-side validation
         if (confirmPinCode.length !== 4) {
             setError("PIN must be exactly 4 digits.");
             return;
         }
 
-        try {
-            const response = await fetch("http://127.0.0.1:8000/api/createpin", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ pin: pin, confirmPin: confirmPinCode, userId: userId })
-            });
-
-            const data = await response.json();
-            console.log(data.walletId, data.walletAddress, data.seedWords)
-
-            if (response.ok) {
-                // Save wallet details in context
-                setWalletDetails({
-                    walletId: data.walletId,
-                    walletAddress: data.walletAddress,
-                    seedWords: data.seedWords
-                });
-                history.push("/auth/securewallet");
-            } else {
-                setError(data.error || `An unexpected error occurred: ${data.message}`);
-            }
-        } catch (e) {
-            console.error(e);
-            setError(`Failed to connect to the server: ${e.message}\n${e.stack}`);
+        if (confirmPinCode !== pin) {
+            setError("PIN does not match.");
+            return;
         }
+        // Generate wallet details locally
+        try {
+            const walletDetails = generateWalletDetails();
+            // Save wallet details to context or localStorage
+            setWalletDetails(walletDetails);
+            localStorage.setItem("walletDetails", JSON.stringify(walletDetails));
+            history.push("/auth/securewallet");
+        } catch (error) {
+            setError(error.message);
+        }
+        // Remove redundant code
     };
 
     const handleChange = (value, index) => {
-        if (value.length > 1) return; // Prevent more than one character
+        if (value.length > 1) return;  
         const newPin = [...confirmPin];
         newPin[index] = value;
         setConfirmPin(newPin);
 
-        // Move focus to the next input box
         if (value && index < 3) {
             document.getElementById(`confirm-pin-input-${index + 1}`).focus();
         }
