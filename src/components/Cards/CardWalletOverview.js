@@ -71,7 +71,18 @@ export default function CardWalletOverview() {
             </div>
             {transactions.map((transaction, index) => (
               <div key={index} className="rounded-my overflow-hidden" style={{ height: "80px", width: "100%" }}>
-                <a href={`/wallet/${transaction.abbr}`} className="wallet-row block my-1.5 rounded-my hover:text-white active:text-white">
+                <a
+                  href={`/wallet/${transaction.abbr}`}
+                  style={{
+                    display: "block",
+                    margin: "0.375rem 0",
+                    borderRadius: "0.375rem",
+                    textDecoration: "none",
+                    color: "inherit",
+                    transition: "color 0.2s",
+                  }}
+                  className="wallet-row"
+                >
                   <div className="flex justify-between">
                     <div className="w-1/3 px-6 py-3">
                       <div className="flex items-center text-left">
@@ -82,20 +93,20 @@ export default function CardWalletOverview() {
                           style={{ objectFit: "cover" }}
                         />
                         <div>
-                          <span className="text-sm font-semibold text-blueGray-700">{transaction.abbr}</span>
-                          <span className="text-xs text-blueGray-400 block" style={{ maxWidth: "100px" }}>{transaction.title}</span>
+                          <span className="text-sm font-semibold">{transaction.abbr}</span>
+                          <span className="text-xs block" style={{ maxWidth: "100px" }}>{transaction.title}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="w-1/3 px-6 py-3 text-xs text-blueGray-500 text-center">
+                    <div className="w-1/3 px-6 py-3 text-xs text-center">
                       {transaction.marketPrice}
                       <span className="text-xs text-green-500 ml-2">{transaction.marketPricePercentage}</span>
                     </div>
 
-                    <div className="w-1/3 px-6 py-3 text-xs text-blueGray-500 text-right">
+                    <div className="w-1/3 px-6 py-3 text-xs text-right">
                       <div>
-                        <span className="text-sm font-semibold text-blueGray-700">{transaction.equivalenceValue}</span>
-                        <span className="text-xs text-blueGray-400 block">{transaction.equivalenceValueAmount}</span>
+                        <span className="text-sm font-semibold">{transaction.equivalenceValue}</span>
+                        <span className="text-xs block">{transaction.equivalenceValueAmount}</span>
                       </div>
                     </div>
                   </div>

@@ -28,12 +28,12 @@ export default function Index() {
               <div className="mt-16 justify-between flex ">
                 <a
                   href="/auth/createpin"
-                  className=" text-white w-full font-bold px-6 py-4 mr-9 rounded-my outline-none focus:outline-none bg-green-500 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  className=" text-white w-full font-bold px-6 py-4 mr-9 rounded-lg outline-none focus:outline-none bg-green-500 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
                 >
                   Create Wallet
                 </a>
                 <a href="#"
-                  className=" text-green w-full font-bold px-6 py-4 ml-9 rounded-my outline-none focus:outline-none bg-primary-color-3 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  className=" text-green w-full font-bold px-6 py-4 ml-9 rounded-lg outline-none focus:outline-none bg-primary-color-3 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
                   >
                     Import Wallet
                   </a>
