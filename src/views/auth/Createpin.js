@@ -56,8 +56,8 @@ export default function CreatePin() {
                     >
                         ←
                     </a>
-                    <h2 className="text-2xl font-semibold mb-4 text-green text-aeonik">
-                        Wallet Pin
+                    <h2 className="text-2xl font-bold mb-4 text-green">
+                        Create Wallet Pin
                     </h2>
                     <p className="text-sm text-blueGray-500 mb-6 font-semibold">
                         Create a pin for your wallet, this will also be used to perform transactions.
