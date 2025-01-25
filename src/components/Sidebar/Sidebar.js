@@ -39,7 +39,7 @@ export default function Sidebar() {
   const location = useLocation();
 
   const navigationItems = [
-    { to: "/admin/dashboard", icon: "fa-wal", text: "Wallet", isAlwaysActive: true },
+    { to: "/admin/dashboard", icon: "fa-wal", text: "Wallet", isActive: true },
     { to: "/admin/history", icon: "fa-his", text: "History" },
     { to: "/admin/browser", icon: "fa-brw", text: "Browser" },
   ].map(item => ({

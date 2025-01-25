@@ -1,8 +1,8 @@
 {
   "name": "notus-react",
   "version": "1.1.0",
-  "description": "SwiftAza - A free Tailwind CSS and React UI Kit and Admin by Creative Tim.",
-  "repository": "https://github.com/creativetimofficial/notus-react",
+  "description": "SwiftAza - A Crypto Wallet Management Platform",
+  "repository": "https://github.com/Deepmynd-Technologies-Ltd/swift_web/",
   "license": "MIT",
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.3",

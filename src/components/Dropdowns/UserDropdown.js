@@ -31,13 +31,14 @@ const UserDropdown = () => {
           <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
             <img
               alt="..."
-              className="w-full rounded-full align-middle border-none shadow-lg"
-              src={require("../../assets/img/profile.jpg")}
+              className="rounded-full align-middle border-none shadow-lg"
+              src={require("../../assets/img/profile.png")}
+              style={{ height: "50px", width: "50px" }}
             />
           </span>
 
           <span className="block text-blueGray-700 text-base font-normal ml-6">
-            <p className="text-sm font-semibold leading-none">Aslam Dhikrullah</p>
+            <p className="text-sm font-semibold leading-none">Bilal Oyeleke</p>
           </span>
         </div>
       </a>

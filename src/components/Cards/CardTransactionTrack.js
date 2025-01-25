@@ -76,19 +76,27 @@ const CardLineChart = ({ wallet }) => {
     <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
       <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
         <div className="items-center">
-          <h2 className="text-3xl text-center font-bold mb-1">{wallet?.equivalenceValue} {wallet?.abbr}</h2>
-          <p className="text-xs text-center mb-4 text-blueGray-500">{wallet?.equivalenceValueAmount}</p>
-          <p className="text-base font-bold font-medium mt-8">Current {wallet?.title} Price</p>
-          <p className="text-xs text-blueGray-500">
-            {wallet?.equivalenceValue} {wallet?.abbr} <span className="text-red-500 ml-4">-0.49%</span>
-          </p>
+          {!wallet ? (
+            <div className="text-center text-gray-500 mt-4">
+              Select a Wallet
+            </div>
+          ) : (
+            <>
+              <h2 className="text-3xl text-center font-bold mb-1">{wallet?.equivalenceValue} {wallet?.abbr}</h2>
+              <p className="text-xs text-center mb-4 text-blueGray-500">{wallet?.equivalenceValueAmount}</p>
+              <p className="text-base font-bold font-medium mt-8">Current {wallet?.title} Price</p>
+              <p className="text-xs text-blueGray-500">
+                {wallet?.equivalenceValue} {wallet?.abbr} <span className="text-red-500 ml-4">-0.49%</span>
+              </p>
+            </>
+          )}
         </div>
         <div className="flex-auto">
           <div className="relative h-64 mt-4">
             <svg width="350" height="95" viewBox="0 0 350 95" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clipPath="url(#clip0_932_4270)">
-                <path d={svgPath} fill="url(#paint0_linear_932_4270)" fillOpacity="0.4" />
-                <path d={svgPath} stroke="#006A4E" strokeWidth="2" strokeLinecap="round" />
+                <path d={svgPath || "M0 50 L350 50"} fill="url(#paint0_linear_932_4270)" fillOpacity="0.4" />
+                <path d={svgPath || "M0 50 L350 50"} stroke="#006A4E" strokeWidth="2" strokeLinecap="round" />
               </g>
               <defs>
                 <linearGradient id="paint0_linear_932_4270" x1="175" y1="3.7113" x2="175" y2="84.5" gradientUnits="userSpaceOnUse">

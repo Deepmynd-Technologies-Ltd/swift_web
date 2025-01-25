@@ -106,7 +106,7 @@ export default function Footer() {
                     <li>
                       <a
                         className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-                        href="https://github.com/creativetimofficial/notus-react/blob/main/LICENSE.md?ref=nr-footer"
+                        href="https://github.com/Deepmynd-Technologies-Ltd/swift_web//blob/main/LICENSE.md?ref=nr-footer"
                       >
                         MIT License
                       </a>

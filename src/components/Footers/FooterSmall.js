@@ -52,7 +52,7 @@ export default function FooterSmall(props) {
                 </li>
                 <li>
                   <a
-                    href="https://github.com/creativetimofficial/notus-react/blob/main/LICENSE.md?ref=nr-footer-small"
+                    href="https://github.com/Deepmynd-Technologies-Ltd/swift_web//blob/main/LICENSE.md?ref=nr-footer-small"
                     className="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
                   >
                     MIT License
