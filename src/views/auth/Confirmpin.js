@@ -6,12 +6,6 @@ export default function ConfirmPin() {
     const [error, setError] = useState(null);
     const history = useHistory();
 
-    useEffect(() => {
-        const savedPin = localStorage.getItem("walletPin");
-        if (savedPin) {
-            setConfirmPin(savedPin.split(""));
-        }
-    }, []);
 
     const handleConfirm = () => {
         const confirmPinCode = confirmPin.join("");  
@@ -37,6 +31,13 @@ export default function ConfirmPin() {
 
         history.push("/auth/securewallet");
     };
+
+    useEffect(() => {
+        const savedPin = localStorage.getItem("walletPin2");
+        if (savedPin) {
+            setConfirmPin(savedPin.split(""));
+        }
+    }, []);
 
     const handleChange = (value, index) => {
         if (value.length > 1) return;  

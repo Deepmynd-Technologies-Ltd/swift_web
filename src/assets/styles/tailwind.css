@@ -182,6 +182,10 @@ body {
   background-color: #006A4E;
   color: white !important;
 }
+.wallet-row.selected {
+  background-color: #006A4E;
+  color: white !important;
+}
 
 .wallet-row img {
   filter: brightness(0) saturate(100%) invert(29%) sepia(10%) saturate(0%) hue-rotate(180deg) brightness(93%) contrast(89%);

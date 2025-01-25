@@ -93,18 +93,18 @@ const CardLineChart = ({ wallet }) => {
         </div>
         <div className="flex-auto">
           <div className="relative h-64 mt-4">
-            <svg width="350" height="95" viewBox="0 0 350 95" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="350" height="100" viewBox="0 0 350 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clipPath="url(#clip0_932_4270)">
-                <path d={svgPath || "M0 50 L350 50"} fill="url(#paint0_linear_932_4270)" fillOpacity="0.4" />
                 <path d={svgPath || "M0 50 L350 50"} stroke="#006A4E" strokeWidth="2" strokeLinecap="round" />
+                <path d={svgPath || "M0 50 L350 50"} fill="url(#paint0_linear_932_4270)" fillOpacity="0.4" />
               </g>
               <defs>
-                <linearGradient id="paint0_linear_932_4270" x1="175" y1="3.7113" x2="175" y2="84.5" gradientUnits="userSpaceOnUse">
+                <linearGradient id="paint0_linear_932_4270" x1="175" y1="50" x2="175" y2="100" gradientUnits="userSpaceOnUse">
                   <stop stopColor="#00FFBC" stopOpacity="0.16" />
                   <stop offset="1" stopColor="#F7FAFE" />
                 </linearGradient>
                 <clipPath id="clip0_932_4270">
-                  <rect width="350" height="95" fill="white" />
+                  <rect width="350" height="100" fill="white" />
                 </clipPath>
               </defs>
             </svg>
