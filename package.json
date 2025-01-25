@@ -13,16 +13,17 @@
     "chart.js": "2.9.4",
     "gulp": "5.0.0",
     "gulp-append-prepend": "1.0.8",
+    "nth-check": ">=2.0.1",
     "postcss": ">=8.4.31",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-loading-indicators": "^1.0.0",
     "react-router": "5.3.4",
     "react-router-dom": "5.3.4",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.5",
     "recharts": "^2.15.0",
-    "tailwindcss": "2.0.4",
-    "nth-check": ">=2.0.1"
+    "tailwindcss": "2.0.4"
   },
   "scripts": {
     "start": "react-scripts start",
