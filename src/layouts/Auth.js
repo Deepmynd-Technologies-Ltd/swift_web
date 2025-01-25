@@ -7,7 +7,7 @@ import VerifyAccountNavBar from "components/Navbars/VerifyAccountNavbar";
 // views
 import Login from "views/auth/Login.js";
 import Register from "views/auth/Register.js";
-import CreateWallet from "views/auth/Createpin.js";
+import CreateWallet from "views/auth/Createwallet.js";
 import ConfirmPin from "views/auth/Confirmpin.js";
 import SecureWallet from "views/auth/Securewallet.js";
 import CreatePin from "views/auth/Createpin.js";

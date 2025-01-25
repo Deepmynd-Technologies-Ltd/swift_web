@@ -8,10 +8,10 @@ export default function SecureWallet() {
     const history = useHistory();
     const { setWalletDetails: setContextWalletDetails } = useContext(PinContext);
 
-    const generateWalletDetails = async () => {
+    const generateWalletPhrase = async () => {
         setLoading(true);
         try {
-            // Step 1: Generate Wallet Phrase
+            // Generate Wallet Phrase
             const phraseResponse = await fetch('http://127.0.0.1:8000/api/wallet/phrase/', {
                 method: 'GET',
                 headers: {
@@ -25,26 +25,8 @@ export default function SecureWallet() {
 
             const phraseData = await phraseResponse.json();
             console.log(phraseData.data);
-            
-            // Step 2: Generate Wallet using the Phrase
-            const walletResponse = await fetch('http://127.0.0.1:8000/api/wallet/generate_wallet/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ phrase: phraseData.data }) // Use .data for the actual phrase
-            });
-
-            if (!walletResponse.ok) {
-                const errorData = await walletResponse.json();
-                console.error('Wallet Generation Error Details:', errorData);
-                throw new Error('Failed to generate wallet details');
-            }
-
-            const walletData = await walletResponse.json();
 
             const details = {
-                walletAddress: walletData.data[0].address, // Adjust based on your backend response structure
                 seedWords: phraseData.data.split(' '), // Split phrase into seed words
             };
 
@@ -52,20 +34,20 @@ export default function SecureWallet() {
             setWalletDetails(details);
             setContextWalletDetails(details);
         } catch (error) {
-            console.error("Wallet Generation Error:", error);
+            console.error("Phrase Generation Error:", error);
             throw error;
         } finally {
             setLoading(false);
         }
     };
-    
+
     useEffect(() => {
         const details = JSON.parse(localStorage.getItem("walletDetails"));
         if (details) {
             setWalletDetails(details);
             setContextWalletDetails(details);
         } else {
-            generateWalletDetails().catch(console.error);
+            generateWalletPhrase().catch(console.error);
         }
     }, []);
 
@@ -78,14 +60,10 @@ export default function SecureWallet() {
 
     const handleNext = () => {
         alert("Wallet secured!");
-        history.push("/admin/dashboard");
+        history.push("/auth/createwallet");
     };
 
-    const { walletAddress = "", seedWords = [] } = walletDetails || {};
-
-
-
-
+    const { seedWords = [] } = walletDetails || {};
 
     return (
         <div
@@ -101,8 +79,7 @@ export default function SecureWallet() {
                 </a>
                 <h2 className="text-2xl font-semibold mb-4 text-green text-aeonik">Wallet</h2>
                 <p className="text-sm text-blueGray-500 mb-6 font-semibold">
-                    We have created your web3 Wallet, below is your wallet seed words.
-                    Keep it safe and make sure you're the only one that have access to it.
+                    Below is your wallet seed words. Keep it safe and make sure you're the only one who has access to it.
                 </p>
 
                 <h3 className="text-sm font-semibold mt-4 mb-2 text-green-500">Seed Words</h3>
@@ -150,7 +127,7 @@ export default function SecureWallet() {
                             </a>
                         </div>
                     </div>
-                )}       
+                )}
                 <button
                     className="w-full mt-6 bg-green-500 text-white font-semibold p-3 rounded-my"
                     onClick={handleNext}
@@ -161,4 +138,3 @@ export default function SecureWallet() {
         </div>
     );
 }
-

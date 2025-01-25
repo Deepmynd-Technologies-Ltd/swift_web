@@ -1,57 +1,81 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
-export default function Register() {
-    const [pin, setPin] = useState(["", "", "", ""]);
+export default function CreateWallet() {
     const [loading, setLoading] = useState(false);
     const history = useHistory();
 
-    const handleNext = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const success = await generateWallet();
-        setLoading(false);
-        if (success) {
-            history.push("/admin/dashboard/");
-        } else {
-            alert("Failed to create wallet. Please try again.");
-        }
-    };
-
-    const handleChange = (value, index) => {
-        if (value.length > 1) return;
-        const newPin = [...pin];
-        newPin[index] = value;
-        setPin(newPin);
-
-        if (value && index < 3) {
-            document.getElementById(`pin-input-${index + 1}`).focus();
-        }
-    };
-
-    const handleKeyDown = (e, index) => {
-        if (e.key === "Backspace" && !pin[index] && index > 0) {
-            document.getElementById(`pin-input-${index - 1}`).focus();
-        }
-    };
-
-    const generateWallet = async () => {
+    // Function to create wallet using the separated implementation
+    const generateWallet = async (phrase) => {
         try {
             const response = await fetch("http://127.0.0.1:8000/api/wallet/generate_wallet/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ pin: pin.join("") }),
+                body: JSON.stringify({
+                    phrase, // Wallet phrase passed as a parameter
+                }),
             });
-            if (response.ok) {
-                return true;
-            } else {
-                return false;
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error details:", errorData);
+                throw new Error("Failed to create wallet");
             }
+
+            const walletData = await response.json();
+            console.log("Wallet created successfully:", walletData);
+
+            // Store wallet details locally
+            const details = {
+                walletAddress: walletData.data[0].address,
+                seedWords: phrase.split(" "),
+            };
+            localStorage.setItem("walletDetails", JSON.stringify(details));
+
+            return true;
         } catch (error) {
             console.error("Error generating wallet:", error);
             return false;
+        }
+    };
+
+    const handleNext = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            // Step 1: Fetch wallet phrase
+            const phraseResponse = await fetch("http://127.0.0.1:8000/api/wallet/phrase/", {
+                method: "GET",
+                headers: {
+                    Accept: "application/json",
+                },
+            });
+
+            if (!phraseResponse.ok) {
+                throw new Error("Failed to generate wallet phrase");
+            }
+
+            const phraseData = await phraseResponse.json();
+            const phrase = phraseData.data;
+
+            // Step 2: Generate wallet with the phrase
+            const success = await generateWallet(phrase);
+
+            setLoading(false);
+
+            if (success) {
+                alert("Wallet created successfully!");
+                history.push("/admin/dashboard");
+            } else {
+                alert("Failed to create wallet. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error during wallet creation:", error);
+            setLoading(false);
+            alert("Failed to create wallet. Please try again.");
         }
     };
 
