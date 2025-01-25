@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import CardLineChart from "./CardLineChart"; // Assuming CardLineChart is imported from the correct path
 
 // Example dynamic data for transactions
 const transactions = [
@@ -10,6 +11,7 @@ const transactions = [
     equivalenceValue: "1.5",
     equivalenceValueAmount: "$ 600.75",
     typeImage: require("../../assets/img/bnb_icon.png"), 
+    isActive: true
   },
   {
     abbr: "BTC",
@@ -57,8 +59,17 @@ const transactions = [
     typeImage: require("../../assets/img/usdt_icon.png"), 
   }
 ];
-
+ 
 export default function CardWalletOverview() {
+  const [selectedWallet, setSelectedWallet] = useState(null);
+
+  const handleWalletClick = (wallet) => {
+    console.log(wallet); // Debug to ensure wallet data is correct
+    setSelectedWallet(wallet);
+    console.log("Selected Wallet:", selectedWallet);
+  };
+  
+
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words w-2/3 mb-6 rounded mx-auto">
@@ -73,6 +84,10 @@ export default function CardWalletOverview() {
               <div key={index} className="rounded-my overflow-hidden" style={{ height: "80px", width: "100%" }}>
                 <a
                   href={`/wallet/${transaction.abbr}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleWalletClick(transaction);
+                  }}
                   style={{
                     display: "block",
                     margin: "0.375rem 0",
@@ -81,7 +96,7 @@ export default function CardWalletOverview() {
                     color: "inherit",
                     transition: "color 0.2s",
                   }}
-                  className="wallet-row"
+                  className={`wallet-row ${transaction.isActive ? 'active' : ''}`}
                 >
                   <div className="flex justify-between">
                     <div className="w-1/3 px-6 py-3">
@@ -116,6 +131,12 @@ export default function CardWalletOverview() {
           </div>
         </div>
       </div>
+      
+      {selectedWallet && (
+        <div className="mt-6">
+          <CardLineChart wallet={selectedWallet} />
+        </div>
+      )}
     </>
   );
 }

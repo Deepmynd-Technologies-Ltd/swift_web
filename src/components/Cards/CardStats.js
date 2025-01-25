@@ -19,7 +19,11 @@ export default function CardStats({ assets, isHidden }) {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=btc&address=${address}`);
       const data = await response.json();
-      setWalletBalance(data.balance);
+      if (data.success) {
+        setWalletBalance(data.data);
+      } else {
+        console.error("Error fetching wallet balance:", data.message);
+      }
     } catch (error) {
       console.error("Error fetching wallet balance:", error);
     }
@@ -42,7 +46,7 @@ export default function CardStats({ assets, isHidden }) {
           <div className="relative flex flex-col bg-white rounded-my shadow-lg p-4 mb-4 xl:mb-0 w-full lg:w-auto max-h-[300px]" style={{ maxHeight: "120px", minWidth: "220px" }}>
             <div className="relative mt-4">
               <p className="font-semibold text-3xl text-blueGray-700">
-                {hidden ? `$${walletBalance}` : "••••••••"}
+                {hidden ? `$${walletBalance}.00` : "••••••••"}
               </p>
               <p className="text-sm mt-2 text-blueGray-400 whitespace-nowrap overflow-hidden text-ellipsis"></p>
                 {walletAddress.slice(0, 4)}...{walletAddress.slice(-4)}

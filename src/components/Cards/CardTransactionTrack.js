@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { CardWalletOverview } from "./CardWalletOverview";
 
-const CardLineChart = () => {
-  const [activePeriod, setActivePeriod] = useState("1H");
-
-  const periods = ["1H", "1D", "1W", "1M", "1Y", "2Y", "ALL"];
-  const svgData = {
+// Example dynamic data for different wallets (to simulate the change of charts for different wallets)
+const chartData = {
+  BTC: {
     "1H": "M0 50 Q50 0, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
     "1D": "M0 50 Q50 10, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
     "1W": "M0 50 Q50 20, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
@@ -12,25 +11,84 @@ const CardLineChart = () => {
     "1Y": "M0 50 Q50 40, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
     "2Y": "M0 50 Q50 50, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
     "ALL": "M0 50 Q50 60, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
-  };
+  },
+  ETH: {
+    "1H": "M0 50 Q50 0, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1D": "M0 50 Q50 15, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1W": "M0 50 Q50 30, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1M": "M0 50 Q50 30, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1Y": "M0 50 Q50 40, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "2Y": "M0 50 Q50 50, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "ALL": "M0 50 Q50 60, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+  },
+  BNB: {
+    "1H": "M0 50 Q50 0, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1D": "M0 50 Q50 10, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1W": "M0 50 Q50 20, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1M": "M0 50 Q50 30, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1Y": "M0 50 Q50 40, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "2Y": "M0 50 Q50 50, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "ALL": "M0 50 Q50 60, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+  },
+  SOL: {
+    "1H": "M0 50 Q50 0, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1D": "M0 50 Q50 15, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1W": "M0 50 Q50 30, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1M": "M0 50 Q50 30, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1Y": "M0 50 Q50 40, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "2Y": "M0 50 Q50 50, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "ALL": "M0 50 Q50 60, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+  },
+  DOGE: {
+    "1H": "M0 50 Q50 0, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1D": "M0 50 Q50 10, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1W": "M0 50 Q50 20, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1M": "M0 50 Q50 30, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1Y": "M0 50 Q50 40, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "2Y": "M0 50 Q50 50, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "ALL": "M0 50 Q50 60, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+  },
+  USDT: {
+    "1H": "M0 50 Q50 0, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1D": "M0 50 Q50 15, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1W": "M0 50 Q50 30, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1M": "M0 50 Q50 30, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "1Y": "M0 50 Q50 40, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "2Y": "M0 50 Q50 50, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+    "ALL": "M0 50 Q50 60, 100 50 T200 50 T300 50 T350 50 T400 50 T450 50",
+  },
+};
+
+
+const CardLineChart = ({ wallet }) => {
+  const [activePeriod, setActivePeriod] = useState("1H");
+  const [svgPath, setSvgPath] = useState("");
+
+  const periods = ["1H", "1D", "1W", "1M", "1Y", "2Y", "ALL"];
+
+  useEffect(() => {
+    if (wallet) {
+      setSvgPath(chartData[wallet.abbr]?.[activePeriod]);
+    }
+  }, [wallet, activePeriod]);
 
   return (
     <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
       <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
         <div className="items-center">
-          <h2 className="text-3xl text-center font-bold mb-1">0.1 BTC</h2>
-          <p className="text-xs text-center mb-4 text-blueGray-500">$ 25,000 USDT</p>
-          <p className="text-base font-bold font-medium mt-8">Current BTC Price</p>
+          <h2 className="text-3xl text-center font-bold mb-1">{wallet?.equivalenceValue} {wallet?.abbr}</h2>
+          <p className="text-xs text-center mb-4 text-blueGray-500">{wallet?.equivalenceValueAmount}</p>
+          <p className="text-base font-bold font-medium mt-8">Current {wallet?.title} Price</p>
           <p className="text-xs text-blueGray-500">
-            0.0095 BTC <span className="text-red-500 ml-4">-0.49%</span>
+            {wallet?.equivalenceValue} {wallet?.abbr} <span className="text-red-500 ml-4">-0.49%</span>
           </p>
         </div>
         <div className="flex-auto">
           <div className="relative h-64 mt-4">
             <svg width="350" height="95" viewBox="0 0 350 95" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clipPath="url(#clip0_932_4270)">
-                <path d={svgData[activePeriod]} fill="url(#paint0_linear_932_4270)" fillOpacity="0.4" />
-                <path d={svgData[activePeriod]} stroke="#006A4E" strokeWidth="2" strokeLinecap="round" />
+                <path d={svgPath} fill="url(#paint0_linear_932_4270)" fillOpacity="0.4" />
+                <path d={svgPath} stroke="#006A4E" strokeWidth="2" strokeLinecap="round" />
               </g>
               <defs>
                 <linearGradient id="paint0_linear_932_4270" x1="175" y1="3.7113" x2="175" y2="84.5" gradientUnits="userSpaceOnUse">
@@ -155,11 +213,18 @@ const CardTransactionTrack = () => {
   );
 };
 
-export default function CombinedComponent() {
+export default function CombinedComponent({ wallet }) {
+
   return (
+
     <>
-      <CardLineChart />
+
+      <CardLineChart wallet={wallet} />
+
       <CardTransactionTrack />
+
     </>
+
   );
+
 }
