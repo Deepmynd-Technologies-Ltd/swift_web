@@ -62,7 +62,7 @@ export default function Sidebar() {
           className="cursor-pointer text-black opacity-50 md:hidden px-2 py-1 text-lg leading-none bg-transparent rounded border border-solid border-transparent"
           onClick={() => setCollapseShow("bg-primary-color-2 m-2 py-3 px-6")}
         >
-          <i className="fas fa-bars"></i>
+          <i className="fa fa-bars"></i>
         </button>
         
         <Link
@@ -73,7 +73,7 @@ export default function Sidebar() {
           Swift<span style={{color: "#006A4E"}}>Aza</span>
         </Link>
 
-        <div className={`md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-2 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-auto h-auto flex-1 rounded transition-all ${collapseShow}`}>
+        <div className={`md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-2 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-auto flex-1 rounded transition-all ${collapseShow}`} style={{ height: "300px", backgroundColor: "#f9f9f9", transition: "all 0.3s" }}>
           <div className="md:min-w-full md:hidden block pb-2 mb-2 border-b border-solid border-blueGray-200">
             <div className="flex justify-end">
               <button
@@ -81,7 +81,7 @@ export default function Sidebar() {
                 className="cursor-pointer text-black opacity-50 md:hidden px-2 py-1 text-lg leading-none bg-transparent rounded border border-solid border-transparent"
                 onClick={() => setCollapseShow("hidden")}
               >
-                <i className="fas fa-times"></i>
+                <i className="fa fa-times"></i>
               </button>
             </div>
           </div>

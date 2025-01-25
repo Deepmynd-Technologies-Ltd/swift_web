@@ -18,15 +18,14 @@ export default function Navbar() {
   return (
     <>
       {/* Navbar */}
-      <nav className=" top-0 left-0 w-full z-10 bg-transparent flex items-center p-4">
-        <div className="w-full mx-auto flex justify-between items-center flex-wrap px-4">
+      <nav className="top-0 left-0 w-full z-10 bg-transparent flex flex-row items-center p-4">
+        <div className="w-full mx-auto flex justify-between items-center flex-row px-4">
           {/* Brand */}
           {window.location.pathname === "/admin/dashboard" && (
             <a
               className="text-green text-sm lg:inline-block font-bold flex items-center bg-primary-color-4 p-2 rounded-lg"
               style={{
                 marginTop: "20px",
-                // fontFamily: "Aeonik",
                 fontWeight: 700,
               }}
               type="button"
@@ -41,22 +40,18 @@ export default function Navbar() {
 
           {window.location.pathname === "/admin/history" && (
             <h2
-              className="text-black text-2xl lg:inline-block font-bold flex items-center  p-2 "
+              className="text-black text-2xl lg:inline-block font-bold flex items-center p-2"
               style={{
                 marginTop: "20px",
-                // fontFamily: "Aeonik",
                 fontWeight: 700,
               }}
               type="button"
               aria-haspopup="true"
-              aria-expanded="true">
-                History
-              </h2>
+              aria-expanded="true"
+            >
+              History
+            </h2>
           )}
-
-          {/* {window.location.pathname === "/admin/browser" && (
-            <div className="text-black text-2xl lg:inline-block font-bold flex items-center p-2" style={{ flexGrow: 1 }}></div>
-          )} */}
 
           {/* Navbar Items */}
           <ul className="flex-col md:flex-row list-none items-center flex mt-4 md:mt-0">

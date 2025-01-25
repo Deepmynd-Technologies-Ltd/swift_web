@@ -6,6 +6,10 @@ export default function CardStats({ assets, isHidden }) {
   const [hidden, setHidden] = useState(isHidden);
   const [walletBalance, setWalletBalance] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [isSendModalOpen, setIsSendModalOpen] = useState(false);
+  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
+  const [recipientAddress, setRecipientAddress] = useState("");
+  const [amount, setAmount] = useState("");
 
   useEffect(() => {
     const walletDetails = JSON.parse(localStorage.getItem("walletDetails"));
@@ -29,14 +33,45 @@ export default function CardStats({ assets, isHidden }) {
     }
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleSendClick = () => {
-    setIsModalOpen(true);
+    setIsSendModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const handleReceiveClick = () => {
+    setIsReceiveModalOpen(true);
+  };
+
+  const closeSendModal = () => {
+    setIsSendModalOpen(false);
+  };
+
+  const closeReceiveModal = () => {
+    setIsReceiveModalOpen(false);
+  };
+
+  const handleSendToken = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/wallet/send_token/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fromAddress: walletAddress,
+          toAddress: recipientAddress,
+          amount: amount,
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert("Token sent successfully!");
+        closeSendModal();
+      } else {
+        console.error("Error sending token:", data.message);
+      }
+    } catch (error) {
+      console.error("Error sending token:", error);
+    }
   };
 
   return (
@@ -66,7 +101,7 @@ export default function CardStats({ assets, isHidden }) {
                 </a>
               </div>
               <div className="flex-1 group flex justify-center items-end">
-                <a href="#" className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                <a href="#" onClick={handleReceiveClick} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
                   <span className="block px-1 pt-1 pb-1">
                     <i className="fas fa-receive text-2xl pt-1 mb-1 block text-center group-hover:text-green"></i>
                     <span className="block text-xs font-semibold pb-2 text-green">Receive</span>
@@ -118,14 +153,15 @@ export default function CardStats({ assets, isHidden }) {
         </div>
       </div>
 
-      {/* Modal */}
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Send Modal */}
+      {isSendModalOpen && (
+        <div className="bg-black opacity-80 h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
+          <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
             {/* Modal Content */}
             <div className="relative flex flex-col p-4 gap-2 w-full max-w-md rounded-lg z-10 shadow-lg" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px",  width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
               <a
                 className="absolute top-2 text-blueGray-500 hover:text-gray-700 mt-8"
-                onClick={closeModal}
+                onClick={closeSendModal}
                 style={{ right: "30px" }}
               >
                 <i className="fa fa-times"></i>
@@ -138,11 +174,14 @@ export default function CardStats({ assets, isHidden }) {
                   <input
                     type="text"
                     placeholder="Enter recipient’s address"
+                    value={recipientAddress}
+                    onChange={(e) => setRecipientAddress(e.target.value)}
                     className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
-                  <button className="absolute transform text-xs bg-blue-500 text-green px-3 py-1 rounded" style={{ right: "10px", top: "10px" }}>
+                  <a className="absolute transform text-xs bg-blue-500 text-green px-3 py-1 rounded" style={{ right: "40px", top: "10px" }}>
                     Paste
-                  </button>
+                  </a>
+                  <img src={require("../../assets/img/scan_icon.png")} alt="Scan Icon" className="absolute transform" style={{ right: "10px", top: "10px", width: "24px", height: "24px" }} />
                 </div>
               </div>
               <div className="w-full mt-4">
@@ -151,6 +190,8 @@ export default function CardStats({ assets, isHidden }) {
                   <input
                     type="text"
                     placeholder="Enter amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
                   <button className="absolute transform text-xs bg-blue-500 text-green px-3 py-1 rounded" style={{ right: "10px", top: "10px" }}>
@@ -166,14 +207,70 @@ export default function CardStats({ assets, isHidden }) {
               <div className="flex gap-2 mt-4">
                 <button
                   className="bg-green-500 w-full text-white px-4 py-2 rounded-lg"
-                  onClick={closeModal}
+                  onClick={handleSendToken}
                 >
                   Send
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Receive Modal */}
+      {isReceiveModalOpen && (
+        <div className="bg-black opacity-80 h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
+          <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
+            {/* Modal Content */}
+            <div className="relative flex flex-col p-4 gap-2 w-full max-w-md rounded-lg z-10 shadow-lg" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px",  width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
+              <a
+                className="absolute top-2 text-blueGray-500 hover:text-gray-700 mt-8"
+                onClick={closeReceiveModal}
+                style={{ right: "30px" }}
+              >
+                <i className="fa fa-times"></i>
+              </a>
+              <h2 className="text-lg font-bold mt-8">Receive Token</h2>
+              <h4 className="text-sm text-blueGray-500">Your wallet address to receive tokens</h4>
+              <div className="w-full mt-4">
+                <label className="block text-sm font-medium font-semibold text-blueGray-700">Wallet Address</label>
+                <div className="relative mt-2">
+                  <input
+                    type="text"
+                    value={walletAddress}
+                    readOnly
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                  <button
+                    className="absolute transform text-xs bg-blue-500 text-white px-3 py-1 rounded"
+                    style={{ right: "40px", top: "10px" }}
+                    onClick={() => navigator.clipboard.writeText(walletAddress)}
+                  >
+                    Copy
+                  </button>
+                  <img
+                    src={require("../../assets/img/scan_icon.png")}
+                    alt="QR Code"
+                    className="absolute transform"
+                    style={{ right: "10px", top: "10px", width: "24px", height: "24px" }}
+                  />
+                </div>
+              </div>
+              <div className="w-full mt-4 text-center">
+                <img
+                  src={require("../../assets/img/scan_icon.png")}
+                  alt="QR Code Large"
+                  className="mx-auto"
+                  style={{ width: "150px", height: "150px" }}
+                />
+                <p className="text-sm text-blueGray-500 mt-4">
+                  Scan the QR code above to receive tokens directly to your wallet.
+                </p>
+              </div>
             </div>
-            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

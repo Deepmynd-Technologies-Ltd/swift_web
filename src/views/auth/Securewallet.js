@@ -79,7 +79,8 @@ export default function SecureWallet() {
                 </a>
                 <h2 className="text-2xl font-semibold mb-4 text-green text-aeonik">Wallet</h2>
                 <p className="text-sm text-blueGray-500 mb-6 font-semibold">
-                    Below is your wallet seed words. Keep it safe and make sure you're the only one who has access to it.
+                    We have created your web3 Wallet, below is your wallet seed words.
+                    Keep it safe and make sure you're the only one that have access to it.
                 </p>
 
                 <h3 className="text-sm font-semibold mt-4 mb-2 text-green-500">Seed Words</h3>
