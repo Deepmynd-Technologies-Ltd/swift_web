@@ -1,10 +1,17 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 export default function ConfirmPin() {
     const [confirmPin, setConfirmPin] = useState(["", "", "", ""]);
     const [error, setError] = useState(null);
     const history = useHistory();
+
+    useEffect(() => {
+        const savedPin = localStorage.getItem("walletPin");
+        if (savedPin) {
+            setConfirmPin(savedPin.split(""));
+        }
+    }, []);
 
     const handleConfirm = () => {
         const confirmPinCode = confirmPin.join("");  
@@ -24,6 +31,9 @@ export default function ConfirmPin() {
             setError("PIN does not match.");
             return;
         }
+
+        localStorage.setItem("walletPin2", confirmPinCode);
+        console.log("Saved PIN:", confirmPinCode);
 
         history.push("/auth/securewallet");
     };

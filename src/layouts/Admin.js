@@ -19,10 +19,28 @@ import Browser from "views/admin/Browser.js";
 export default function Admin() {
   const location = useLocation();
 
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <Sidebar />
       <div className="relative md:ml-64 bg-primary-color min-h-screen flex flex-col">
+        {/* Background overlay */}
+        {isModalOpen && (
+          <>
+            {/* Background overlay */}
+            <div
+              className="fixed inset-0 opacity-50 z-40 bg-black"
+              onClick={closeModal}
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            ></div>
+          </>
+        )}
+
         {/* Wrap Routes with TransitionGroup and CSSTransition */}
         <TransitionGroup>
           <CSSTransition

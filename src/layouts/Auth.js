@@ -54,17 +54,18 @@ export default function Auth() {
           </AuthLayout>
         </Route>
 
-        <Route path="/auth/createwallet" exact>
-          <AuthLayout NavbarComponent={VerifyAccountNavBar}>
-            <CreateWallet />
-          </AuthLayout>
-        </Route>
-
         <Route path="/auth/securewallet" exact>
           <AuthLayout NavbarComponent={VerifyAccountNavBar}>
             <SecureWallet />
           </AuthLayout>
         </Route>
+
+        <Route path="/auth/createwallet" exact>
+          <AuthLayout NavbarComponent={VerifyAccountNavBar}>
+            <CreateWallet />
+          </AuthLayout>
+        </Route>
+        
       </Switch>
     </PinProvider>
   );
