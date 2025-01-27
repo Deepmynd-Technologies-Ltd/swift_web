@@ -26,16 +26,6 @@ export default function CreateWallet() {
             const walletData = await response.json();
             console.log("Wallet created successfully:", walletData);
 
-            const details = {
-                walletAddresses: walletData.data,
-                seedWords: phrase.split(" "),
-            };
-            localStorage.setItem("walletDetails", JSON.stringify(details));
-
-            // Access the Ethereum address
-            const ethereumAddress = walletData.data.ethereum;
-            console.log("Ethereum Address:", ethereumAddress);
-
             return true;
         } catch (error) {
             console.error("Error generating wallet:", error);
