@@ -1,9 +1,9 @@
+// CardStats.js
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-// @ts-ignore
 
-export default function CardStats({ assets, isHidden }) {
-  const [hidden, setHidden] = useState(isHidden);
+export default function CardStats({ isHidden, selectedWallet }) {
+  const [hidden] = useState(isHidden);
   const [walletBalance, setWalletBalance] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
@@ -11,13 +11,31 @@ export default function CardStats({ assets, isHidden }) {
   const [recipientAddress, setRecipientAddress] = useState("");
   const [amount, setAmount] = useState("");
 
+  const tokenNames = {
+    BTC: "Bitcoin",
+    ETH: "Ethereum",
+    BNB: "BNB BEP20",
+    SOL: "Solana",
+    DOGE: "Doge coin",
+    USDT: "USDT BEP20",
+  };
+
+  const tokenName = selectedWallet ? tokenNames[selectedWallet.abbr] : null;
+
   useEffect(() => {
-    const walletDetails = JSON.parse(localStorage.getItem("walletDetails"));
-    if (walletDetails && walletDetails.walletAddress) {
-      setWalletAddress(walletDetails.walletAddress);
-      fetchWalletBalance(walletDetails.walletAddress);
+    if (tokenName) {
+      const walletDetails = JSON.parse(localStorage.getItem("walletDetails"));
+      if (walletDetails && walletDetails.walletAddresses && Array.isArray(walletDetails.walletAddresses)) {
+        const activeWallet = walletDetails.walletAddresses.find((wallet) => wallet.name === tokenName);
+        if (activeWallet) {
+          setWalletAddress(activeWallet.address);
+          fetchWalletBalance(activeWallet.address);
+        }
+      } else {
+        console.error("No wallet details found in localStorage");
+      }
     }
-  }, []);
+  }, [tokenName]);
 
   const fetchWalletBalance = async (address) => {
     try {
@@ -73,6 +91,10 @@ export default function CardStats({ assets, isHidden }) {
       console.error("Error sending token:", error);
     }
   };
+
+  if (!selectedWallet) {
+    return <div>No wallet selected</div>;
+  }
 
   return (
     <div className="relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 min-h-[300px] items-center justify-center">

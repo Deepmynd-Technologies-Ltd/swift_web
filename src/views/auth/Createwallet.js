@@ -27,10 +27,14 @@ export default function CreateWallet() {
             console.log("Wallet created successfully:", walletData);
 
             const details = {
-                walletAddress: walletData.data[0].address,
+                walletAddresses: walletData.data,
                 seedWords: phrase.split(" "),
             };
             localStorage.setItem("walletDetails", JSON.stringify(details));
+
+            // Access the Ethereum address
+            const ethereumAddress = walletData.data.ethereum;
+            console.log("Ethereum Address:", ethereumAddress);
 
             return true;
         } catch (error) {

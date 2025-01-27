@@ -177,10 +177,10 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.wallet-row:hover {
-  background-color: #006A4E;
+/* .wallet-row:hover {
+  background-color: #9ae6d1;
   color: white !important;
-}
+} */
 
 .wallet-row.active {
   background-color: #006A4E;
@@ -196,7 +196,7 @@ body {
   transition: filter 0.2s ease;
 }
 
-.wallet-row:hover img,
+/* .wallet-row:hover img, */
 .wallet-row.active img {
   filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(100%) contrast(100%);
 }
@@ -2202,6 +2202,7 @@ select {
 
 .opacity-80 {
   opacity: 0.8;
+  color: #deedff;
 }
 
 .outline-none {

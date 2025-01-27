@@ -13,7 +13,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col lg:flex-row">
       <div className="w-full xl:w-7/12 mb-12 xl:mb-0 px-4" style={{ flex: "0 0 60%" }}>
-        <CardStats />
+        <CardStats selectedWallet={selectedWallet} />
         <CardWalletOverview
           selectedWallet={selectedWallet}
           onSelectWallet={handleSelectWallet}

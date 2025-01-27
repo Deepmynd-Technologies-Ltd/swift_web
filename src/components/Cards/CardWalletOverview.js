@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-export default function CardWalletOverview({ selectedWallet, onSelectWallet }) {
+export default function CardWalletOverview({ onSelectWallet }) {
   const transactions = [
     {
       abbr: "BNB",
-      title: "Binance coin",
+      title: "BNB BEP20",
       marketPrice: "$ 400.50",
       marketPricePercentage: "1.23%",
       equivalenceValue: "1.5",
@@ -58,8 +58,14 @@ export default function CardWalletOverview({ selectedWallet, onSelectWallet }) {
     },
   ];
 
+  const [selectedWallet, setSelectedWallet] = useState(transactions[0]);
+
+  useEffect(() => {
+    onSelectWallet(selectedWallet);
+  }, [selectedWallet, onSelectWallet]);
+
   const handleWalletClick = (wallet) => {
-    onSelectWallet(wallet); // Notify parent component of the selected wallet
+    setSelectedWallet(wallet);
   };
 
   return (
@@ -73,7 +79,13 @@ export default function CardWalletOverview({ selectedWallet, onSelectWallet }) {
               <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
             </div>
             {transactions.map((transaction, index) => (
-              <div key={index} className="rounded-my overflow-hidden" style={{ height: "80px", width: "100%" }}>
+              <div
+                key={index}
+                className={`rounded-my overflow-hidden ${
+                  selectedWallet?.abbr === transaction.abbr ? "bg-blue-50" : ""
+                }`}
+                style={{ height: "80px", width: "100%" }}
+              >
                 <a
                   href={`/wallet/${transaction.abbr}`}
                   onClick={(e) => {
@@ -88,7 +100,7 @@ export default function CardWalletOverview({ selectedWallet, onSelectWallet }) {
                     color: "inherit",
                     transition: "color 0.2s",
                   }}
-                  className={`wallet-row ${transaction.isActive ? 'active' : ''}`}
+                  className={`wallet-row ${selectedWallet?.abbr === transaction.abbr ? "active" : ""}`}
                 >
                   <div className="flex justify-between">
                     <div className="w-1/3 px-6 py-3">
@@ -100,8 +112,10 @@ export default function CardWalletOverview({ selectedWallet, onSelectWallet }) {
                           style={{ objectFit: "cover" }}
                         />
                         <div>
-                          <span className="text-sm font-semibold">{transaction.abbr}</span>
-                          <span className="text-xs block" style={{ maxWidth: "100px" }}>{transaction.title}</span>
+                          <span className="text-sm font-bold">{transaction.abbr}</span>
+                          <span className="text-xs block font-semibold" style={{ maxWidth: "100px" }}>
+                            {transaction.title}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -124,5 +138,5 @@ export default function CardWalletOverview({ selectedWallet, onSelectWallet }) {
         </div>
       </div>
     </>
-    );
-  }
+  );
+}
