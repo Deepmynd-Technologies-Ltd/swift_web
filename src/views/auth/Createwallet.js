@@ -26,6 +26,12 @@ export default function CreateWallet() {
             const walletData = await response.json();
             console.log("Wallet created successfully:", walletData);
 
+            const details = {
+                walletAddresses: walletData.data,
+                seedWords: phrase.split(" "),
+            };
+            localStorage.setItem("walletDetails", JSON.stringify(details));
+
             return true;
         } catch (error) {
             console.error("Error generating wallet:", error);

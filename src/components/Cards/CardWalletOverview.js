@@ -1,67 +1,92 @@
 import React, { useState, useEffect } from "react";
 
 export default function CardWalletOverview({ onSelectWallet }) {
-  const transactions = [
-    {
-      abbr: "BNB",
-      title: "BNB BEP20",
-      marketPrice: "$ 400.50",
-      marketPricePercentage: "1.23%",
-      equivalenceValue: "1.5",
-      equivalenceValueAmount: "$ 600.75",
-      typeImage: require("../../assets/img/bnb_icon.png"),
-    },
-    {
-      abbr: "BTC",
-      title: "Bitcoin",
-      marketPrice: "$ 50,000.26",
-      marketPricePercentage: "0.701%",
-      equivalenceValue: "0.1",
-      equivalenceValueAmount: "$ 4,345.02",
-      typeImage: require("../../assets/img/bitcoin_icon.png"),
-    },
-    {
-      abbr: "DOGE",
-      title: "Doge coin",
-      marketPrice: "$ 0.25",
-      marketPricePercentage: "2.45%",
-      equivalenceValue: "1000",
-      equivalenceValueAmount: "$ 250.00",
-      typeImage: require("../../assets/img/xrp_icon.png"),
-    },
-    {
-      abbr: "ETH",
-      title: "Ethereum",
-      marketPrice: "$ 3,500.00",
-      marketPricePercentage: "0.98%",
-      equivalenceValue: "2.5",
-      equivalenceValueAmount: "$ 7,000.00",
-      typeImage: require("../../assets/img/ethereum_icon.png"),
-    },
-    {
-      abbr: "SOL",
-      title: "Solana",
-      marketPrice: "$ 150.00",
-      marketPricePercentage: "1.56%",
-      equivalenceValue: "10",
-      equivalenceValueAmount: "$ 1,500.00",
-      typeImage: require("../../assets/img/solana_icon.png"),
-    },
-    {
-      abbr: "USDT",
-      title: "USDT BEP20",
-      marketPrice: "$ 1.00",
-      marketPricePercentage: "0.01%",
-      equivalenceValue: "1000",
-      equivalenceValueAmount: "$ 1,000.00",
-      typeImage: require("../../assets/img/usdt_icon.png"),
-    },
-  ];
+  const [transactions, setTransactions] = useState([]);
+  const [selectedWallet, setSelectedWallet] = useState(null);
 
-  const [selectedWallet, setSelectedWallet] = useState(transactions[0]);
-
+  // Fetch real values from the backend API
   useEffect(() => {
-    onSelectWallet(selectedWallet);
+    async function fetchWalletData() {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/wallet/");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+
+        // Map API data to your expected structure
+        const formattedData = [
+          {
+            abbr: "BNB",
+            title: "BNB BEP20",
+            marketPrice: `$ ${data.binancecoin.usd.toFixed(2)}`,
+            marketPricePercentage: `${data.binancecoin.usd_24h_change.toFixed(2)}%`,
+            equivalenceValue: "1.5",
+            equivalenceValueAmount: `$ ${(data.binancecoin.usd * 1.5).toFixed(2)}`,
+            typeImage: require("../../assets/img/bnb_icon.png"),
+          },
+          {
+            abbr: "BTC",
+            title: "Bitcoin",
+            marketPrice: `$ ${data.bitcoin.usd.toFixed(2)}`,
+            marketPricePercentage: `${data.bitcoin.usd_24h_change.toFixed(2)}%`,
+            equivalenceValue: "0.1",
+            equivalenceValueAmount: `$ ${(data.bitcoin.usd * 0.1).toFixed(2)}`,
+            typeImage: require("../../assets/img/bitcoin_icon.png"),
+          },
+          {
+            abbr: "DOGE",
+            title: "Doge coin",
+            marketPrice: `$ ${data.dogecoin.usd.toFixed(4)}`,
+            marketPricePercentage: `${data.dogecoin.usd_24h_change.toFixed(2)}%`,
+            equivalenceValue: "1000",
+            equivalenceValueAmount: `$ ${(data.dogecoin.usd * 1000).toFixed(2)}`,
+            typeImage: require("../../assets/img/xrp_icon.png"),
+          },
+          {
+            abbr: "ETH",
+            title: "Ethereum",
+            marketPrice: `$ ${data.ethereum.usd.toFixed(2)}`,
+            marketPricePercentage: `${data.ethereum.usd_24h_change.toFixed(2)}%`,
+            equivalenceValue: "2.5",
+            equivalenceValueAmount: `$ ${(data.ethereum.usd * 2.5).toFixed(2)}`,
+            typeImage: require("../../assets/img/ethereum_icon.png"),
+          },
+          {
+            abbr: "SOL",
+            title: "Solana",
+            marketPrice: `$ ${data.solana.usd.toFixed(2)}`,
+            marketPricePercentage: `${data.solana.usd_24h_change.toFixed(2)}%`,
+            equivalenceValue: "10",
+            equivalenceValueAmount: `$ ${(data.solana.usd * 10).toFixed(2)}`,
+            typeImage: require("../../assets/img/solana_icon.png"),
+          },
+          {
+            abbr: "USDT",
+            title: "USDT BEP20",
+            marketPrice: `$ ${data.tether.usd.toFixed(2)}`,
+            marketPricePercentage: `${data.tether.usd_24h_change.toFixed(2)}%`,
+            equivalenceValue: "1000",
+            equivalenceValueAmount: `$ ${(data.tether.usd * 1000).toFixed(2)}`,
+            typeImage: require("../../assets/img/usdt_icon.png"),
+          },
+        ];
+
+        setTransactions(formattedData);
+        setSelectedWallet(formattedData[0]); // Set the first wallet as the default selected
+      } catch (error) {
+        console.error("Error fetching wallet data:", error);
+      }
+    }
+
+    fetchWalletData();
+  }, []);
+
+  // Update parent component when the selected wallet changes
+  useEffect(() => {
+    if (selectedWallet) {
+      onSelectWallet(selectedWallet);
+    }
   }, [selectedWallet, onSelectWallet]);
 
   const handleWalletClick = (wallet) => {
@@ -123,7 +148,6 @@ export default function CardWalletOverview({ onSelectWallet }) {
                       {transaction.marketPrice}
                       <span className="text-xs text-green-500 ml-2">{transaction.marketPricePercentage}</span>
                     </div>
-
                     <div className="w-1/3 px-6 py-3 text-xs text-right">
                       <div>
                         <span className="text-sm font-semibold">{transaction.equivalenceValue}</span>
