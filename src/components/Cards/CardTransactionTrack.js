@@ -144,7 +144,7 @@ const CardLineChart = ({ wallet }) => {
               {marketData && getCurrentCoinData() && (
                 <>
                   <h2 className="text-3xl text-center font-bold mb-1">
-                    ${getCurrentCoinData().usd.toFixed(2)} {wallet.abbr}
+                    {getCurrentCoinData().usd.toFixed(2)} {wallet.abbr}
                   </h2>
                   <p className="text-xs text-center mb-4 text-blueGray-500">
                     {wallet.equivalenceValueAmount}
