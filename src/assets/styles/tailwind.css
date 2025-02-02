@@ -187,7 +187,7 @@ body {
   color: white !important;
 }
 .wallet-row.selected {
-  background-color: #006A4E;
+  background-color: #006A4E #21ffc4 #F7FAFE;
   color: white !important;
 }
 
@@ -1351,6 +1351,7 @@ select {
   --tw-bg-opacity: 1;
   background-color:  #FFFFFF;
 }
+
 
 .bg-pink-500 {
   --tw-bg-opacity: 1;

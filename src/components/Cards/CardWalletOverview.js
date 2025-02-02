@@ -15,23 +15,34 @@ export default function CardWalletOverview({ onSelectWallet }) {
         const data = await response.json();
 
         // Map API data to your expected structure
-        const formattedData = [
+        const walletDetails = JSON.parse(localStorage.getItem('walletDetails'));
+        const walletAddresses = walletDetails.walletAddresses;
+
+        const bnbWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'bnb').address;
+        const btcWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'btc').address;
+        const dogeWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'doge').address;
+        const ethWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'eth').address;
+        const solWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'sol').address;
+        const usdtWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'usdt').address;
+
+
+        const formattedData = await Promise.all([
           {
             abbr: "BNB",
             title: "BNB BEP20",
             marketPrice: `$ ${data.binancecoin.usd.toFixed(2)}`,
             marketPricePercentage: `${data.binancecoin.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: "1.5",
-            equivalenceValueAmount: `$ ${(data.binancecoin.usd * 1.5).toFixed(2)}`,
-            typeImage: require("../../assets/img/bnb_icon.png"),
+            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=bnb&address=${bnbWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.binancecoin.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=bnb&address=${bnbWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
+            typeImage: require("../../assets/img/bnb_icon_.png"),
           },
           {
             abbr: "BTC",
             title: "Bitcoin",
             marketPrice: `$ ${data.bitcoin.usd.toFixed(2)}`,
             marketPricePercentage: `${data.bitcoin.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: "0.1",
-            equivalenceValueAmount: `$ ${(data.bitcoin.usd * 0.1).toFixed(2)}`,
+            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=btc&address=${btcWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.bitcoin.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=btc&address=${btcWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/bitcoin_icon.png"),
           },
           {
@@ -39,17 +50,17 @@ export default function CardWalletOverview({ onSelectWallet }) {
             title: "Doge coin",
             marketPrice: `$ ${data.dogecoin.usd.toFixed(4)}`,
             marketPricePercentage: `${data.dogecoin.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: "1000",
-            equivalenceValueAmount: `$ ${(data.dogecoin.usd * 1000).toFixed(2)}`,
-            typeImage: require("../../assets/img/xrp_icon.png"),
+            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=doge&address=${dogeWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.dogecoin.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=doge&address=${dogeWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
+            typeImage: require("../../assets/img/xrp_icon_.png"),
           },
           {
             abbr: "ETH",
             title: "Ethereum",
             marketPrice: `$ ${data.ethereum.usd.toFixed(2)}`,
             marketPricePercentage: `${data.ethereum.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: "2.5",
-            equivalenceValueAmount: `$ ${(data.ethereum.usd * 2.5).toFixed(2)}`,
+            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=eth&address=${ethWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.ethereum.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=eth&address=${ethWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/ethereum_icon.png"),
           },
           {
@@ -57,8 +68,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
             title: "Solana",
             marketPrice: `$ ${data.solana.usd.toFixed(2)}`,
             marketPricePercentage: `${data.solana.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: "10",
-            equivalenceValueAmount: `$ ${(data.solana.usd * 10).toFixed(2)}`,
+            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=sol&address=${solWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.solana.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=sol&address=${solWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/solana_icon.png"),
           },
           {
@@ -66,11 +77,11 @@ export default function CardWalletOverview({ onSelectWallet }) {
             title: "USDT BEP20",
             marketPrice: `$ ${data.tether.usd.toFixed(2)}`,
             marketPricePercentage: `${data.tether.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: "1000",
-            equivalenceValueAmount: `$ ${(data.tether.usd * 1000).toFixed(2)}`,
-            typeImage: require("../../assets/img/usdt_icon.png"),
+            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=usdt&address=${usdtWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.tether.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=usdt&address=${usdtWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
+            typeImage: require("../../assets/img/usdt_icon_.png"),
           },
-        ];
+        ]);
 
         setTransactions(formattedData);
         setSelectedWallet(formattedData[0]); // Set the first wallet as the default selected
@@ -146,7 +157,9 @@ export default function CardWalletOverview({ onSelectWallet }) {
                     </div>
                     <div className="w-1/3 px-6 py-3 text-xs text-center">
                       {transaction.marketPrice}
-                      <span className="text-xs text-green-500 ml-2">{transaction.marketPricePercentage}</span>
+                      <span className={`text-xs ml-2 ${parseFloat(transaction.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
+                        {transaction.marketPricePercentage}
+                      </span>
                     </div>
                     <div className="w-1/3 px-6 py-3 text-xs text-right">
                       <div>
