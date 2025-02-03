@@ -8,10 +8,12 @@ export default function CardStats({ isHidden, selectedWallet }) {
   const [walletBalance, setWalletBalance] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
   const [isBuySellModalOpen, setIsBuySellModalOpen] = useState(false);
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
-  const [isP2PModalOpen, setIsP2PModalOpen] = useState(false); // State for P2P modal
+  const [isP2PModalOpen, setIsP2PModalOpen] = useState(false);
+  const [selectedWalletState, setSelectedWalletState] = useState(null);
   const [recipientAddress, setRecipientAddress] = useState("");
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const [amount, setAmount] = useState("");
@@ -19,13 +21,14 @@ export default function CardStats({ isHidden, selectedWallet }) {
   const [toToken, setToToken] = useState("ETH");
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown visibility
 
   const tokenNames = {
-    BTC: "Bitcoin",
-    ETH: "Ethereum",
     BNB: "BNB BEP20",
-    SOL: "Solana",
+    BTC: "Bitcoin",
     DOGE: "Doge coin",
+    ETH: "Ethereum",
+    SOL: "Solana",
     USDT: "USDT BEP20",
   };
 
@@ -72,6 +75,10 @@ export default function CardStats({ isHidden, selectedWallet }) {
     setIsSendModalOpen(false);
   };
 
+  const closeConfirmationModal = () => {
+    setIsConfirmationOpen(false);
+  };
+
   const closeReceiveModal = () => {
     setIsReceiveModalOpen(false);
   };
@@ -91,33 +98,15 @@ export default function CardStats({ isHidden, selectedWallet }) {
     }
   };
 
+  
+
   const handleError = (err) => {
     console.error(err);
   };
 
-  const handleSendToken = async () => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/wallet/send_token/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fromAddress: walletAddress,
-          toAddress: recipientAddress,
-          amount: amount,
-        }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        alert("Token sent successfully!");
-        closeSendModal();
-      } else {
-        console.error("Error sending token:", data.message);
-      }
-    } catch (error) {
-      console.error("Error sending token:", error);
-    }
+  const handleSendToken = () => {
+    setIsSendModalOpen(false);
+    setIsConfirmationOpen(true);
   };
 
   const copyToClipboard = (text) => {
@@ -251,78 +240,234 @@ return (
       </div>
     </div>
 
-      {/* Send Modal */}
-      {isSendModalOpen && (
-        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 1.0 }}>
-          <div className="inset-0 z-40 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
-            {/* Modal Content */}
-            <div className="relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg z-10 shadow-lg" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px",  width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
-              <div className="flex items-center justify-center">
-                <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
-              </div>
-              <a
-                className="absolute top-2 text-blueGray-500 hover:text-gray-700 mt-8"
-                onClick={closeSendModal}
-                style={{ right: "30px" }}
+        {/* Send Modal */}
+        {isSendModalOpen && (
+          <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+            <div className="inset-0 z-40 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
+              {/* Modal Content */}
+              <div
+                className={`relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 ${
+                  isDropdownOpen ? "h-[700px]" : "h-[400px]"
+                }`}
+                style={{
+                  top: "130px",
+                  minWidth: "400px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "left",
+                  padding: "8px 40px 40px",
+                  width: "446px",
+                  background: "#F7FAFE",
+                  borderRadius: "24px",
+                }}
               >
-                <i className="fa fa-times"></i>
-              </a>
-              <h2 className="text-lg font-bold mt-8">Send Token</h2>
-              <h4 className="text-sm text-blueGray-500">Enter recipient’s details</h4>
-              <div className="w-full">
-                <label className="block text-sm font-medium font-semibold text-blueGray-700 mt-4">Recipient Address</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Enter recipient’s address"
-                    value={recipientAddress}
-                    onChange={(e) => setRecipientAddress(e.target.value)}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                  <a className="absolute transform text-xs bg-blue-500 text-green px-3 py-1 rounded" style={{ right: "40px", top: "10px" }}>
-                    Paste
-                  </a>
-                  <img src={require("../../assets/img/scan_icon_2.png")} alt="Scan Icon" className="absolute transform bg-primary-color-4" style={{ right: "10px", top: "10px", width: "24px", height: "24px" }} />
+                <div className="flex items-center justify-center">
+                  <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
                 </div>
-              </div>
-              <div className="w-full mt-4">
-                <label className="block text-sm font-medium font-semibold text-blueGray-700">Amount</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Enter amount"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                  <button className="absolute transform text-xs bg-blue-500 text-green px-3 py-1 rounded" style={{ right: "10px", top: "10px" }}>
+                <a
+                  className="absolute top-2 text-blueGray-500 hover:text-gray-700 mt-8"
+                  onClick={closeSendModal}
+                  style={{ right: "30px" }}
+                >
+                  <i className="fa fa-times"></i>
+                </a>
+
+                <h2 className="text-lg font-bold mt-8">Send Token</h2>
+                <h4 className="text-sm text-blueGray-500">Enter recipient's details</h4>
+
+                {/* Recipient Address Input */}
+                <div className="w-full">
+                  <label className="block text-sm font-medium font-semibold text-blueGray-700 mt-4">
+                    Recipient Address
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Enter recipient’s address"
+                      value={recipientAddress}
+                      onChange={(e) => setRecipientAddress(e.target.value)}
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <div className="bg-white w-full h-10 justify-between rounded-lg" style={{ position: "absolute", top: "1px", right: "1px", maxWidth: "90px" }}>
+                      <button
+                        className="absolute transform text-xs bg-white text-green px-3 py-1 rounded"
+                        style={{ right: "40px", top: "10px" }}
+                        onClick={() => navigator.clipboard.readText().then(text => setRecipientAddress(text))}
+                      >
+                        Paste
+                      </button>
+                      <img
+                        src={require("../../assets/img/scan_icon_2.png")}
+                        alt="Scan Icon"
+                        className="absolute transform cursor-pointer"
+                        style={{ right: "10px", top: "10px", width: "24px", height: "24px", background: "transparent", color: "green" }}
+                        onClick={() => setIsScanModalOpen(true)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Amount Input with Dropdown */}
+                <div className="w-full mt-4">
+                  <label className="block text-sm font-medium font-semibold text-blueGray-700">
+                    Amount
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Enter amount"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center"
+                    />
+                    
+                    {/* Token Selector */}
+                    <div className="absolute w-full" style={{ maxWidth: "90px", bottom: "1px", left: "1px" }}>
+                      <button
+                        className="text-left justify-between w-full px-3 py-2 rounded-lg text-green sm:text-base cursor-pointer transition-colors duration-200"
+                        style={{ 
+                          backgroundColor: selectedWalletState ? "#e0f7fa" : "white"
+                        }}
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      >
+                        {selectedWalletState ? selectedWalletState.abbr : (selectedWallet ? selectedWallet.abbr : "Select")}
+                        <span className={`absolute right-0 top-2 text-green mr-2 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}>
+                          ▼
+                        </span>
+                      </button>
+                    </div>
+                    <button
+                      className="absolute right-0  text-xs bg-blue-500 text-green px-3 py-1 rounded"
+                      onClick={() => setAmount(walletBalance)}
+                      style={{ bottom: "10px"}}
+                    >
                       Max
+                    </button>
+                  </div>
+
+                  {/* Dropdown Content */}
+                  <div
+                    className="absolute overflow-hidden duration-300 ease-in-out bg-white rounded-lg shadow-sm"
+                    style={{
+                      maxHeight: isDropdownOpen ? '150px' : '0',
+                      opacity: isDropdownOpen ? 1 : 0,
+                      marginTop: '2px',
+                      width: "83%",
+                      transition: "max-height 0.3s ease, opacity 0.3s ease",
+                    }}
+                  >
+                    <div className="overflow-y-auto no-scrollbar" style={{ maxHeight: '130px' }}>
+                      {Object.keys(tokenNames).map((key) => (
+                        <div
+                          key={key}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-200 flex items-center justify-between"
+                          onClick={() => {
+                            setSelectedWalletState({ abbr: key });
+                            setIsDropdownOpen(false);
+                          }}
+                        >
+                          {key}
+                          <img
+                            src={require(`../../assets/img/${key.toLowerCase()}_icon.png`)}
+                            alt="Token Icon"
+                            className="w-10 h-10 mr-2"
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Balance Information */}
+                  <div className="flex items-center mt-2 justify-between">
+                    <span className="flex items-center text-sm text-blueGray-500">
+                      <img
+                        src={require("../../assets/img/verify_icon_2.png")}
+                        alt="Available Icon"
+                        className="mr-2"
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                      Available: {walletBalance} {selectedWalletState ? selectedWalletState.abbr : (selectedWallet ? selectedWallet.abbr : "Token")}
+                    </span>
+                    <span className="flex items-center text-sm text-blueGray-500">
+                      <img
+                        src={require("../../assets/img/verify_icon_2.png")}
+                        alt="Available Icon"
+                        className="mr-2"
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                      ${(walletBalance * 1287.3).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Send Button */}
+                <div className="flex gap-2 mt-4">
+                  <button
+                    className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
+                    onClick={handleSendToken}
+                  >
+                    Send
                   </button>
                 </div>
-                <div className="flex items-center mt-2 justify-between">
-                  <p className=" text-sm text-blueGray-500">Available: {walletBalance} {selectedWallet?.abbr}</p>
-                  <p className=" text-sm text-blueGray-500">${(walletBalance * 1287.3).toFixed(2)}</p>
-                </div>
-              </div>
-
-              <div className="flex gap-2 mt-4">
-                <button
-                  className="bg-green-500 w-full text-white px-4 py-2 rounded-lg"
-                  onClick={handleSendToken}
-                >
-                  Send
-                </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Receive Modal */}
-      {isReceiveModalOpen && (
-        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 1.0 }}>
-          <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
+         {/* Confirmation Modal */}
+        {isConfirmationOpen && (
+          <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+          <div className="inset-0 z-40 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
             {/* Modal Content */}
+                  <div
+                    className={`relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 ${
+                    isDropdownOpen ? "h-[700px]" : "h-[400px]"
+                    }`}
+                    style={{
+                    top: "130px",
+                    minWidth: "400px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "left",
+                    padding: "8px 40px 40px",
+                    width: "446px",
+                    background: "#F7FAFE",
+                    borderRadius: "24px",
+                    }}
+                  >
+                    <div className="flex items-center justify-center">
+                    <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
+                    </div>
+                    <a
+                    className="absolute top-2 text-blueGray-500 hover:text-gray-700 mt-12"
+                    onClick={closeConfirmationModal}
+                    style={{ right: "30px" }}
+                    >
+                    <i className="fa fa-times"></i>
+                    </a>
+
+                    <h2 className="text-lg font-bold mt-8 text-left text-black">Send Token</h2>
+                    <img
+                        src={require("../../assets/img/verify_icon_2.png")}
+                        alt="Rejoice Icon"
+                        className="relative item-center"
+                        style={{ width: "150px", height: "150px", left: "30%", top: "0" }}
+                      />
+                    <h3 className="text-lg text-center font-bold" style={{lineHeight: "29px", color: "#9A7CF8"}}>Rejoice!</h3>
+                    <p className="text-sm text-center text-blueGray-500">You have sent 0.01 BTC to <br /><strong>0x473hfhyskjeyhden75hdgws73</strong></p>
+                    <button className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-500 transition-colors duration-200 mt-4"
+                      onClick={() => setIsConfirmationOpen(false)}>
+                      Go Back
+                    </button>
+                    </div>
+                  </div>
+                  </div>
+                )}
+
+                  {isReceiveModalOpen && (
+                    <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+                    <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
+                      {/* Modal Content */}
             <div className="relative p-4 z-10 shadow-lg" style={{ top: "100px", maxWidth: "350px", height: "550px", width: "100%", background: "#F7FAFE", borderRadius: "24px" }}>
               <div className="flex items-center justify-center">
                 <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
@@ -396,23 +541,46 @@ return (
 
       {/* Scan Modal */}
       {isScanModalOpen && (
-        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 1.0 }}>
+        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
           <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
             {/* Modal Content */}
-                  <div className="relative p-4 z-10 shadow-lg" style={{ top: "180px", maxWidth: "350px", height: "400px", width: "100%", background: "#F7FAFE", borderRadius: "24px" }}>
-                    <div className="flex items-center justify-center">
-                    <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
-                    </div>
-                    <a
-                    className="absolute top-2 text-blueGray-500 hover:text-gray-700"
-                    onClick={() => setIsScanModalOpen(false)}
-                    style={{ right: "30px" }}
-                    >
-                    <i className="fa fa-times"></i>
-                    </a>
-                    <div className="p-4 gap-2 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
-                    <h4 className="text-lg font-semibold text-blueGray-700">Scan QR Code</h4>
-                    <div className="flex flex-col justify-center items-center rounded-lg" style={{ width: "300px", minWidth: "300px", height: "280px", minHeight: "280px", background: "rgba(118, 135, 150, 0.08)" }}>
+            <div className="relative p-4 z-10 shadow-lg" style={{ top: "180px", maxWidth: "350px", height: "400px", width: "100%", background: "#F7FAFE", borderRadius: "24px" }}>
+              <div className="flex items-center justify-center">
+                <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
+              </div>
+              
+                className="absolute top-2 text-blueGray-500 hover:text-gray-700"
+                onClick={() => setIsScanModalOpen(false)}
+                style={{ right: "30px" }}
+              >
+                <i className="fa fa-times"></i>
+              </a>
+              <div className="p-4 gap-2 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
+                <h4 className="text-lg font-semibold text-blueGray-700">Scan QR Code</h4>
+                <div className="flex flex-col justify-center items-center rounded-lg relative" style={{ width: "300px", minWidth: "300px", height: "280px", minHeight: "280px", background: "rgba(118, 135, 150, 0.08)" }}>
+                  {/* Corner frames - Top Left */}
+                  <div className="absolute top-4 left-4 w-12 h-12">
+                    <div className="absolute top-0 left-0 w-1 h-8 bg-gray-400"></div>
+                    <div className="absolute top-0 left-0 w-8 h-1 bg-gray-400"></div>
+                  </div>
+                  
+                  {/* Top Right */}
+                  <div className="absolute top-4 right-4 w-12 h-12">
+                    <div className="absolute top-0 right-0 w-1 h-8 bg-gray-400"></div>
+                    <div className="absolute top-0 right-0 w-8 h-1 bg-gray-400"></div>
+                  </div>
+                  
+                  {/* Bottom Left */}
+                  <div className="absolute bottom-4 left-4 w-12 h-12">
+                    <div className="absolute bottom-0 left-0 w-1 h-8 bg-gray-400"></div>
+                    <div className="absolute bottom-0 left-0 w-8 h-1 bg-gray-400"></div>
+                  </div>
+                  
+                  {/* Bottom Right */}
+                  <div className="absolute bottom-4 right-4 w-12 h-12">
+                    <div className="absolute bottom-0 right-0 w-1 h-8 bg-gray-400"></div>
+                    <div className="absolute bottom-0 right-0 w-8 h-1 bg-gray-400"></div>
+                  </div>
 
                   <QRCodeScanner
                     onScan={handleScan}
@@ -427,7 +595,7 @@ return (
       )}
 
       {isBuySellModalOpen && (
-        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 1.0 }}>
+        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
           <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
             <div className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px",  width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
               <div className="p-4">
@@ -494,7 +662,7 @@ return (
 
 
       {isSwapModalOpen && (
-        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 1.0 }}>
+        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
           <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
             {/* Modal Content */}
             <div className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px", width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
@@ -580,7 +748,7 @@ return (
 
       {/* P2P Modal */}
       {isP2PModalOpen && (
-        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 1.0 }}>
+        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
           <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
             {/* Modal Content */}
             <div className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px", width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
