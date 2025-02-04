@@ -456,7 +456,7 @@ return (
                     <h3 className="text-lg text-center font-bold" style={{lineHeight: "29px", color: "#9A7CF8"}}>Rejoice!</h3>
                     <p className="text-sm text-center text-blueGray-500">You have sent 0.01 BTC to <br /><strong>0x473hfhyskjeyhden75hdgws73</strong></p>
                     <button className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-500 transition-colors duration-200 mt-4"
-                      onClick={() => setIsConfirmationOpen(false)}>
+                      onClick={() => { setIsConfirmationOpen(false); setIsSendModalOpen(true); }}>
                       Go Back
                     </button>
                     </div>
@@ -548,7 +548,7 @@ return (
               <div className="flex items-center justify-center">
                 <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
               </div>
-              
+              <a
                 className="absolute top-2 text-blueGray-500 hover:text-gray-700"
                 onClick={() => setIsScanModalOpen(false)}
                 style={{ right: "30px" }}
