@@ -419,55 +419,55 @@ return (
           <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
           <div className="inset-0 z-40 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
             {/* Modal Content */}
-                  <div
-                    className={`relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 ${
-                    isDropdownOpen ? "h-[700px]" : "h-[400px]"
-                    }`}
-                    style={{
-                    top: "130px",
-                    minWidth: "400px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "left",
-                    padding: "8px 40px 40px",
-                    width: "446px",
-                    background: "#F7FAFE",
-                    borderRadius: "24px",
-                    }}
-                  >
-                    <div className="flex items-center justify-center">
-                    <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
-                    </div>
-                    <a
-                    className="absolute top-2 text-blueGray-500 hover:text-gray-700 mt-12"
-                    onClick={closeConfirmationModal}
-                    style={{ right: "30px" }}
-                    >
-                    <i className="fa fa-times"></i>
-                    </a>
+            <div
+              className={`relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 ${
+              isDropdownOpen ? "h-[700px]" : "h-[400px]"
+              }`}
+              style={{
+              top: "130px",
+              minWidth: "400px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "left",
+              padding: "8px 40px 40px",
+              width: "446px",
+              background: "#F7FAFE",
+              borderRadius: "24px",
+              }}
+            >
+              <div className="flex items-center justify-center">
+              <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
+              </div>
+              <a
+              className="absolute top-2 text-blueGray-500 hover:text-gray-700 mt-12"
+              onClick={closeConfirmationModal}
+              style={{ right: "30px" }}
+              >
+              <i className="fa fa-times"></i>
+              </a>
 
-                    <h2 className="text-lg font-bold mt-8 text-left text-black">Send Token</h2>
-                    <img
-                        src={require("../../assets/img/verify_icon_2.png")}
-                        alt="Rejoice Icon"
-                        className="relative item-center"
-                        style={{ width: "150px", height: "150px", left: "30%", top: "0" }}
-                      />
-                    <h3 className="text-lg text-center font-bold" style={{lineHeight: "29px", color: "#9A7CF8"}}>Rejoice!</h3>
-                    <p className="text-sm text-center text-blueGray-500">You have sent 0.01 BTC to <br /><strong>0x473hfhyskjeyhden75hdgws73</strong></p>
-                    <button className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-500 transition-colors duration-200 mt-4"
-                      onClick={() => { setIsConfirmationOpen(false); setIsSendModalOpen(true); }}>
-                      Go Back
-                    </button>
-                    </div>
-                  </div>
-                  </div>
-                )}
+              <h2 className="text-lg font-bold mt-8 text-left text-black">Send Token</h2>
+              <img
+                  src={require("../../assets/img/verify_icon_2.png")}
+                  alt="Rejoice Icon"
+                  className="relative item-center"
+                  style={{ width: "150px", height: "150px", left: "30%", top: "0" }}
+                />
+              <h3 className="text-lg text-center font-bold" style={{lineHeight: "29px", color: "#9A7CF8"}}>Rejoice!</h3>
+              <p className="text-sm text-center text-blueGray-500">You have sent 0.01 BTC to <br /><strong>0x473hfhyskjeyhden75hdgws73</strong></p>
+              <button className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-500 transition-colors duration-200 mt-4"
+                onClick={() => { setIsConfirmationOpen(false); setIsSendModalOpen(true); }}>
+                Go Back
+              </button>
+              </div>
+            </div>
+            </div>
+          )}
 
-                  {isReceiveModalOpen && (
-                    <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
-                    <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
-                      {/* Modal Content */}
+      {isReceiveModalOpen && (
+        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+          <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
+            {/* Modal Content */}
             <div className="relative p-4 z-10 shadow-lg" style={{ top: "100px", maxWidth: "350px", height: "550px", width: "100%", background: "#F7FAFE", borderRadius: "24px" }}>
               <div className="flex items-center justify-center">
                 <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
@@ -499,47 +499,58 @@ return (
                     level="H" // Error correction level (L, M, Q, H)
                     bgColor="rgba(118, 135, 150, 0.08)" // Background color of the QR code
                     style={{ borderRadius: "8px" }}
-                  />
-                  <h4 className="block text-sm font-medium text-blueGray-700 mt-2 text-center" style={{ width: "250px" }}>{walletAddress}</h4>
-                </div>
-                <div className="flex items-center justify-between" style={{ width: "70%" }}>
-                  <a
+                    />
+                    <h4 className="block text-sm font-medium text-blueGray-700 mt-2 text-center" style={{ width: "250px" }}>{walletAddress}</h4>
+                  </div>
+                  <div className="flex items-center justify-between" style={{ width: "70%" }}>
+                    <a
                     className="relative text-blue-500 flex flex-col justify-center items-center"
                     onClick={() => copyToClipboard(walletAddress)}
-                  >
+                    >
                     <span className="h-12 w-12 rounded-lg flex items-center justify-center" style={{ background: "rgba(122, 138, 152, 0.08)" }}>
                       <img
-                        src={require("../../assets/img/copy_image_1.png")}
-                        alt="Copy"
-                        className="relative"
-                        style={{ width: "30px", height: "30px" }}
+                      src={require("../../assets/img/copy_image_1.png")}
+                      alt="Copy"
+                      className="relative"
+                      style={{ width: "30px", height: "30px" }}
                       />
                     </span>
                     <h3 className="text-sm text-blue-500">Copy</h3>
-                  </a>
+                    </a>
 
-                  <a
+                    <a
                     className="relative text-blue-500 flex flex-col justify-center items-center ml-4"
-                    onClick={() => alert("Share functionality not implemented yet")}
-                  >
+                    onClick={() => {
+                      if (navigator.share) {
+                      navigator.share({
+                        title: 'Wallet Address',
+                        text: `Here is my wallet address: ${walletAddress}`,
+                      })
+                      .then(() => console.log('Successfully shared'))
+                      .catch((error) => console.log('Error sharing', error));
+                      } else {
+                      alert('Share functionality is not supported in this browser.');
+                      }
+                    }}
+                    >
                     <span className="h-12 w-12 rounded-lg flex items-center justify-center" style={{ background: "rgba(122, 138, 152, 0.08)" }}>
                       <img
-                        src={require("../../assets/img/share_icon_1.png")}
-                        alt="Copy"
-                        className="relative"
-                        style={{ width: "30px", height: "30px" }}
+                      src={require("../../assets/img/share_icon_1.png")}
+                      alt="Share"
+                      className="relative"
+                      style={{ width: "30px", height: "30px" }}
                       />
                     </span>
                     <h3 className="text-sm text-blue-500">Share</h3>
-                  </a>
+                    </a>
+                  </div>
+                  </div>
+                </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+              )}
 
-      {/* Scan Modal */}
+              {/* Scan Modal */}
       {isScanModalOpen && (
         <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
           <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
