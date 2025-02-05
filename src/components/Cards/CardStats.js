@@ -7,6 +7,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
   const [hidden] = useState(isHidden);
   const [walletBalance, setWalletBalance] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [walletPrivateKey, setWalletPrivateKey] = useState(""); // State for wallet private key
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
@@ -41,6 +42,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
         const activeWallet = walletDetails.walletAddresses.find((wallet) => wallet.name === tokenName);
         if (activeWallet) {
           setWalletAddress(activeWallet.address);
+          setWalletPrivateKey(activeWallet.private_key); // Set the private key
           fetchWalletBalance(activeWallet.address);
         }
       } else {
@@ -48,6 +50,38 @@ export default function CardStats({ isHidden, selectedWallet }) {
       }
     }
   }, [tokenName]);
+
+  const sendTransactionToBackend = async () => {
+    const transactionData = {
+      private_key: walletPrivateKey, // From local storage
+      from_address: walletAddress, // From local storage
+      to_address: recipientAddress, // From user input
+      amount: parseFloat(amount), // From user input
+      crypto_symbol: selectedWalletState ? selectedWalletState.abbr.toLowerCase() : selectedWallet.abbr.toLowerCase(), // From selected token
+    };
+  
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/wallet/send_transaction/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transactionData),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        alert("Transaction sent successfully!");
+        setIsConfirmationOpen(true); // Show confirmation modal
+      } else {
+        alert(`Failed to send transaction: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Error sending transaction:", error);
+      alert("An error occurred while sending the transaction.");
+    }
+  };
 
   const fetchWalletBalance = async (address) => {
     try {
@@ -98,15 +132,22 @@ export default function CardStats({ isHidden, selectedWallet }) {
     }
   };
 
-  
-
   const handleError = (err) => {
     console.error(err);
   };
 
   const handleSendToken = () => {
-    setIsSendModalOpen(false);
-    setIsConfirmationOpen(true);
+    if (!recipientAddress || !amount) {
+      alert("Please enter recipient address and amount.");
+      return;
+    }
+  
+    if (parseFloat(amount) > parseFloat(walletBalance)) {
+      alert("Insufficient balance.");
+      return;
+    }
+  
+    sendTransactionToBackend(); // Call the function to send the transaction
   };
 
   const copyToClipboard = (text) => {
@@ -544,13 +585,13 @@ return (
                     <h3 className="text-sm text-blue-500">Share</h3>
                     </a>
                   </div>
-                  </div>
-                </div>
                 </div>
               </div>
-              )}
+            </div>
+          </div>
+      )}
 
-              {/* Scan Modal */}
+      {/* Scan Modal */}
       {isScanModalOpen && (
         <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
           <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
