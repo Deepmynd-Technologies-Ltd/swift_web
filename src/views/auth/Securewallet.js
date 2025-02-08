@@ -29,8 +29,9 @@ export default function SecureWallet() {
             const details = {
                 seedWords: phraseData.data.split(' '), // Split phrase into seed words
             };
+            console.log('Wallet Details:', details);
 
-            localStorage.setItem("walletDetails", JSON.stringify(details));
+            sessionStorage.setItem("walletDetails", JSON.stringify(details));
             setWalletDetails(details);
             setContextWalletDetails(details);
         } catch (error) {
@@ -42,7 +43,7 @@ export default function SecureWallet() {
     };
 
     useEffect(() => {
-        const details = JSON.parse(localStorage.getItem("walletDetails"));
+        const details = JSON.parse(sessionStorage.getItem("walletDetails"));
         if (details) {
             setWalletDetails(details);
             setContextWalletDetails(details);

@@ -9,7 +9,7 @@ export default function CreatePin() {
     const { setPin: setContextPin } = useContext(PinContext);
 
     useEffect(() => {
-        const savedPin = localStorage.getItem("walletPin");
+        const savedPin = sessionStorage.getItem("walletPin");
         console.log("Saved PIN:", savedPin);
         if (savedPin) {
             setPin(savedPin.split(""));
@@ -19,7 +19,7 @@ export default function CreatePin() {
     const handleNext = () => {
         const pinCode = pin.join("");
         // Save pin to local storage
-        localStorage.setItem("walletPin", pinCode);
+        sessionStorage.setItem("walletPin", pinCode);
         setContextPin(pinCode);
         history.push("/auth/confirmpin");
         console.log("PIN:", pinCode);

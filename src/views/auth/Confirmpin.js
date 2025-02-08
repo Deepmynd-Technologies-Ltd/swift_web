@@ -9,7 +9,7 @@ export default function ConfirmPin() {
 
     const handleConfirm = () => {
         const confirmPinCode = confirmPin.join("");  
-        const pin = localStorage.getItem("walletPin");  
+        const pin = sessionStorage.getItem("walletPin");  
 
         if (!pin) {
             setError("PIN is missing.");
@@ -26,14 +26,14 @@ export default function ConfirmPin() {
             return;
         }
 
-        localStorage.setItem("walletPin2", confirmPinCode);
+        sessionStorage.setItem("walletPin2", confirmPinCode);
         console.log("Saved PIN:", confirmPinCode);
 
         history.push("/auth/securewallet");
     };
 
     useEffect(() => {
-        const savedPin = localStorage.getItem("walletPin2");
+        const savedPin = sessionStorage.getItem("walletPin2");
         if (savedPin) {
             setConfirmPin(savedPin.split(""));
         }
