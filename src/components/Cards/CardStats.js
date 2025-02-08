@@ -37,7 +37,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
 
   useEffect(() => {
     if (tokenName) {
-      const walletDetails = JSON.parse(sessionStorage.getItem("walletDetails"));
+      const walletDetails = JSON.parse(localStorage.getItem("walletDetails"));
       if (walletDetails && walletDetails.walletAddresses && Array.isArray(walletDetails.walletAddresses)) {
         const activeWallet = walletDetails.walletAddresses.find((wallet) => wallet.name === tokenName);
         if (activeWallet) {
@@ -46,7 +46,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
           fetchWalletBalance(activeWallet.address);
         }
       } else {
-        console.error("No wallet details found in sessionStorage");
+        console.error("No wallet details found in localStorage");
       }
     }
   }, [tokenName]);

@@ -31,7 +31,7 @@ export default function SecureWallet() {
             };
             console.log('Wallet Details:', details);
 
-            sessionStorage.setItem("walletDetails", JSON.stringify(details));
+            localStorage.setItem("walletDetails", JSON.stringify(details));
             setWalletDetails(details);
             setContextWalletDetails(details);
         } catch (error) {
@@ -43,7 +43,7 @@ export default function SecureWallet() {
     };
 
     useEffect(() => {
-        const details = JSON.parse(sessionStorage.getItem("walletDetails"));
+        const details = JSON.parse(localStorage.getItem("walletDetails"));
         if (details) {
             setWalletDetails(details);
             setContextWalletDetails(details);

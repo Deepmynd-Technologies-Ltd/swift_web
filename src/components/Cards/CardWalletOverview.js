@@ -15,7 +15,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
         const data = await response.json();
 
         // Map API data to your expected structure
-        const walletDetails = JSON.parse(sessionStorage.getItem('walletDetails'));
+        const walletDetails = JSON.parse(localStorage.getItem('walletDetails'));
         const walletAddresses = walletDetails.walletAddresses;
 
         const bnbWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'bnb').address;

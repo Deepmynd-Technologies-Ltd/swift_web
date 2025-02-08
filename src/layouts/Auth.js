@@ -36,32 +36,32 @@ export default function Auth() {
           </AuthLayout>
         </Route>
 
+        <Route path="/auth/createpin" exact>
+          <AuthLayout NavbarComponent={CreateAccountNavbar}>
+            <CreatePin />
+          </AuthLayout>
+        </Route>
+
         <Route path="/auth/login" exact>
           <AuthLayout NavbarComponent={CreateAccountNavbar}>
             <Login />
           </AuthLayout>
         </Route>
 
-        <Route path="/auth/createpin" exact>
-          <AuthLayout NavbarComponent={VerifyAccountNavBar}>
-            <CreatePin />
-          </AuthLayout>
-        </Route>
-
         <Route path="/auth/confirmpin" exact>
-          <AuthLayout NavbarComponent={VerifyAccountNavBar}>
+          <AuthLayout NavbarComponent={CreateAccountNavbar}>
             <ConfirmPin />
           </AuthLayout>
         </Route>
 
         <Route path="/auth/securewallet" exact>
-          <AuthLayout NavbarComponent={VerifyAccountNavBar}>
+          <AuthLayout NavbarComponent={CreateAccountNavbar}>
             <SecureWallet />
           </AuthLayout>
         </Route>
 
         <Route path="/auth/createwallet" exact>
-          <AuthLayout NavbarComponent={VerifyAccountNavBar}>
+          <AuthLayout NavbarComponent={CreateAccountNavbar}>
             <CreateWallet />
           </AuthLayout>
         </Route>

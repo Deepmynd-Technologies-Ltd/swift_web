@@ -30,7 +30,7 @@ export default function CreateWallet() {
                 walletAddresses: walletData.data,
                 seedWords: phrase.split(" "),
             };
-            sessionStorage.setItem("walletDetails", JSON.stringify(details));
+            localStorage.setItem("walletDetails", JSON.stringify(details));
 
             return true;
         } catch (error) {

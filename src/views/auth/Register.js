@@ -36,7 +36,7 @@ export default function Register() {
       if (response.ok) {
         const data = await response.json();
         console.log("Registration successful:", data);
-        sessionStorage.setItem("userId", data.user_id); // Save user_id
+        localStorage.setItem("userId", data.user_id); // Save user_id
         history.push("/auth/createpin");
       } else {
         const errorData = await response.json();
