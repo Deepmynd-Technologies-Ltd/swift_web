@@ -7,7 +7,7 @@ export default function CreateWallet() {
 
     const generateWallet = async (phrase) => {
         try {
-            const response = await fetch("http://swift-api-g7a3.onrender.com/api/wallet/generate_wallet/", {
+            const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/generate_wallet/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -43,7 +43,7 @@ export default function CreateWallet() {
         setLoading(true);
 
         try {
-            const phraseResponse = await fetch("http://swift-api-g7a3.onrender.com/api/wallet/phrase/", {
+            const phraseResponse = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/phrase/", {
                 method: "GET",
                 headers: {
                     Accept: "application/json",

@@ -4,15 +4,15 @@ import { PinContext } from "../../context/PinContext";
 
 export default function SecureWallet() {
     const [walletDetails, setWalletDetails] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); // Initialize loading as true
     const history = useHistory();
     const { setWalletDetails: setContextWalletDetails } = useContext(PinContext);
 
     const generateWalletPhrase = async () => {
-        setLoading(true);
+        setLoading(true); // Set loading to true at the start
         try {
             // Generate Wallet Phrase
-            const phraseResponse = await fetch('http://swift-api-g7a3.onrender.com/api/wallet/phrase/', {
+            const phraseResponse = await fetch('https://swift-api-g7a3.onrender.com/api/wallet/phrase/', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
@@ -38,7 +38,7 @@ export default function SecureWallet() {
             console.error("Phrase Generation Error:", error);
             throw error;
         } finally {
-            setLoading(false);
+            setLoading(false); // Set loading to false when done
         }
     };
 
@@ -47,6 +47,7 @@ export default function SecureWallet() {
         if (details) {
             setWalletDetails(details);
             setContextWalletDetails(details);
+            setLoading(false); // Set loading to false if details are already available
         } else {
             generateWalletPhrase().catch(console.error);
         }
