@@ -12,7 +12,7 @@ export default function SecureWallet() {
         setLoading(true);
         try {
             // Generate Wallet Phrase
-            const phraseResponse = await fetch('http://127.0.0.1:8000/api/wallet/phrase/', {
+            const phraseResponse = await fetch('http://swift-api-g7a3.onrender.com/api/wallet/phrase/', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'

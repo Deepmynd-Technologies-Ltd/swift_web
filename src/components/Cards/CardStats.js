@@ -61,7 +61,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/wallet/send_transaction/", {
+      const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/send_transaction/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
 
   const fetchWalletBalance = async (address) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=btc&address=${address}`);
+      const response = await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=btc&address=${address}`);
       const data = await response.json();
       if (data.success) {
         setWalletBalance(data.data);
