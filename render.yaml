@@ -2,8 +2,12 @@ services:
   - type: web
     name: swift-web
     env: node
+    services:
+  - type: web
+    name: swift-web
+    env: node
     buildCommand: npm install && npm run build
-    startCommand: npm start
+    startCommand: serve -s build -l $PORT
     envVars:
       - key: NODE_VERSION
         value: 16
