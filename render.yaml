@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: swift-web
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 16
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    autoDeploy: true
+    healthCheckPath: /
+    disk:
+      name: swift-web-data
+      mountPath: /data
+      sizeGB: 1
