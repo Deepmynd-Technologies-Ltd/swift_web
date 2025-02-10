@@ -8,7 +8,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
   useEffect(() => {
     async function fetchWalletData() {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/wallet/");
+        const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -32,17 +32,18 @@ export default function CardWalletOverview({ onSelectWallet }) {
             title: "BNB BEP20",
             marketPrice: `$ ${data.binancecoin.usd.toFixed(2)}`,
             marketPricePercentage: `${data.binancecoin.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=bnb&address=${bnbWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
-            equivalenceValueAmount: `$ ${(data.binancecoin.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=bnb&address=${bnbWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
+            equivalenceValue: await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=bnb&address=${bnbWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.binancecoin.usd * await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=bnb&address=${bnbWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/bnb_icon_.png"),
+            default: true,
           },
           {
             abbr: "BTC",
             title: "Bitcoin",
             marketPrice: `$ ${data.bitcoin.usd.toFixed(2)}`,
             marketPricePercentage: `${data.bitcoin.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=btc&address=${btcWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
-            equivalenceValueAmount: `$ ${(data.bitcoin.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=btc&address=${btcWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
+            equivalenceValue: await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=btc&address=${btcWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.bitcoin.usd * await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=btc&address=${btcWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/bitcoin_icon.png"),
           },
           {
@@ -50,8 +51,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
             title: "Doge coin",
             marketPrice: `$ ${data.dogecoin.usd.toFixed(4)}`,
             marketPricePercentage: `${data.dogecoin.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=doge&address=${dogeWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
-            equivalenceValueAmount: `$ ${(data.dogecoin.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=doge&address=${dogeWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
+            equivalenceValue: await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=doge&address=${dogeWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.dogecoin.usd * await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=doge&address=${dogeWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/xrp_icon_.png"),
           },
           {
@@ -59,8 +60,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
             title: "Ethereum",
             marketPrice: `$ ${data.ethereum.usd.toFixed(2)}`,
             marketPricePercentage: `${data.ethereum.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=eth&address=${ethWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
-            equivalenceValueAmount: `$ ${(data.ethereum.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=eth&address=${ethWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
+            equivalenceValue: await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=eth&address=${ethWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.ethereum.usd * await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=eth&address=${ethWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/ethereum_icon.png"),
           },
           {
@@ -68,8 +69,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
             title: "Solana",
             marketPrice: `$ ${data.solana.usd.toFixed(2)}`,
             marketPricePercentage: `${data.solana.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=sol&address=${solWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
-            equivalenceValueAmount: `$ ${(data.solana.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=sol&address=${solWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
+            equivalenceValue: await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=sol&address=${solWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.solana.usd * await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=sol&address=${solWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/solana_icon.png"),
           },
           {
@@ -77,8 +78,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
             title: "USDT BEP20",
             marketPrice: `$ ${data.tether.usd.toFixed(2)}`,
             marketPricePercentage: `${data.tether.usd_24h_change.toFixed(2)}%`,
-            equivalenceValue: await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=usdt&address=${usdtWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
-            equivalenceValueAmount: `$ ${(data.tether.usd * await fetch(`http://127.0.0.1:8000/api/wallet/get_balance/?symbol=usdt&address=${usdtWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
+            equivalenceValue: await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=usdt&address=${usdtWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
+            equivalenceValueAmount: `$ ${(data.tether.usd * await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=usdt&address=${usdtWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/usdt_icon_.png"),
           },
         ]);

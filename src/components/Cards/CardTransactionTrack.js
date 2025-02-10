@@ -28,7 +28,7 @@ const CardLineChart = ({ wallet }) => {
 
   const fetchMarketData = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/wallet/');
+      const response = await axios.get('https://swift-api-g7a3.onrender.com/api/wallet/');
       setMarketData(response.data);
     } catch (error) {
       console.error('Error fetching market data:', error);
