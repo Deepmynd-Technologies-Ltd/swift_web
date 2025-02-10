@@ -110,8 +110,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
   return (
     <>
       {loading && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
-          <div className="loader">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+          <div className="loader justify-center items-center">
             <svg
               className="animate-spin h-8 w-8 text-blue-600"
               xmlns="http://www.w3.org/2000/svg"
@@ -132,6 +132,9 @@ export default function CardWalletOverview({ onSelectWallet }) {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
+          </div>
+          <div className="flex justify-center items-center h-64">
+              <div className="loader">Loading...</div>
           </div>
         </div>
       )}
