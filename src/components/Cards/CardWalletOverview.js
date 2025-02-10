@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 export default function CardWalletOverview({ onSelectWallet }) {
   const [transactions, setTransactions] = useState([]);
   const [selectedWallet, setSelectedWallet] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Fetch real values from the backend API
   useEffect(() => {
@@ -24,7 +25,6 @@ export default function CardWalletOverview({ onSelectWallet }) {
         const ethWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'eth').address;
         const solWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'sol').address;
         const usdtWalletAddress = walletAddresses.find(wallet => wallet.symbols === 'usdt').address;
-
 
         const formattedData = await Promise.all([
           {
@@ -88,6 +88,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
         setSelectedWallet(formattedData[0]); // Set the first wallet as the default selected
       } catch (error) {
         console.error("Error fetching wallet data:", error);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -109,70 +111,97 @@ export default function CardWalletOverview({ onSelectWallet }) {
     <>
       <div className="relative flex flex-col min-w-0 break-words w-2/3 mb-6 rounded mx-auto">
         <div className="block w-full overflow-x-auto">
-          <div className="flex flex-col space-y-4">
-            <div className="flex justify-between bg-gray-100 px-6 py-3 rounded-t">
-              <div className="w-1/3 text-left text-xs font-semibold text-blueGray-700">Token</div>
-              <div className="w-1/3 text-center text-xs font-semibold text-blueGray-700">Market Price</div>
-              <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
-            </div>
-            {transactions.map((transaction, index) => (
-              <div
-                key={index}
-                className={`rounded-my overflow-hidden ${
-                  selectedWallet?.abbr === transaction.abbr ? "bg-blue-50" : ""
-                }`}
-                style={{ height: "80px", width: "100%" }}
-              >
-                <a
-                  href={`/wallet/${transaction.abbr}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleWalletClick(transaction);
-                  }}
-                  style={{
-                    display: "block",
-                    margin: "0.375rem 0",
-                    borderRadius: "0.375rem",
-                    textDecoration: "none",
-                    color: "inherit",
-                    transition: "color 0.2s",
-                  }}
-                  className={`wallet-row ${selectedWallet?.abbr === transaction.abbr ? "active" : ""}`}
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="loader">
+                <svg
+                  className="animate-spin h-8 w-8 text-blue-600"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
                 >
-                  <div className="flex justify-between">
-                    <div className="w-1/3 px-6 py-3">
-                      <div className="flex items-center text-left">
-                        <img
-                          src={transaction.typeImage}
-                          alt={transaction.abbr}
-                          className="w-8 h-8 rounded mr-4"
-                          style={{ objectFit: "cover" }}
-                        />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col space-y-4">
+              <div className="flex justify-between bg-gray-100 px-6 py-3 rounded-t">
+                <div className="w-1/3 text-left text-xs font-semibold text-blueGray-700">Token</div>
+                <div className="w-1/3 text-center text-xs font-semibold text-blueGray-700">Market Price</div>
+                <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
+              </div>
+              {transactions.map((transaction, index) => (
+                <div
+                  key={index}
+                  className={`rounded-my overflow-hidden ${
+                    selectedWallet?.abbr === transaction.abbr ? "bg-blue-50" : ""
+                  }`}
+                  style={{ height: "80px", width: "100%" }}
+                >
+                  <a
+                    href={`/wallet/${transaction.abbr}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleWalletClick(transaction);
+                    }}
+                    style={{
+                      display: "block",
+                      margin: "0.375rem 0",
+                      borderRadius: "0.375rem",
+                      textDecoration: "none",
+                      color: "inherit",
+                      transition: "color 0.2s",
+                    }}
+                    className={`wallet-row ${selectedWallet?.abbr === transaction.abbr ? "active" : ""}`}
+                  >
+                    <div className="flex justify-between">
+                      <div className="w-1/3 px-6 py-3">
+                        <div className="flex items-center text-left">
+                          <img
+                            src={transaction.typeImage}
+                            alt={transaction.abbr}
+                            className="w-8 h-8 rounded mr-4"
+                            style={{ objectFit: "cover" }}
+                          />
+                          <div>
+                            <span className="text-sm font-bold">{transaction.abbr}</span>
+                            <span className="text-xs block font-semibold" style={{ maxWidth: "100px" }}>
+                              {transaction.title}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="w-1/3 px-6 py-3 text-xs text-center">
+                        {transaction.marketPrice}
+                        <span className={`text-xs ml-2 ${parseFloat(transaction.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
+                          {transaction.marketPricePercentage}
+                        </span>
+                      </div>
+                      <div className="w-1/3 px-6 py-3 text-xs text-right">
                         <div>
-                          <span className="text-sm font-bold">{transaction.abbr}</span>
-                          <span className="text-xs block font-semibold" style={{ maxWidth: "100px" }}>
-                            {transaction.title}
-                          </span>
+                          <span className="text-sm font-semibold">{transaction.equivalenceValue}</span>
+                          <span className="text-xs block">{transaction.equivalenceValueAmount}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="w-1/3 px-6 py-3 text-xs text-center">
-                      {transaction.marketPrice}
-                      <span className={`text-xs ml-2 ${parseFloat(transaction.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
-                        {transaction.marketPricePercentage}
-                      </span>
-                    </div>
-                    <div className="w-1/3 px-6 py-3 text-xs text-right">
-                      <div>
-                        <span className="text-sm font-semibold">{transaction.equivalenceValue}</span>
-                        <span className="text-xs block">{transaction.equivalenceValueAmount}</span>
-                      </div>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            ))}
-          </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </>
