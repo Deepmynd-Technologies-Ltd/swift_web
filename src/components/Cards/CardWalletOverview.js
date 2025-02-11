@@ -111,7 +111,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
   return (
     <>
       {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 h-screen w-full top-0 left-0 opacity-75">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 h-screen w-full top-0 left-0 opacity-75 z-100">
           <div className="flex flex-col items-center">
             <CircleLoader color="#1D4ED8" size={48} />
             <p className="mt-4 text-white">Loading...</p>
