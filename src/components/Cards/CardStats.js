@@ -43,7 +43,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
         if (activeWallet) {
           setWalletAddress(activeWallet.address);
           setWalletPrivateKey(activeWallet.private_key); // Set the private key
-          fetchWalletBalance(activeWallet.address);
+          fetchWalletBalance(activeWallet.balance);
         }
       } else {
         console.error("No wallet details found in localStorage");
@@ -61,7 +61,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
     };
 
     try {
-      const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/send_transaction/", {
+      const response = await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/send_transaction/?symbol=${selectedWalletState ? selectedWalletState.abbr.toLowerCase() : selectedWallet.abbr.toLowerCase()}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,10 +72,10 @@ export default function CardStats({ isHidden, selectedWallet }) {
       const result = await response.json();
 
       if (result.success) {
-        alert("Transaction sent successfully!");
+        alert(result.message); // Alert the returned message
         setIsConfirmationOpen(true); // Show confirmation modal
       } else {
-        alert(`Failed to send transaction: ${result.message}`);
+        alert(`Failed to send transaction: ${result.message.split('\n')[0]}`);
       }
     } catch (error) {
       console.error("Error sending transaction:", error);
@@ -140,11 +140,11 @@ export default function CardStats({ isHidden, selectedWallet }) {
     if (!recipientAddress || !amount) {
       alert("Please enter recipient address and amount.");
       return;
-    }
+    
 
-    if (parseFloat(amount) > parseFloat(walletBalance)) {
-      alert("Insufficient balance.");
-      return;
+    // if (parseFloat(amount) > parseFloat(walletBalance)) {
+    //   alert("Insufficient balance.");
+    //   return;
     }
 
     sendTransactionToBackend(); // Call the function to send the transaction
