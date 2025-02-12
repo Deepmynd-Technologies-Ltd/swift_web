@@ -125,13 +125,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
     setIsP2PModalOpen(false);
   };
 
-  const handleScan = (data) => {
-    if (data) {
-      setRecipientAddress(data);
-      setIsScanModalOpen(false);
-    }
-  };
-
   const handleError = (err) => {
     console.error(err);
   };
@@ -595,57 +588,57 @@ export default function CardStats({ isHidden, selectedWallet }) {
           <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
           {/* Modal Content */}
           <div className="relative p-4 z-10 shadow-lg" style={{ top: "180px", maxWidth: "350px", height: "400px", width: "100%", background: "#F7FAFE", borderRadius: "24px" }}>
-            <div className="flex items-center justify-center">
-            <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
+          <div className="flex items-center justify-center">
+          <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
+          </div>
+          <a
+          className="absolute top-2 text-blueGray-500 hover:text-gray-700"
+          onClick={() => setIsScanModalOpen(false)}
+          style={{ right: "30px" }}
+          >
+          <i className="fa fa-times"></i>
+          </a>
+          <div className="p-4 gap-2 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
+          <h4 className="text-lg font-semibold text-blueGray-700">Scan QR Code</h4>
+          <div className="flex flex-col justify-center items-center rounded-lg relative" style={{ width: "300px", minWidth: "300px", height: "280px", minHeight: "280px", background: "rgba(118, 135, 150, 0.08)" }}>
+            {/* Corner frames - Top Left */}
+            <div className="absolute top-4 left-4 w-12 h-12">
+            <div className="absolute top-0 left-0 w-1 h-8 bg-gray-400"></div>
+            <div className="absolute top-0 left-0 w-8 h-1 bg-gray-400"></div>
             </div>
-            <a
-            className="absolute top-2 text-blueGray-500 hover:text-gray-700"
-            onClick={() => setIsScanModalOpen(false)}
-            style={{ right: "30px" }}
-            >
-            <i className="fa fa-times"></i>
-            </a>
-            <div className="p-4 gap-2 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
-            <h4 className="text-lg font-semibold text-blueGray-700">Scan QR Code</h4>
-            <div className="flex flex-col justify-center items-center rounded-lg relative" style={{ width: "300px", minWidth: "300px", height: "280px", minHeight: "280px", background: "rgba(118, 135, 150, 0.08)" }}>
-              {/* Corner frames - Top Left */}
-              <div className="absolute top-4 left-4 w-12 h-12">
-              <div className="absolute top-0 left-0 w-1 h-8 bg-gray-400"></div>
-              <div className="absolute top-0 left-0 w-8 h-1 bg-gray-400"></div>
-              </div>
 
-              {/* Top Right */}
-              <div className="absolute top-4 right-4 w-12 h-12">
-              <div className="absolute top-0 right-0 w-1 h-8 bg-gray-400"></div>
-              <div className="absolute top-0 right-0 w-8 h-1 bg-gray-400"></div>
-              </div>
-
-              {/* Bottom Left */}
-              <div className="absolute bottom-4 left-4 w-12 h-12">
-              <div className="absolute bottom-0 left-0 w-1 h-8 bg-gray-400"></div>
-              <div className="absolute bottom-0 left-0 w-8 h-1 bg-gray-400"></div>
-              </div>
-
-              {/* Bottom Right */}
-              <div className="absolute bottom-4 right-4 w-12 h-12">
-              <div className="absolute bottom-0 right-0 w-1 h-8 bg-gray-400"></div>
-              <div className="absolute bottom-0 right-0 w-8 h-1 bg-gray-400"></div>
-              </div>
-
-              <QRCodeScanner
-              onResult={(result) => {
-                if (result?.text) {
-                  setRecipientAddress(result.text);
-                  setIsScanModalOpen(false);
-                  setIsSendModalOpen(true);
-                }
-              }}
-              onError={handleError}
-              constraints={{ facingMode: 'environment' }}
-              style={{ width: "100%", height: "100%" }}
-              />
+            {/* Top Right */}
+            <div className="absolute top-4 right-4 w-12 h-12">
+            <div className="absolute top-0 right-0 w-1 h-8 bg-gray-400"></div>
+            <div className="absolute top-0 right-0 w-8 h-1 bg-gray-400"></div>
             </div>
+
+            {/* Bottom Left */}
+            <div className="absolute bottom-4 left-4 w-12 h-12">
+            <div className="absolute bottom-0 left-0 w-1 h-8 bg-gray-400"></div>
+            <div className="absolute bottom-0 left-0 w-8 h-1 bg-gray-400"></div>
             </div>
+
+            {/* Bottom Right */}
+            <div className="absolute bottom-4 right-4 w-12 h-12">
+            <div className="absolute bottom-0 right-0 w-1 h-8 bg-gray-400"></div>
+            <div className="absolute bottom-0 right-0 w-8 h-1 bg-gray-400"></div>
+            </div>
+
+            <QRCodeScanner
+            onResult={(result) => {
+            if (result?.text) {
+              setRecipientAddress(result.text);
+              setIsScanModalOpen(false);
+              setIsSendModalOpen(true);
+            }
+            }}
+            onError={handleError}
+            constraints={{ facingMode: 'environment' }}
+            style={{ width: "100%", height: "100%" }}
+            />
+          </div>
+          </div>
           </div>
           </div>
         </div>

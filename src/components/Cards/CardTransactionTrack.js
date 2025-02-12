@@ -255,15 +255,6 @@ const transactions = [
     typeImage: require("../../assets/img/transaction_icon_2.png"),
   },
   {
-    type: "Withdraw",
-    description: "You sent ₦20,000 to your bank account.",
-    date: "27 Dec - 05:07",
-    source: "Naira Wallet",
-    destination: "External Bank Account",
-    amount: "20,000",
-    typeImage: require("../../assets/img/transaction_icon_1.png"),
-  },
-  {
     type: "Purchase",
     description: "You paid ₦100,000 to your bank account.",
     date: "27 Dec - 05:07",

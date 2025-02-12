@@ -73,6 +73,19 @@ export default function Sidebar() {
           Swift<span style={{color: "#006A4E"}}>Aza</span>
         </Link>
 
+        {/* Mobile and Tablet View */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white md:hidden flex justify-around items-center h-24 border-t border-gray-200">
+          {navigationItems.map((item, index) => (
+            <NavigationItem
+              key={index}
+              {...item}
+              isActive={location.pathname === item.to || activeItem === item.to}
+              onClick={() => setActiveItem(item.to)}
+            />
+          ))}
+        </div>
+
+        {/* Desktop View */}
         <div className={`md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-2 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-auto flex-1 rounded transition-all ${collapseShow}`} style={{ height: "300px", backgroundColor: "#f9f9f9", transition: "all 0.3s" }}>
           <div className="md:min-w-full md:hidden block pb-2 mb-2 border-b border-solid border-blueGray-200">
             <div className="flex justify-end">
@@ -97,7 +110,7 @@ export default function Sidebar() {
             ))}
           </ul>
 
-          <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-2" style={{ margin: "10%", marginTop: "120%", marginLeft: "6%", gap: "6px" }}>
+          <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-2 justify-between items-center" style={{ margin: "10%", marginTop: "120%", marginLeft: "6%"}}>
             {helpAndSettingsItems.map((item, index) => (
               <NavigationItem
                 key={index}
