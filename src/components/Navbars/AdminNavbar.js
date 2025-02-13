@@ -23,19 +23,19 @@ export default function Navbar() {
           {/* Brand */}
           {window.location.pathname === "/admin/dashboard" && (
             <a
-              className="text-green text-sm lg:inline-block font-bold flex items-center bg-primary-color-4 p-2 rounded-lg"
-              style={{
-                marginTop: "20px",
-                fontWeight: 700,
-              }}
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="true"
-            >
-              <i className="fas fa-wal mr-2"></i>
-              Wallets
-              <i className="fa fa-chevron-down ml-2"></i>
-            </a>
+            className="sm:mx-auto text-green text-sm lg:inline-block font-bold flex items-center bg-primary-color-4 p-2 rounded-lg justify-center text-center lg:justify-start lg:text-left"
+            style={{
+              marginTop: "20px",
+              fontWeight: 700,
+            }}
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="true"
+          >
+            <i className="fas fa-wal mr-2"></i>
+            Wallets
+            <i className="fa fa-chevron-down ml-2"></i>
+          </a>
           )}
 
           {window.location.pathname === "/admin/history" && (
@@ -54,7 +54,7 @@ export default function Navbar() {
           )}
 
           {/* Navbar Items */}
-          <ul className="flex-col md:flex-row list-none items-center flex mt-4 md:mt-0">
+          <ul className="hidden md:flex flex-col md:flex-row list-none items-center flex mt-4 md:mt-0  ">
             {/* Notifications */}
             <div className="mr-1">
               <NotificationDropdown />

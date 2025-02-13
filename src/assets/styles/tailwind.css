@@ -1947,6 +1947,11 @@ select {
   margin-right: auto;
 }
 
+.mx-0 {
+  margin-left: 0px !important;
+  margin-right:  0px !important;
+}
+
 .mt-0 {
   margin-top: 0px;
 }

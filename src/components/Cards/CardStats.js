@@ -195,8 +195,8 @@ export default function CardStats({ isHidden, selectedWallet }) {
     <div className="relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 min-h-[300px] items-center justify-center">
       <div className="flex-auto p-4">
         <div className="container flex flex-col lg:flex-row lg:justify-between gap-4 w-full">
-          <div className="relative flex flex-col bg-white rounded-my shadow-lg p-4 mb-4 xl:mb-0 w-full lg:w-auto max-h-[300px]" style={{ maxHeight: "120px", minWidth: "220px" }}>
-            <div className="relative mt-4">
+          <div className="relative flex flex-col bg-white rounded-my shadow-lg p-4 mb-4 xl:mb-0 w-full lg:w-auto max-h-[300px] justify-center  md:items-left" style={{ maxHeight: "120px", minWidth: "220px" }}>
+            <div className="relative mt-4 text-center md:text-left">
               <p className="font-semibold text-3xl text-blueGray-700">
                 {hidden ? "••••••••" : `$${walletBalance}.00`}
               </p>
@@ -205,6 +205,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
               <button className="text-xs bg-primary-color-3 text-green ml-3 w-8 rounded">WS</button>
             </div>
           </div>
+
 
           <div className="relative bg-white rounded-my shadow-lg p-4 w-full lg:w-2/3" style={{ minHeight: "170px", minWidth: "320px" }}>
             <div className="flex grid grid-cols-1 lg:grid-cols-2 md:grid-cols-3 gap-6">
