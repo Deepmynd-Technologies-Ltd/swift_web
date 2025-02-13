@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const NavigationItem = ({ to, icon, text, isActive, onClick }) => (
-  <li className="items-center">
+  <div className="items-center">
     <Link
       style={{
         fontSize: "12px",
@@ -18,19 +18,18 @@ const NavigationItem = ({ to, icon, text, isActive, onClick }) => (
       to={to}
       onClick={onClick}
     >
-      <ul
+      <div
         className={`fas ${icon}`}
         style={{
-          marginRight: "4px",
           fontSize: "12px",
           color: isActive ? "#006A4E" : "#6B7280",
           backgroundColor: isActive ? "#006A4E" : "#6B7280",
           transition: "color 0.2s",
         }}
-      ></ul>
+      ></div>
       <span style={{ transition: "color 0.2s" }}>{text}</span>
     </Link>
-  </li>
+  </div>
 );
 
 export default function Sidebar() {
@@ -44,7 +43,7 @@ export default function Sidebar() {
     { to: "/admin/browser", icon: "fa-brw", text: "Browser" },
   ].map(item => ({
     ...item,
-    text: <span style={{ marginLeft: "20px" }}>{item.text}</span>
+    text: <span style={{ marginLeft: "20px" }}>{item.text}</span>,
   }));
 
   const helpAndSettingsItems = [
@@ -57,13 +56,22 @@ export default function Sidebar() {
 
   return (
     <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-hidden md:flex-row md:flex-nowrap shadow-xl bg-primary-color-2 flex flex-wrap items-center justify-between relative md:w-64 z-10 py-2 px-4" style={{ height: "100%" }}>
-      <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto" style={{ marginLeft: "2%" }}>
-        <button
-          className="cursor-pointer text-black opacity-50 md:hidden px-2 py-1 text-lg leading-none bg-transparent rounded border border-solid border-transparent"
-          onClick={() => setCollapseShow("bg-primary-color-2 m-2 py-3 px-6")}
-        >
-          <i className="fa fa-bars"></i>
-        </button>
+      <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto">
+          <div className="fixed bottom-0 w-full bg-primary-color-2 shadow-lg flex justify-between block lg:hidden items-center" style={{ padding: "10px 0", zIndex: 999 }}>
+            {navigationItems.map((item, index) => (
+              <NavigationItem
+                key={index}
+                {...item}
+                isActive={location.pathname === item.to || activeItem === item.to}
+                onClick={() => setActiveItem(item.to)}
+              >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div className={`fas ${item.icon}`} style={{ fontSize: "20px", marginBottom: "5px", textAlign: "center" }}></div>
+                  <span style={{ marginLeft: "0", textAlign: "center" }}>{item.text}</span>
+                </div>
+              </NavigationItem>
+            ))}
+          </div>
         
         <Link
           className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-lg font-bold p-2 px-0"
@@ -73,19 +81,6 @@ export default function Sidebar() {
           Swift<span style={{color: "#006A4E"}}>Aza</span>
         </Link>
 
-        {/* Mobile and Tablet View */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white md:hidden flex justify-around items-center h-24 border-t border-gray-200">
-          {navigationItems.map((item, index) => (
-            <NavigationItem
-              key={index}
-              {...item}
-              isActive={location.pathname === item.to || activeItem === item.to}
-              onClick={() => setActiveItem(item.to)}
-            />
-          ))}
-        </div>
-
-        {/* Desktop View */}
         <div className={`md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-2 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-auto flex-1 rounded transition-all ${collapseShow}`} style={{ height: "300px", backgroundColor: "#f9f9f9", transition: "all 0.3s" }}>
           <div className="md:min-w-full md:hidden block pb-2 mb-2 border-b border-solid border-blueGray-200">
             <div className="flex justify-end">
@@ -99,18 +94,23 @@ export default function Sidebar() {
             </div>
           </div>
 
-          <ul className="md:flex-col md:min-w-full flex flex-col list-none" style={{ marginLeft: "8%", gap: "6px" }}>
+          <div className="md:flex-col md:min-w-full flex flex-col list-none" style={{ marginLeft: "8%", gap: "6px", flex: 1, justifyContent: "space-between" }}>
             {navigationItems.map((item, index) => (
               <NavigationItem
                 key={index}
                 {...item}
                 isActive={location.pathname === item.to || activeItem === item.to}
                 onClick={() => setActiveItem(item.to)}
-              />
+              >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div className={`fas ${item.icon}`} style={{ fontSize: "20px", marginBottom: "5px", textAlign: "center" }}></div>
+                  <span style={{ marginLeft: "0", textAlign: "center" }}>{item.text}</span>
+                </div>
+              </NavigationItem>
             ))}
-          </ul>
+          </div>
 
-          <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-2 justify-between items-center" style={{ margin: "10%", marginTop: "120%", marginLeft: "6%"}}>
+          <div className="md:flex-col md:min-w-full flex flex-col list-none md:mb-2" style={{ margin: "10%", marginTop: "120%", marginLeft: "6%", gap: "6px", flex: 1, justifyContent: "space-between" }}>
             {helpAndSettingsItems.map((item, index) => (
               <NavigationItem
                 key={index}
@@ -119,9 +119,14 @@ export default function Sidebar() {
                 text={item.text}
                 isActive={activeItem === item.key}
                 onClick={() => setActiveItem(item.key)}
-              />
+              >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div className={`fas ${item.icon}`} style={{ fontSize: "20px", marginBottom: "5px", textAlign: "center" }}></div>
+                  <span style={{ marginLeft: "0", textAlign: "center" }}>{item.text}</span>
+                </div>
+              </NavigationItem>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
     </nav>
