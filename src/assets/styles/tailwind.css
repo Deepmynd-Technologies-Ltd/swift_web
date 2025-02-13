@@ -734,6 +734,7 @@ object {
  * https://github.com/mozdevs/cssremedy/issues/14
  */
 
+
 img,
 video {
   max-width: 100%;
@@ -2035,6 +2036,10 @@ select {
 
 .ml-6 {
   margin-left: 1rem;
+}
+
+.ml-8 {
+  margin-left: 1.8rem;
 }
 
 .ml-9 {
