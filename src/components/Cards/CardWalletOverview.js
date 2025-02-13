@@ -86,7 +86,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
         ]);
 
         setTransactions(formattedData);
-        setSelectedWallet(formattedData[0]); // Set the first wallet as the default selected
+        setSelectedWallet(formattedData[0]);
       } catch (error) {
         console.error("Error fetching wallet data:", error);
       } finally {
@@ -97,7 +97,6 @@ export default function CardWalletOverview({ onSelectWallet }) {
     fetchWalletData();
   }, []);
 
-  // Update parent component when the selected wallet changes
   useEffect(() => {
     if (selectedWallet) {
       onSelectWallet(selectedWallet);
@@ -123,7 +122,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
           <div className="flex flex-col space-y-4">
             <div className="flex justify-between bg-gray-100 px-6 py-3 rounded-t">
               <div className="w-1/3 text-left text-xs font-semibold text-blueGray-700">Token</div>
-              <div className="w-1/3 text-center text-xs font-semibold text-blueGray-700">Market Price</div>
+              <div className="w-1/3 text-center text-xs font-semibold text-blueGray-700 hidden md:block">Market Price</div>
               <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
             </div>
             {transactions.map((transaction, index) => (
@@ -160,14 +159,20 @@ export default function CardWalletOverview({ onSelectWallet }) {
                           style={{ objectFit: "cover" }}
                         />
                         <div>
-                          <span className="text-sm font-bold">{transaction.abbr}</span>
-                          <span className="text-xs block font-semibold" style={{ maxWidth: "100px" }}>
+                          <span className="text-sm font-bold hidden md:block">{transaction.abbr}</span>
+                          <span className="text-xs block font-semibold md:mt-0" style={{ maxWidth: "100px" }}>
                             {transaction.title}
                           </span>
+                          <div className="flex items-center md:hidden">
+                            <span className="text-xs">{transaction.marketPrice}</span>
+                            <span className={`text-xs ml-2 ${parseFloat(transaction.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
+                              {transaction.marketPricePercentage}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className="w-1/3 px-6 py-3 text-xs text-center">
+                    <div className="w-1/3 px-6 py-3 text-xs text-center hidden md:block">
                       {transaction.marketPrice}
                       <span className={`text-xs ml-2 ${parseFloat(transaction.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
                         {transaction.marketPricePercentage}
