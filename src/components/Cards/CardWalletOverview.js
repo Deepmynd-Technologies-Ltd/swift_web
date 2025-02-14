@@ -36,7 +36,6 @@ export default function CardWalletOverview({ onSelectWallet }) {
             equivalenceValue: await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=bnb&address=${bnbWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data),
             equivalenceValueAmount: `$ ${(data.binancecoin.usd * await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=bnb&address=${bnbWalletAddress}`).then(res => res.json()).then(balanceData => balanceData.data)).toFixed(2)}`,
             typeImage: require("../../assets/img/bnb_icon_.png"),
-            default: true,
           },
           {
             abbr: "BTC",
@@ -85,8 +84,12 @@ export default function CardWalletOverview({ onSelectWallet }) {
           },
         ]);
 
+        // Check if the screen width is greater than 768px (desktop view)
+        if (window.innerWidth > 768) {
+          setSelectedWallet(formattedData[0]);
+        }
+
         setTransactions(formattedData);
-        setSelectedWallet(formattedData[0]);
       } catch (error) {
         console.error("Error fetching wallet data:", error);
       } finally {

@@ -1,11 +1,44 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { X as CloseIcon } from 'lucide-react';
 
-const CardLineChart = ({ wallet }) => {
+// Basic Modal Component
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed top-0 inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white w-full max-w-md rounded-lg overflow-auto max-h-[90vh]"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center p-4 border-b">
+          <h2 className="text-lg font-semibold">Price Chart</h2>
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+            aria-label="Close modal"
+          >
+            <CloseIcon className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="p-4">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CardLineChart = ({ wallet, isMobile = false }) => {
   const [activePeriod, setActivePeriod] = useState("1H");
   const [svgPath, setSvgPath] = useState("");
   const [priceData, setPriceData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [marketData, setMarketData] = useState(null);
 
   const periods = ["1H", "1D", "1W", "1M", "1Y", "2Y", "ALL"];
@@ -20,10 +53,36 @@ const CardLineChart = ({ wallet }) => {
   };
 
   useEffect(() => {
-    if (wallet) {
-      fetchPriceData(wallet.abbr, activePeriod);
-      fetchMarketData();
-    }
+    let mounted = true;
+
+    const fetchData = async () => {
+      if (!wallet) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      try {
+        await Promise.all([
+          fetchPriceData(wallet.abbr, activePeriod),
+          fetchMarketData()
+        ]);
+      } catch (err) {
+        if (mounted) {
+          setError('Failed to fetch data. Please try again later.');
+          console.error('Error fetching data:', err);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      mounted = false;
+    };
   }, [wallet, activePeriod]);
 
   const fetchMarketData = async () => {
@@ -131,8 +190,10 @@ const CardLineChart = ({ wallet }) => {
     return new Date(timestamp * 1000).toLocaleString();
   };
 
+  const currentCoinData = getCurrentCoinData();
+
   return (
-    <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
+    <div className={`relative flex flex-col min-w-0 break-words w-full ${!isMobile && 'mb-6'} shadow-lg rounded bg-white`}>
       <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
         <div className="items-center">
           {!wallet ? (
@@ -141,30 +202,43 @@ const CardLineChart = ({ wallet }) => {
             </div>
           ) : (
             <>
-              {marketData && getCurrentCoinData() && (
+              {loading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500" />
+                </div>
+              ) : error ? (
+                <div className="p-4 text-red-600 bg-red-50 rounded-lg">
+                  {error}
+                </div>
+              ) : (
                 <>
-                  <h2 className="text-3xl text-center font-bold mb-1">
-                    {getCurrentCoinData().usd.toFixed(2)} {wallet.abbr}
-                  </h2>
-                  <p className="text-xs text-center mb-4 text-blueGray-500">
-                    {wallet.equivalenceValueAmount}
-                  </p>
-                  <p className="text-base font-bold font-medium mt-8">
-                    Current {wallet?.title} Price
-                  </p>
-                  <p className="text-xs text-blueGray-500">
-                    {wallet?.equivalenceValue} {wallet?.abbr}{" "}
-                    <span className={`${getCurrentCoinData().usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                      {getCurrentCoinData().usd_24h_change.toFixed(2)}%
-                    </span>
-                  </p>
+                  {marketData && currentCoinData && (
+                    <>
+                      <h2 className="text-3xl text-center font-bold mb-1">
+                        {currentCoinData.usd.toFixed(2)} {wallet.abbr}
+                      </h2>
+                      <p className="text-xs text-center mb-4 text-blueGray-500">
+                        {wallet.equivalenceValueAmount}
+                      </p>
+                      <p className="text-base font-bold font-medium mt-8">
+                        Current {wallet?.title} Price
+                      </p>
+                      <p className="text-xs text-blueGray-500">
+                        {wallet?.equivalenceValue} {wallet?.abbr}{" "}
+                        <span className={`${currentCoinData.usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                          {currentCoinData.usd_24h_change.toFixed(2)}%
+                        </span>
+                      </p>
+                    </>
+                  )}
                 </>
               )}
             </>
           )}
         </div>
+        
         <div className="flex-auto">
-          <div className="relative h-64 mt-4">
+          <div className="relative h-48 md:h-64 mt-4">
             <svg
               width="100%"
               maxWidth="350"
@@ -172,16 +246,17 @@ const CardLineChart = ({ wallet }) => {
               viewBox="0 0 350 120"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              className="w-full"
             >
               <g clipPath="url(#clip0_932_4270)">
                 <path
-                  d={svgPath || "M0 50 L350 50"}
+                  d={svgPath}
                   stroke="#006A4E"
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
                 <path
-                  d={`${svgPath || "M0 50 L350 50"} L350 120 L0 120 Z`}
+                  d={`${svgPath} L350 120 L0 120 Z`}
                   fill="url(#paint0_linear_932_4270)"
                   fillOpacity="0.4"
                 />
@@ -204,15 +279,15 @@ const CardLineChart = ({ wallet }) => {
               </defs>
             </svg>
           </div>
-          <div className="flex justify-between gap-2 mt-4">
+          <div className="flex flex-wrap justify-start md:justify-between gap-2 mt-4 overflow-x-auto">
             {periods.map((period) => (
               <button
                 key={period}
                 onClick={() => setActivePeriod(period)}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm font-medium transition-colors flex-shrink-0 ${
                   activePeriod === period
                     ? "bg-green-500 text-white"
-                    : "bg-primary-color-4 text-gray-600 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 {period}
@@ -224,7 +299,6 @@ const CardLineChart = ({ wallet }) => {
     </div>
   );
 };
-
 
 const transactions = [
   {
@@ -308,18 +382,34 @@ const CardTransactionTrack = () => {
   );
 };
 
-export default function CombinedComponent({ wallet }) {
+
+const CombinedComponent = ({ wallet }) => {
+  const [isModalOpen, setIsModalOpen] = useState(!!wallet); // Open modal if wallet is provided
+
+  useEffect(() => {
+    setIsModalOpen(!!wallet); // Open modal when wallet changes
+  }, [wallet]);
 
   return (
-
     <>
+      <div className="hidden md:block">
+        <CardLineChart wallet={wallet} />
+      </div>
 
-      <CardLineChart wallet={wallet} />
+      <div className="md:hidden">
+        <Modal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)}
+        >
+          <CardLineChart wallet={wallet} isMobile={true} />
+        </Modal>
+      </div>
 
-      <CardTransactionTrack />
-
+      <div className="hidden md:block">
+        <CardTransactionTrack />
+      </div>
     </>
-
   );
+};
 
-}
+export default CombinedComponent;
