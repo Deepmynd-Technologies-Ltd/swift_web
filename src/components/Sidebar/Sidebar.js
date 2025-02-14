@@ -6,7 +6,7 @@ const NavigationItem = ({ to, icon, text, isActive, onClick, isMobile }) => (
     <Link
       style={{
         fontSize: "12px",
-        padding: "20px 12px",
+        padding: "12px 12px",
         maxWidth: isMobile ? "100%" : "70%",
         maxHeight: isMobile ? "100px" : "70%",
         fontWeight: "bold",
