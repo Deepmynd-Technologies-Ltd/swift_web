@@ -2,19 +2,21 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const NavigationItem = ({ to, icon, text, isActive, onClick, isMobile }) => (
-  <div className={`items-center ${isMobile ? 'flex-1 flex flex-col justify-center' : ''}`} style={{ marginBottom: isMobile ? '0' : '10px' }}>
+  <div className={`items-center ${isMobile ? 'flex-1 flex flex-col justify-center' : ''}`}>
     <Link
       style={{
         fontSize: "12px",
-        padding: "8px 12px",
+        padding: "20px 12px",
         maxWidth: isMobile ? "100%" : "70%",
+        maxHeight: isMobile ? "100px" : "70%",
         fontWeight: "bold",
         display: "block",
         borderRadius: "0.375rem",
         color: isActive ? "#006A4E" : "#6B7280",
-        backgroundColor: isActive ? "#e7e7e7" : "transparent",
+        // backgroundColor: isActive ? "#e7e7e7" : "transparent",
         transition: "all 0.2s",
         marginLeft: isMobile ? "0" : "10%",
+        marginBottom: isMobile ? "10px" : "0",
         textAlign: isMobile ? "center" : "left",
       }}
       to={to}
