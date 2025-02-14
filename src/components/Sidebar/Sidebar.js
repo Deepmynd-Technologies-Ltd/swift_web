@@ -67,8 +67,8 @@ export default function Sidebar() {
 
   return (
     <nav
-      className="hidden md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-hidden md:flex-row md:flex-nowrap shadow-xl bg-primary-color-2 flex flex-wrap items-center justify-between relative md:w-64 z-10 py-2 px-4"
-      style={{ height: "100%" }}
+      className=" md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-hidden md:flex-row md:flex-nowrap shadow-xl bg-primary-color-2 flex flex-wrap items-center justify-between relative md:w-64 z-10 py-2 px-4"
+      style={{ height: "100%", marginTop: "-20px", transition: "all 0.3s" }}
     >
       <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto">
         {/* Mobile Navigation */}
