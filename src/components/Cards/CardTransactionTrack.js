@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { X as CloseIcon } from 'lucide-react';
+import LoadingInterface from "../../components/Cards/LoadingInterface";
 
 // Basic Modal Component
 const Modal = ({ isOpen, onClose, children }) => {
@@ -176,19 +177,6 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     return marketData[coinId];
   };
 
-  const formatNumber = (num) => {
-    if (num >= 1e9) {
-      return `$${(num / 1e9).toFixed(2)}B`;
-    } else if (num >= 1e6) {
-      return `$${(num / 1e6).toFixed(2)}M`;
-    } else {
-      return `$${num.toFixed(2)}`;
-    }
-  };
-
-  const getFormattedDate = (timestamp) => {
-    return new Date(timestamp * 1000).toLocaleString();
-  };
 
   const currentCoinData = getCurrentCoinData();
 
@@ -202,16 +190,6 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
             </div>
           ) : (
             <>
-              {loading ? (
-                <div className="flex items-center justify-center p-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500" />
-                </div>
-              ) : error ? (
-                <div className="p-4 text-red-600 bg-red-50 rounded-lg">
-                  {error}
-                </div>
-              ) : (
-                <>
                   {marketData && currentCoinData && (
                     <>
                       <h2 className="text-3xl text-center font-bold mb-1">
@@ -232,8 +210,6 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
                     </>
                   )}
                 </>
-              )}
-            </>
           )}
         </div>
         
