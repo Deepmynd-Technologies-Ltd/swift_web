@@ -1,51 +1,43 @@
-// CreateWallet.js
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import LoadingInterface from "../../components/Cards/LoadingInterface";
-import { useSelector, useDispatch } from 'react-redux';
-import { setBalance, setAddress, setPrivateKey, setLoading, setError } from '../../features/wallet/walletSlice';
 
 export default function CreateWallet() {
-    const walletDetails = useSelector((state) => state.wallet);
-    const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
     const history = useHistory();
 
     const generateWallet = async (phrase) => {
-        dispatch(setLoading(true));
         try {
-          const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/generate_wallet/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ phrase }),
-          });
-      
-          if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Error details:", errorData);
-            throw new Error("Failed to create wallet");
-          }
-      
-          const walletData = await response.json();
-          const details = {
-            walletAddresses: walletData.data,
-            seedWords: phrase.split(" "),
-          };
-      
-          localStorage.setItem("walletDetails", JSON.stringify(details));
-          dispatch(setAddress(walletData.data.address));
-          dispatch(setPrivateKey(walletData.data.privateKey));
-          return true;
+            const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/generate_wallet/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    phrase,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error details:", errorData);
+                throw new Error("Failed to create wallet");
+            }
+
+            const walletData = await response.json();
+            console.log("Wallet created successfully:", walletData);
+
+            const details = {
+                walletAddresses: walletData.data,
+                seedWords: phrase.split(" "),
+            };
+            localStorage.setItem("walletDetails", JSON.stringify(details));
+
+            return true;
         } catch (error) {
-          console.error("Error generating wallet:", error);
-          dispatch(setError(error.message));
-          return false;
-        } finally {
-          dispatch(setLoading(false));
+            console.error("Error generating wallet:", error);
+            return false;
         }
-      };
+    };
 
     const handleNext = async () => {
         setLoading(true);
@@ -86,14 +78,38 @@ export default function CreateWallet() {
     }, []);
 
     return (
-        <div className="container mx-auto px-4 flex items-center justify-center" style={{ height: "500px", overflow: "hidden" }}>
-            <div className="relative flex flex-col w-full lg:w-6/12 px-4 top-20">
+        <div className="container mx-auto px-4 h-screen flex items-center justify-center" style={{ maxHeight: "100vh", overflow: "hidden" }}>
+            <div className="relative flex flex-col w-full lg:w-6/12 px-4">
                 <div className="bg-white rounded-my shadow-lg p-8">
-                    <LoadingInterface loading={loading} />
+                    <div className="flex justify-center items-center">
+                        <div className="loader items-center">
+                            <div className="flex flex-row gap-2 square-bar-container">
+                                <div className="square w-5 h-5"></div>
+                                <div className="flex flex-col">
+                                    <div className="bar" style={{ height: "8px", width: "30px" }}></div>
+                                    <div className="bar" style={{ height: "10px", width: "40px", marginTop: "-4px" }}></div>
+                                </div>
+                            </div>
+                            <div className="flex flex-row gap-2 square-bar-container">
+                                <div className="square w-6 h-6"></div>
+                                <div className="flex flex-col">
+                                    <div className="bar" style={{ height: "10px", width: "40px" }}></div>
+                                    <div className="bar" style={{ height: "12px", width: "60px", marginTop: "-4px"  }}></div>
+                                </div>
+                            </div>
+                            <div className="flex flex-row gap-2 square-bar-container">
+                                <div className="square w-8 h-8"></div>
+                                <div className="flex flex-col">
+                                    <div className="bar" style={{ height: "12px", width: "50px" }}></div>
+                                    <div className="bar" style={{ height: "14px", width: "70px", marginTop: "-4px"  }}></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div className="text-center gap-4">
                         {loading ? (
                             <p className="text-gray-600 mt-4 text-blueGray-500 semibold">Generating wallet address...</p>
-                        ) : (
+                            ) : (
                             <p className="text-gray-600 mt-4 text-blueGray-500 semibold">
                                 Generate Wallet Address
                             </p>
