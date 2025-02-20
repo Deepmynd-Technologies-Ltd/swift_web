@@ -2,44 +2,50 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import LoadingInterface from "../../components/Cards/LoadingInterface";
+import { useSelector, useDispatch } from 'react-redux';
+import { setBalance, setAddress, setPrivateKey, setLoading, setError } from '../../features/wallet/walletSlice';
 
 export default function CreateWallet() {
+    const walletDetails = useSelector((state) => state.wallet);
+    const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
     const history = useHistory();
 
     const generateWallet = async (phrase) => {
+        dispatch(setLoading(true));
         try {
-            const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/generate_wallet/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    phrase,
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Error details:", errorData);
-                throw new Error("Failed to create wallet");
-            }
-
-            const walletData = await response.json();
-            console.log("Wallet created successfully:", walletData);
-
-            const details = {
-                walletAddresses: walletData.data,
-                seedWords: phrase.split(" "),
-            };
-            localStorage.setItem("walletDetails", JSON.stringify(details));
-
-            return true;
+          const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/generate_wallet/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ phrase }),
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error details:", errorData);
+            throw new Error("Failed to create wallet");
+          }
+      
+          const walletData = await response.json();
+          const details = {
+            walletAddresses: walletData.data,
+            seedWords: phrase.split(" "),
+          };
+      
+          localStorage.setItem("walletDetails", JSON.stringify(details));
+          dispatch(setAddress(walletData.data.address));
+          dispatch(setPrivateKey(walletData.data.privateKey));
+          return true;
         } catch (error) {
-            console.error("Error generating wallet:", error);
-            return false;
+          console.error("Error generating wallet:", error);
+          dispatch(setError(error.message));
+          return false;
+        } finally {
+          dispatch(setLoading(false));
         }
-    };
+      };
 
     const handleNext = async () => {
         setLoading(true);
