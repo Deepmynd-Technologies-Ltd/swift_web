@@ -25,13 +25,13 @@ export default function CardWalletOverview({ onSelectWallet }) {
 
   return (
     <>
-      {loading && (
+      {/* {loading && (
         <div className="fixed inset-0 bg-primary-color-4 flex justify-center items-center z-50 h-screen w-full top-0 left-0 z-100">
           <div className="bg-white rounded-my shadow-lg p-8">
             <LoadingInterface loading={loading} />
           </div>
         </div>
-      )}
+      )} */}
       <div className="relative flex flex-col min-w-0 break-words w-2/3 mb-6 rounded mx-auto">
         <div className="block w-full overflow-x-auto">
           <div className="flex flex-col space-y-4">
