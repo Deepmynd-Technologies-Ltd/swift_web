@@ -6,12 +6,12 @@ const NavigationItem = ({ to, icon, text, isActive, onClick, isMobile }) => (
     <Link
       style={{
         fontSize: "12px",
-        padding: "12px 12px",
+        padding: "8px 12px 12px",
         maxWidth: isMobile ? "100%" : "70%",
         maxHeight: isMobile ? "100px" : "50%",
         fontWeight: "bold",
         display: "block",
-        borderRadius: "0.375rem",
+        borderRadius: "1rem",
         color: isActive ? "#006A4E" : "#6B7280",
         backgroundColor: isActive && !isMobile ? "#e7e7e7" : "transparent",
         transition: "all 0.2s",
@@ -70,9 +70,9 @@ export default function Sidebar() {
   return (
     <nav
       className=" md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-hidden md:flex-row md:flex-nowrap shadow-xl bg-primary-color-2 flex flex-wrap items-center justify-between relative md:w-64 z-10 py-2 px-4"
-      style={{ height: "100%", marginTop: "-20px", transition: "all 0.3s" }}
+      style={{ marginTop: "-20px", transition: "all 0.3s" }}
     >
-      <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto">
+      <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full ">
         {/* Mobile Navigation */}
         <div
           className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-between items-center lg:hidden"
@@ -135,7 +135,7 @@ export default function Sidebar() {
               marginLeft: "2%",
               flex: 1,
               justifyContent: "space-between",
-              padding: "10px",
+              padding: "8px 12px 12px",
             }}
           >
             {helpAndSettingsItems.map((item, index) => (
