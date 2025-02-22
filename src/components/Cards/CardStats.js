@@ -4,10 +4,12 @@ import { QrReader as QRCodeScanner } from "react-qr-reader";
 import { X } from "lucide-react";
 import { useSelector, useDispatch } from 'react-redux';
 import { setAddress, setPrivateKey, fetchWalletBalance } from '../../features/wallet/walletSlice';
+import { addTransaction } from "../../transactionSlice";
 
 
 const CardStats = ({ isHidden, selectedWallet }) => {
   const dispatch = useDispatch();
+
   const walletBalance = useSelector((state) => state.wallet.balance);
   const walletAddress = useSelector((state) => state.wallet.address);
 
@@ -60,8 +62,46 @@ const CardStats = ({ isHidden, selectedWallet }) => {
       alert("Please enter recipient address and amount.");
       return;
     }
-    // Send transaction logic
-  }, [recipientAddress, amount]);
+
+    // Simulate a successful transaction
+    const transaction = {
+      type: "Send",
+      description: `You sent ${amount} ${selectedWalletState?.abbr || selectedWallet?.abbr} to ${recipientAddress}`,
+      date: new Date().toLocaleString(),
+      source: walletAddress,
+      destination: recipientAddress,
+      amount: amount,
+      typeImage: require("../../assets/img/withdraw_icon.png"),
+    };
+
+    // Dispatch the transaction to Redux
+    dispatch(addTransaction(transaction));
+
+    // Reset form and close modal
+    setRecipientAddress("");
+    setAmount("");
+    setIsSendModalOpen(false);
+  }, [recipientAddress, amount, selectedWalletState, selectedWallet, walletAddress, dispatch]);
+
+  const handleReceiveTransaction = useCallback(() => {
+    const transaction = {
+      type: "Receive",
+      description: `You received ${amount} ${selectedWalletState?.abbr || selectedWallet?.abbr} from ${recipientAddress}`,
+      date: new Date().toLocaleString(),
+      source: recipientAddress,
+      destination: walletAddress,
+      amount: amount,
+      typeImage: require("../../assets/img/receive_icon.png"),
+    };
+
+    // Dispatch the transaction to Redux
+    dispatch(addTransaction(transaction));
+
+    // Reset form and close modal
+    setRecipientAddress("");
+    setAmount("");
+    setIsReceiveModalOpen(false);
+  }, [recipientAddress, amount, selectedWalletState, selectedWallet, walletAddress, dispatch]);
 
   const copyToClipboard = useCallback((text) => {
     navigator.clipboard.writeText(text)
