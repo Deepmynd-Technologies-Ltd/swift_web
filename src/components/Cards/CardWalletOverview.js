@@ -17,14 +17,18 @@ export default function CardWalletOverview({ onSelectWallet }) {
     // Add beforeunload event listener
     window.addEventListener('beforeunload', handleBeforeUnload);
 
-    // Fetch wallet data on component mount
-    dispatch(fetchAllWalletData());
-    localStorage.setItem('walletDataFetched', 'true');
+    // Check if this is a fresh page load
+    const isFirstLoad = !localStorage.getItem('walletDataFetched');
+    
+    if (isFirstLoad || !isFetched) {
+      dispatch(fetchAllWalletData());
+      localStorage.setItem('walletDataFetched', 'true');
+    }
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [dispatch]);
+  }, [dispatch, isFetched]);
 
   // Periodically refresh wallet data
   useEffect(() => {
