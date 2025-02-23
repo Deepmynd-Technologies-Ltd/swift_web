@@ -1,15 +1,30 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchWalletData, setSelectedWallet } from "../../features/wallet/walletSlice";
+import { fetchAllWalletData, setSelectedWallet, updateWallets } from "../../features/wallet/walletSlice";
 import LoadingInterface from "../../components/Cards/LoadingInterface";
 
 export default function CardWalletOverview({ onSelectWallet }) {
   const dispatch = useDispatch();
-  const { transactions, loading, selectedWallet } = useSelector((state) => state.wallet);
+  const { wallets, loading, selectedWallet, isFetched } = useSelector((state) => state.wallet);
 
   // Fetch wallet data on component mount
   useEffect(() => {
-    dispatch(fetchWalletData());
+    if (!isFetched) {
+      dispatch(fetchAllWalletData());
+    }
+  }, [dispatch, isFetched]);
+
+  // Periodically refresh wallet data (e.g., every 60 seconds)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch(fetchAllWalletData()).then((action) => {
+        if (action.payload) {
+          dispatch(updateWallets(action.payload)); // Update wallet details
+        }
+      });
+    }, 60000); // Refresh every 60 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
   }, [dispatch]);
 
   // Notify parent component when selected wallet changes
@@ -25,7 +40,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
 
   return (
     <>
-      {/* {loading && (
+    {/* {loading && (
         <div className="fixed inset-0 bg-primary-color-4 flex justify-center items-center z-50 h-screen w-full top-0 left-0 z-100">
           <div className="bg-white rounded-my shadow-lg p-8">
             <LoadingInterface loading={loading} />
@@ -40,19 +55,19 @@ export default function CardWalletOverview({ onSelectWallet }) {
               <div className="w-1/3 text-center text-xs font-semibold text-blueGray-700 hidden md:block">Market Price</div>
               <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
             </div>
-            {transactions.map((transaction, index) => (
+            {(loading && !isFetched ? Array.from({ length: 5 }) : wallets).map((wallet, index) => (
               <div
                 key={index}
                 className={`rounded-my overflow-hidden ${
-                  selectedWallet?.abbr === transaction.abbr ? "bg-blue-50" : ""
+                  !loading && selectedWallet?.abbr === wallet?.abbr ? "bg-blue-50" : ""
                 }`}
                 style={{ height: "80px", width: "100%" }}
               >
                 <a
-                  href={`/wallet/${transaction.abbr}`}
+                  href={loading && !isFetched ? "#" : `/wallet/${wallet.abbr}`}
                   onClick={(e) => {
                     e.preventDefault();
-                    handleWalletClick(transaction);
+                    if (!loading || isFetched) handleWalletClick(wallet);
                   }}
                   style={{
                     display: "block",
@@ -62,41 +77,41 @@ export default function CardWalletOverview({ onSelectWallet }) {
                     color: "inherit",
                     transition: "color 0.2s",
                   }}
-                  className={`wallet-row ${selectedWallet?.abbr === transaction.abbr ? "active" : ""}`}
+                  className={`wallet-row ${!loading && selectedWallet?.abbr === wallet?.abbr ? "active" : ""}`}
                 >
                   <div className="flex justify-between">
                     <div className="w-1/3 px-6 py-3">
                       <div className="flex items-center text-left">
                         <img
-                          src={transaction.typeImage}
-                          alt={transaction.abbr}
-                          className="w-8 h-8 rounded mr-4"
+                          src={loading && !isFetched ? require("../../assets/img/browser_icon.png") : wallet.typeImage}
+                          alt={loading && !isFetched ? "loading" : wallet.abbr}
+                          className="w-5 h-5 rounded mr-4"
                           style={{ objectFit: "cover" }}
                         />
                         <div>
-                          <span className="text-sm font-bold hidden md:block">{transaction.abbr}</span>
+                          <span className="text-sm font-bold hidden md:block">{loading && !isFetched ? "" : wallet.abbr}</span>
                           <span className="text-xs block font-semibold md:mt-0" style={{ maxWidth: "100px" }}>
-                            {transaction.title}
+                            {loading && !isFetched ? "Loading..." : wallet.title}
                           </span>
                           <div className="flex items-center md:hidden">
-                            <span className="text-xs">{transaction.marketPrice}</span>
-                            <span className={`text-xs ml-2 ${parseFloat(transaction.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
-                              {transaction.marketPricePercentage}
+                            <span className="text-xs">{loading && !isFetched ? "0.0" : wallet.marketPrice}</span>
+                            <span className={`text-xs ml-2 ${loading && !isFetched ? "" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
+                              {loading && !isFetched ? "0.0%" : wallet.marketPricePercentage}
                             </span>
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="w-1/3 px-6 py-3 text-xs text-center hidden md:block">
-                      {transaction.marketPrice}
-                      <span className={`text-xs ml-2 ${parseFloat(transaction.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
-                        {transaction.marketPricePercentage}
+                      {loading && !isFetched ? "0.0" : wallet.marketPrice}
+                      <span className={`text-xs ml-2 ${loading && !isFetched ? "" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
+                        {loading && !isFetched ? "0.0%" : wallet.marketPricePercentage}
                       </span>
                     </div>
                     <div className="w-1/3 px-6 py-3 text-xs text-right">
                       <div>
-                        <span className="text-sm font-semibold">{transaction.equivalenceValue}</span>
-                        <span className="text-xs block">{transaction.equivalenceValueAmount}</span>
+                        <span className="text-sm font-semibold">{loading && !isFetched ? "0.0" : wallet.equivalenceValue}</span>
+                        <span className="text-xs block">{loading && !isFetched ? "0.0" : wallet.equivalenceValueAmount}</span>
                       </div>
                     </div>
                   </div>

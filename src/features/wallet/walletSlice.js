@@ -18,17 +18,18 @@ export const fetchWalletBalance = createAsyncThunk(
   }
 );
 
-export const fetchWalletData = createAsyncThunk(
-  'wallet/fetchWalletData',
+export const fetchAllWalletData = createAsyncThunk(
+  'wallet/fetchAllWalletData',
   async (_, { getState, rejectWithValue }) => {
     const { wallet } = getState();
 
     // Skip API call if data is already fetched
     if (wallet.isFetched) {
-      return wallet.transactions;
+      return wallet.wallets;
     }
 
     try {
+      // Fetch market data
       const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/");
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -41,74 +42,85 @@ export const fetchWalletData = createAsyncThunk(
 
       // Helper function to fetch balance
       const fetchBalance = async (symbol, address) => {
-        if (!address) {
-          throw new Error(`Address not found for symbol: ${symbol}`);
+        if (!address) return 0;
+        try {
+          const balanceResponse = await fetch(
+            `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${symbol}&address=${address}`
+          );
+          const balanceData = await balanceResponse.json();
+          return balanceData.success ? balanceData.data : 0;
+        } catch (error) {
+          console.error(`Error fetching balance for ${symbol}:`, error);
+          return 0;
         }
-        const balanceResponse = await fetch(
-          `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${symbol}&address=${address}`
-        );
-        const balanceData = await balanceResponse.json();
-        return balanceData.data;
       };
 
-      // Process all wallet data in parallel
-      const formattedData = await Promise.all([
+      // Define wallet configurations
+      const walletConfigs = [
         {
+          symbol: 'bnb',
           abbr: "BNB",
           title: "BNB BEP20",
-          marketPrice: `$ ${data.binancecoin.usd.toFixed(2)}`,
-          marketPricePercentage: `${data.binancecoin.usd_24h_change.toFixed(2)}%`,
-          equivalenceValue: walletAddresses.find(wallet => wallet.symbols === 'bnb') ? await fetchBalance('bnb', walletAddresses.find(wallet => wallet.symbols === 'bnb').address) : 0,
-          equivalenceValueAmount: walletAddresses.find(wallet => wallet.symbols === 'bnb') ? `$ ${(data.binancecoin.usd * await fetchBalance('bnb', walletAddresses.find(wallet => wallet.symbols === 'bnb').address)).toFixed(2)}` : '$0.00',
+          marketData: data.binancecoin,
           typeImage: require("../../assets/img/bnb_icon_.png"),
         },
         {
+          symbol: 'btc',
           abbr: "BTC",
           title: "Bitcoin",
-          marketPrice: `$ ${data.bitcoin.usd.toFixed(2)}`,
-          marketPricePercentage: `${data.bitcoin.usd_24h_change.toFixed(2)}%`,
-          equivalenceValue: walletAddresses.find(wallet => wallet.symbols === 'btc') ? await fetchBalance('btc', walletAddresses.find(wallet => wallet.symbols === 'btc').address) : 0,
-          equivalenceValueAmount: walletAddresses.find(wallet => wallet.symbols === 'btc') ? `$ ${(data.bitcoin.usd * await fetchBalance('btc', walletAddresses.find(wallet => wallet.symbols === 'btc').address)).toFixed(2)}` : '$0.00',
+          marketData: data.bitcoin,
           typeImage: require("../../assets/img/bitcoin_icon.png"),
         },
         {
+          symbol: 'doge',
           abbr: "DOGE",
           title: "Doge coin",
-          marketPrice: `$ ${data.dogecoin.usd.toFixed(4)}`,
-          marketPricePercentage: `${data.dogecoin.usd_24h_change.toFixed(2)}%`,
-          equivalenceValue: walletAddresses.find(wallet => wallet.symbols === 'doge') ? await fetchBalance('doge', walletAddresses.find(wallet => wallet.symbols === 'doge').address) : 0,
-          equivalenceValueAmount: walletAddresses.find(wallet => wallet.symbols === 'doge') ? `$ ${(data.dogecoin.usd * await fetchBalance('doge', walletAddresses.find(wallet => wallet.symbols === 'doge').address)).toFixed(2)}` : '$0.00',
+          marketData: data.dogecoin,
           typeImage: require("../../assets/img/xrp_icon_.png"),
         },
         {
+          symbol: 'eth',
           abbr: "ETH",
           title: "Ethereum",
-          marketPrice: `$ ${data.ethereum.usd.toFixed(2)}`,
-          marketPricePercentage: `${data.ethereum.usd_24h_change.toFixed(2)}%`,
-          equivalenceValue: walletAddresses.find(wallet => wallet.symbols === 'eth') ? await fetchBalance('eth', walletAddresses.find(wallet => wallet.symbols === 'eth').address) : 0,
-          equivalenceValueAmount: walletAddresses.find(wallet => wallet.symbols === 'eth') ? `$ ${(data.ethereum.usd * await fetchBalance('eth', walletAddresses.find(wallet => wallet.symbols === 'eth').address)).toFixed(2)}` : '$0.00',
+          marketData: data.ethereum,
           typeImage: require("../../assets/img/ethereum_icon.png"),
         },
         {
+          symbol: 'sol',
           abbr: "SOL",
           title: "Solana",
-          marketPrice: `$ ${data.solana.usd.toFixed(2)}`,
-          marketPricePercentage: `${data.solana.usd_24h_change.toFixed(2)}%`,
-          equivalenceValue: walletAddresses.find(wallet => wallet.symbols === 'sol') ? await fetchBalance('sol', walletAddresses.find(wallet => wallet.symbols === 'sol').address) : 0,
-          equivalenceValueAmount: walletAddresses.find(wallet => wallet.symbols === 'sol') ? `$ ${(data.solana.usd * await fetchBalance('sol', walletAddresses.find(wallet => wallet.symbols === 'sol').address)).toFixed(2)}` : '$0.00',
+          marketData: data.solana,
           typeImage: require("../../assets/img/solana_icon.png"),
         },
         {
+          symbol: 'usdt',
           abbr: "USDT",
           title: "USDT BEP20",
-          marketPrice: `$ ${data.tether.usd.toFixed(2)}`,
-          marketPricePercentage: `${data.tether.usd_24h_change.toFixed(2)}%`,
-          equivalenceValue: walletAddresses.find(wallet => wallet.symbols === 'usdt') ? await fetchBalance('usdt', walletAddresses.find(wallet => wallet.symbols === 'usdt').address) : 0,
-          equivalenceValueAmount: walletAddresses.find(wallet => wallet.symbols === 'usdt') ? `$ ${(data.tether.usd * await fetchBalance('usdt', walletAddresses.find(wallet => wallet.symbols === 'usdt').address)).toFixed(2)}` : '$0.00',
+          marketData: data.tether,
           typeImage: require("../../assets/img/usdt_icon_.png"),
         },
-      ]);
+      ];
 
+      // Fetch all balances in parallel and construct wallet data
+      const walletPromises = walletConfigs.map(async (config) => {
+        const walletAddress = walletAddresses.find(w => w.symbols === config.symbol);
+        const balance = await fetchBalance(config.symbol, walletAddress?.address);
+        
+        return {
+          abbr: config.abbr,
+          title: config.title,
+          symbol: config.symbol,
+          address: walletAddress?.address || '',
+          marketPrice: `$ ${config.marketData.usd.toFixed(config.symbol === 'doge' ? 4 : 2)}`,
+          marketPricePercentage: `${config.marketData.usd_24h_change.toFixed(2)}%`,
+          equivalenceValue: balance,
+          equivalenceValueAmount: `$ ${(config.marketData.usd * balance).toFixed(2)}`,
+          typeImage: config.typeImage,
+          rawMarketPrice: config.marketData.usd, // Store raw value for calculations
+        };
+      });
+
+      const formattedData = await Promise.all(walletPromises);
       return formattedData;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -122,7 +134,7 @@ const walletSlice = createSlice({
     balance: 0,
     address: '',
     privateKey: '',
-    transactions: [],
+    wallets: [], // Store all wallet details here
     loading: false,
     error: null,
     selectedWallet: null,
@@ -130,7 +142,10 @@ const walletSlice = createSlice({
   },
   reducers: {
     setSelectedWallet: (state, action) => {
-      state.selectedWallet = action.payload;
+      const wallet = state.wallets.find(w => w.symbol === action.payload.symbol);
+      if (wallet) {
+        state.selectedWallet = wallet;
+      }
     },
     setAddress: (state, action) => {
       state.address = action.payload;
@@ -140,6 +155,20 @@ const walletSlice = createSlice({
     },
     setError: (state, action) => {
       state.error = action.payload;
+    },
+    updateWallets: (state, action) => {
+      state.wallets = action.payload; // Update wallet details
+    },
+    updateWalletBalance: (state, action) => {
+      const { symbol, balance } = action.payload;
+      const wallet = state.wallets.find(w => w.symbol === symbol);
+      if (wallet) {
+        wallet.equivalenceValue = balance;
+        wallet.equivalenceValueAmount = `$ ${(wallet.rawMarketPrice * balance).toFixed(2)}`;
+        if (state.selectedWallet?.symbol === symbol) {
+          state.selectedWallet = { ...wallet };
+        }
+      }
     },
   },
   extraReducers: (builder) => {
@@ -155,12 +184,12 @@ const walletSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-      .addCase(fetchWalletData.pending, (state) => {
+      .addCase(fetchAllWalletData.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchWalletData.fulfilled, (state, action) => {
-        state.transactions = action.payload;
+      .addCase(fetchAllWalletData.fulfilled, (state, action) => {
+        state.wallets = action.payload;
         state.loading = false;
         state.isFetched = true; // Mark data as fetched
         // Set default selected wallet on desktop
@@ -168,12 +197,12 @@ const walletSlice = createSlice({
           state.selectedWallet = action.payload[0];
         }
       })
-      .addCase(fetchWalletData.rejected, (state, action) => {
+      .addCase(fetchAllWalletData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
   },
 });
 
-export const { setAddress, setPrivateKey, setSelectedWallet, setError } = walletSlice.actions;
+export const { setAddress, setPrivateKey, setSelectedWallet, setError, updateWallets } = walletSlice.actions;
 export default walletSlice.reducer;
