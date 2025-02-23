@@ -7,23 +7,20 @@ export default function CardWalletOverview({ onSelectWallet }) {
   const { wallets, loading, selectedWallet, isFetched } = useSelector((state) => state.wallet);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Handle page refresh and initial load
+  // Dummy placeholder data to maintain UI when loading
+  const placeholderWallets = Array.from({ length: 5 }).map((_, index) => ({
+    abbr: "",
+    title: "Loading...",
+    marketPrice: "$0.00",
+    marketPricePercentage: "0.0%",
+    equivalenceValue: "0.0",
+    equivalenceValueAmount: "$0.00",
+    typeImage: "https://via.placeholder.com/40", // Placeholder image URL
+  }));
+
+  // Handle initial data fetch
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      // Clear localStorage flag on page refresh
-      localStorage.removeItem('walletDataFetched');
-    };
-
-    // Add beforeunload event listener
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // Fetch wallet data on component mount
     dispatch(fetchAllWalletData());
-    localStorage.setItem('walletDataFetched', 'true');
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
   }, [dispatch]);
 
   // Periodically refresh wallet data
@@ -54,8 +51,6 @@ export default function CardWalletOverview({ onSelectWallet }) {
     dispatch(setSelectedWallet(wallet));
   };
 
-  const shouldShowLoading = (loading && !isFetched) || (!localStorage.getItem('walletDataFetched') && loading);
-
   return (
     <div className="relative flex flex-col min-w-0 break-words w-2/3 mb-6 rounded mx-auto">
       <div className="block w-full overflow-x-auto">
@@ -65,19 +60,20 @@ export default function CardWalletOverview({ onSelectWallet }) {
             <div className="w-1/3 text-center text-xs font-semibold text-blueGray-700 hidden md:block">Market Price</div>
             <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
           </div>
-          {(shouldShowLoading ? Array.from({ length: 5 }) : wallets).map((wallet, index) => (
+
+          {(loading || !isFetched ? placeholderWallets : wallets).map((wallet, index) => (
             <div
               key={wallet?.abbr || index}
               className={`rounded-my overflow-hidden ${
-                !shouldShowLoading && selectedWallet?.abbr === wallet?.abbr ? "bg-blue-50" : ""
+                !loading && selectedWallet?.abbr === wallet?.abbr ? "bg-blue-50" : ""
               }`}
               style={{ height: "80px", width: "100%" }}
             >
               <a
-                href={shouldShowLoading ? "#" : `/wallet/${wallet.abbr}`}
+                href={loading ? "#" : `/wallet/${wallet.abbr}`}
                 onClick={(e) => {
                   e.preventDefault();
-                  if (!shouldShowLoading) handleWalletClick(wallet);
+                  if (!loading) handleWalletClick(wallet);
                 }}
                 style={{
                   display: "block",
@@ -87,41 +83,41 @@ export default function CardWalletOverview({ onSelectWallet }) {
                   color: "inherit",
                   transition: "color 0.2s",
                 }}
-                className={`wallet-row ${!shouldShowLoading && selectedWallet?.abbr === wallet?.abbr ? "active" : ""}`}
+                className={`wallet-row ${!loading && selectedWallet?.abbr === wallet?.abbr ? "active" : ""}`}
               >
                 <div className="flex justify-between">
                   <div className="w-1/3 px-6 py-3">
                     <div className="flex items-center text-left">
                       <img
-                        src={shouldShowLoading ? require("../../assets/img/browser_icon.png") : wallet.typeImage}
-                        alt={shouldShowLoading ? "loading" : wallet.abbr}
-                        className="w-5 h-5 rounded mr-4"
+                        src={wallet.typeImage}
+                        alt={wallet.abbr}
+                        className="w-8 h-8 rounded mr-4"
                         style={{ objectFit: "cover" }}
                       />
                       <div>
-                        <span className="text-sm font-bold hidden md:block">{shouldShowLoading ? "" : wallet.abbr}</span>
+                        <span className="text-sm font-bold hidden md:block">{wallet.abbr}</span>
                         <span className="text-xs block font-semibold md:mt-0" style={{ maxWidth: "100px" }}>
-                          {shouldShowLoading ? "Loading..." : wallet.title}
+                          {wallet.title}
                         </span>
                         <div className="flex items-center md:hidden">
-                          <span className="text-xs">{shouldShowLoading ? "0.0" : wallet.marketPrice}</span>
-                          <span className={`text-xs ml-2 ${shouldShowLoading ? "" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
-                            {shouldShowLoading ? "0.0%" : wallet.marketPricePercentage}
+                          <span className="text-xs">{wallet.marketPrice}</span>
+                          <span className={`text-xs ml-2 ${parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
+                            {wallet.marketPricePercentage}
                           </span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="w-1/3 px-6 py-3 text-xs text-center hidden md:block">
-                    {shouldShowLoading ? "0.0" : wallet.marketPrice}
-                    <span className={`text-xs ml-2 ${shouldShowLoading ? "" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
-                      {shouldShowLoading ? "0.0%" : wallet.marketPricePercentage}
+                    {wallet.marketPrice}
+                    <span className={`text-xs ml-2 ${parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
+                      {wallet.marketPricePercentage}
                     </span>
                   </div>
                   <div className="w-1/3 px-6 py-3 text-xs text-right">
                     <div>
-                      <span className="text-sm font-semibold">{shouldShowLoading ? "0.0" : wallet.equivalenceValue}</span>
-                      <span className="text-xs block">{shouldShowLoading ? "0.0" : wallet.equivalenceValueAmount}</span>
+                      <span className="text-sm font-semibold">{wallet.equivalenceValue}</span>
+                      <span className="text-xs block">{wallet.equivalenceValueAmount}</span>
                     </div>
                   </div>
                 </div>
