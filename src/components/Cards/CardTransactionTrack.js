@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { X as CloseIcon } from 'lucide-react';
-import LoadingInterface from "../../components/Cards/LoadingInterface";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
 
 // Basic Modal Component
 const Modal = ({ isOpen, onClose, children }) => {
@@ -83,8 +81,11 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
 
     fetchData();
 
+    const intervalId = setInterval(fetchData, 60000); // Fetch data every 60 seconds
+
     return () => {
       mounted = false;
+      clearInterval(intervalId);
     };
   }, [wallet, activePeriod]);
 
@@ -179,7 +180,6 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     return marketData[coinId];
   };
 
-
   const currentCoinData = getCurrentCoinData();
 
   return (
@@ -192,26 +192,26 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
             </div>
           ) : (
             <>
-                  {marketData && currentCoinData && (
-                    <>
-                      <h2 className="text-3xl text-center font-bold mb-1">
-                        {currentCoinData.usd.toFixed(2)} {wallet.abbr}
-                      </h2>
-                      <p className="text-xs text-center mb-4 text-blueGray-500">
-                        {wallet.equivalenceValueAmount}
-                      </p>
-                      <p className="text-base font-bold font-medium mt-8">
-                        Current {wallet?.title} Price
-                      </p>
-                      <p className="text-xs text-blueGray-500">
-                        {wallet?.equivalenceValue} {wallet?.abbr}{" "}
-                        <span className={`${currentCoinData.usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                          {currentCoinData.usd_24h_change.toFixed(2)}%
-                        </span>
-                      </p>
-                    </>
-                  )}
+              {marketData && currentCoinData && (
+                <>
+                  <h2 className="text-3xl text-center font-bold mb-1">
+                    {currentCoinData.usd.toFixed(2)} {wallet.abbr}
+                  </h2>
+                  <p className="text-xs text-center mb-4 text-blueGray-500">
+                    {wallet.equivalenceValueAmount}
+                  </p>
+                  <p className="text-base font-bold font-medium mt-8">
+                    Current {wallet?.title} Price
+                  </p>
+                  <p className="text-xs text-blueGray-500">
+                    {wallet?.equivalenceValue} {wallet?.abbr}{" "}
+                    <span className={`${currentCoinData.usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                      {currentCoinData.usd_24h_change.toFixed(2)}%
+                    </span>
+                  </p>
                 </>
+              )}
+            </>
           )}
         </div>
         
@@ -277,7 +277,6 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     </div>
   );
 };
-
 
 const CardTransactionTrack = () => {
   const transactions = useSelector((state) => state.transactions.transactions);
