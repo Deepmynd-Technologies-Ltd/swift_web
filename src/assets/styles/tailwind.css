@@ -2103,8 +2103,8 @@ select {
   margin-top: 12rem;
 }
 
-.mt-90 {
-  margin-top: 95%;
+.mt-100 {
+  margin-top: 100%;
 }
 
 .mr-auto {
@@ -2504,6 +2504,10 @@ select {
 
 .bottom-0 {
   bottom: 0px;
+}
+
+.bottom-20 {
+  bottom: 5rem;
 }
 
 .left-0 {

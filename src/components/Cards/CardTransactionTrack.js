@@ -283,42 +283,74 @@ const CardTransactionTrack = () => {
 
     return (
       <div className="block w-full overflow-x-auto">
-        <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-          <h3 className="font-semibold text-sm text-blueGray-700">Transactions</h3>
-        </div>
-        <div className="h-2 mx-4 my-2 border border-solid border-blueGray-100" />
-        <div className="space-y-4">
-          {transactions.map((transaction, index) => (
-            <div
-              key={index}
-              className="bg-white my-1 rounded-my p-2 shadow-md"
-              style={{ height: "70px", width: "100%", marginTop: "5px" }}
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <img
-                    src={transaction.typeImage}
-                    alt={transaction.type}
-                    className="w-8 h-8 rounded-full mr-4"
-                    style={{ objectFit: "cover" }}
-                  />
-                  <div>
-                    <span className="text-sm font-semibold text-blueGray-700">{transaction.type}</span>
-                    <span className="block text-xs text-blueGray-500">
-                      {transaction.description}
-                    </span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-bold text-blueGray-700">
-                    ₦{transaction.amount}
-                  </div>
-                  <div className="text-xs text-blueGray-500">{transaction.date}</div>
-                </div>
-              </div>
+      <div className="relative w-full px-4 max-w-full flex-grow flex-1">
+        <h3 className="font-semibold text-sm text-blueGray-700">Transactions</h3>
+      </div>
+      <div className="h-2 mx-4 my-2 border border-solid border-blueGray-100" />
+      <div className="space-y-4">
+        {transactions.length > 0 ? (
+        transactions.map((transaction, index) => (
+          <div
+          key={index}
+          className="bg-white my-1 rounded-my p-2 shadow-md"
+          style={{ height: "70px", width: "100%", marginTop: "5px" }}
+          >
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+            <img
+              src={transaction.typeImage}
+              alt={transaction.type}
+              className="w-8 h-8 rounded-full mr-4"
+              style={{ objectFit: "cover" }}
+            />
+            <div>
+              <span className="text-sm font-semibold text-blueGray-700">{transaction.type}</span>
+              <span className="block text-xs text-blueGray-500">
+              {transaction.description}
+              </span>
             </div>
-          ))}
+            </div>
+            <div className="text-right">
+            <div className="text-sm font-bold text-blueGray-700">
+              ₦{transaction.amount}
+            </div>
+            <div className="text-xs text-blueGray-500">{transaction.date}</div>
+            </div>
+          </div>
+          </div>
+        ))
+        ) : (
+        <div className="flex flex-col justify-center items-center h-48">
+          <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-18 w-8 mt-8 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M9 2H15L21 8V22H3V2H9Z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M9 2V8H15V2"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M7 13H17M7 17H13"
+          />
+          </svg>
+          <p>You have not make any transaction yet</p>
         </div>
+        )}
+      </div>
       </div>
     );
   };

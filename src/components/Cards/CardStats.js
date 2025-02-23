@@ -584,119 +584,140 @@ export default function CardStats({ isHidden, selectedWallet }) {
 
       {/* Scan Modal */}
       {isScanModalOpen && (
-      <div
+        <div
         className="bg-black h-screen w-full z-10 flex justify-center items-center"
         style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}
-      >
+        >
         <div
           className="relative p-4 z-10 shadow-lg flex flex-col items-center"
           style={{ maxWidth: "350px", height: "420px", width: "100%", background: "#F7FAFE", borderRadius: "24px" }}
         >
           <div className="flex items-center justify-center w-full">
-            <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
+          <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
           </div>
 
           <button
-            className="absolute top-2 text-blueGray-500 hover:text-gray-700"
-            onClick={() => setIsScanModalOpen(false)}
-            style={{ right: "30px" }}
+          className="absolute top-2 text-blueGray-500 hover:text-gray-700"
+          onClick={() => setIsScanModalOpen(false)}
+          style={{ right: "30px" }}
           >
-            <i className="fa fa-times"></i>
+          <i className="fa fa-times"></i>
           </button>
 
           <div className="p-4 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
-            <h4 className="text-lg font-semibold text-blueGray-700">Scan QR Code</h4>
+          <h4 className="text-lg font-semibold text-blueGray-700">Scan QR Code</h4>
 
-            <div
-              className="flex flex-col justify-center items-center rounded-lg relative"
-              style={{ width: "300px", height: "280px", background: "rgba(118, 135, 150, 0.08)" }}
-            >
-              <QrReader
-                delay={300}
-                constraints={{ facingMode: "environment" }}
-                onResult={(result, error) => {
-                  if (result?.text) {
-                    setRecipientAddress(result.text);
-                    setIsScanModalOpen(false);
-                    setIsSendModalOpen(true);
-                  }
-                  if (error) {
-                    setErrorMessage("Failed to scan QR code. Try again.");
-                  }
-                }}
-                style={{ width: "100%", height: "100%" }}
-              />
+          <div
+            className="flex flex-col justify-center items-center rounded-lg relative"
+            style={{ width: "300px", height: "280px", background: "rgba(118, 135, 150, 0.08)" }}
+          >
+            <QrReader
+            delay={300}
+            constraints={{ facingMode: "environment" }}
+            onResult={(result, error) => {
+              if (result?.text) {
+              setRecipientAddress(result.text);
+              setIsScanModalOpen(false);
+              setIsSendModalOpen(true);
+              }
+              if (error) {
+              setErrorMessage("Failed to scan QR code. Try again.");
+              }
+            }}
+            style={{ width: "100%", height: "100%" }}
+            />
 
-              {/* Error message */}
-              {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
+            {/* Error message */}
+            {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
             </div>
+
+            {/* Torchlight Button */}
+            <button
+            className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
+            onClick={() => {
+              const video = document.querySelector("video");
+              const track = video.srcObject.getVideoTracks()[0];
+              const imageCapture = new ImageCapture(track);
+              imageCapture.getPhotoCapabilities().then(() => {
+              if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
+                track.applyConstraints({
+                advanced: [{ torch: true }]
+                });
+              } else {
+                alert("Torch is available only on mobile devices.");
+              }
+              });
+            }}
+            >
+            Turn on Torch
+            </button>
+            </div>
+          </div>
+          </div>
+          )}
+
+          {isBuySellModalOpen && (
+          <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+            <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
+            <div className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px", width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
+              <div className="p-4">
+              <div className="flex justify-between items-center mb-4">
+                <div className="inline-flex bg-gray-100 rounded-lg p-1">
+                <button
+                  className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Buy' ? 'bg-white shadow-sm' : ''
+                  }`}
+                  onClick={() => setActiveTab('Buy')}
+                >
+                  Buy
+                </button>
+                <button
+                  className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Sell' ? 'bg-white shadow-sm' : ''
+                  }`}
+                  onClick={() => setActiveTab('Sell')}
+                >
+                  Sell
+                </button>
+                </div>
+                <button
+                onClick={() => setIsBuySellModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+                >
+                <X size={20} />
+                </button>
+              </div>
+
+              <div className="overflow-y-auto max-h-[70vh]">
+                {paymentOptions.map((option, index) => (
+                <div
+                  key={option.name}
+                  className={`flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer ${index !== paymentOptions.length - 1 ? 'border-b border-gray-100' : ''
+                  }`}
+                  onClick={() => {
+                  // Handle payment option click
+                  console.log(`Selected payment option: ${option.name}`);
+                  // Add your payment processing logic here
+                }}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    {option.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-sm">{option.name}</h3>
+                    <p className="text-gray-500 text-xs">{option.description}</p>
+                  </div>
+                </div>
+                <div className="text-gray-400">
+                  →
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    )}
-
-      {isBuySellModalOpen && (
-        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
-          <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
-            <div className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px", width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
-              <div className="p-4">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="inline-flex bg-gray-100 rounded-lg p-1">
-                    <button
-                      className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Buy' ? 'bg-white shadow-sm' : ''
-                        }`}
-                      onClick={() => setActiveTab('Buy')}
-                    >
-                      Buy
-                    </button>
-                    <button
-                      className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Sell' ? 'bg-white shadow-sm' : ''
-                        }`}
-                      onClick={() => setActiveTab('Sell')}
-                    >
-                      Sell
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => setIsBuySellModalOpen(false)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-
-                <div className="overflow-y-auto max-h-[70vh]">
-                  {paymentOptions.map((option, index) => (
-                    <div
-                      key={option.name}
-                      className={`flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer ${index !== paymentOptions.length - 1 ? 'border-b border-gray-100' : ''
-                        }`}
-                      onClick={() => {
-                        // Handle payment option click
-                        console.log(`Selected payment option: ${option.name}`);
-                        // Add your payment processing logic here
-                      }}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                          {option.icon}
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-sm">{option.name}</h3>
-                          <p className="text-gray-500 text-xs">{option.description}</p>
-                        </div>
-                      </div>
-                      <div className="text-gray-400">
-                        →
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+    </div>
+  </div>
+)}
 
 
       {isSwapModalOpen && (
