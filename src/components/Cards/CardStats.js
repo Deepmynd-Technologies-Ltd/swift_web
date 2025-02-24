@@ -357,9 +357,12 @@ export default function CardStats({ isHidden, selectedWallet }) {
                   {/* Token Selector */}
                   <div className="absolute w-full" style={{ maxWidth: "90px", bottom: "0", left: "1px" }}>
                     <button
-                      className="text-left justify-between w-full px-2 py-2 rounded-lg text-green sm:text-base cursor-pointer transition-colors duration-200"
+                      className="text-left justify-between w-full px-2 py-1 rounded-lg text-green sm:text-base cursor-pointer transition-colors duration-200"
                       style={{
-                        backgroundColor: selectedWalletState ? "#e0f7fa" : "white"
+                        backgroundColor: selectedWalletState ? "#e0f7fa" : "white",
+                        height: "36px", // Adjust the height to fit within the input field
+                        marginBottom: "3px",
+                        border: "none",
                       }}
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     >
@@ -370,15 +373,15 @@ export default function CardStats({ isHidden, selectedWallet }) {
                     </button>
                   </div>
                   <button
-                    className="absolute right-0  text-xs bg-blue-500 text-green px-3 py-1 rounded"
+                    className="absolute right-0 text-xs bg-blue-500 text-green px-3 py-1 rounded"
                     onClick={() => setAmount(walletBalance)}
                     style={{ bottom: "10px" }}
                   >
                     Max
                   </button>
-                </div>
+                  </div>
 
-                {/* Dropdown Content */}
+                  {/* Dropdown Content */}
                 <div
                   className="absolute overflow-hidden duration-300 ease-in-out bg-white rounded-lg shadow-sm"
                   style={{
