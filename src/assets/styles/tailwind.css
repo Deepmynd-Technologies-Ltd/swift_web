@@ -2948,6 +2948,13 @@ select {
   transition-duration: 150ms;
 }
 
+@media (max-width: 640px) {
+  .modal-content {
+    width: 90%;
+    padding: 8px 20px 20px;
+  }
+}
+
 @-webkit-keyframes spin {
   to {
     -webkit-transform: rotate(360deg);

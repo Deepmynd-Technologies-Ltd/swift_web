@@ -277,13 +277,12 @@ export default function CardStats({ isHidden, selectedWallet }) {
       {/* Send Modal */}
       {isSendModalOpen && (
         <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
-          <div className="inset-0 z-40 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
+          <div className="inset-0 z-40 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
             {/* Modal Content */}
             <div
-              className={`relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 ${isDropdownOpen ? "h-[700px]" : "h-[400px]"
-                }`}
+              className={`relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 ${isDropdownOpen ? "h-[700px]" : "h-[400px]"} sm:h-auto`}
               style={{
-                top: "130px",
+                // top: "130px",
                 minWidth: "400px",
                 display: "flex",
                 flexDirection: "column",
@@ -292,6 +291,8 @@ export default function CardStats({ isHidden, selectedWallet }) {
                 width: "446px",
                 background: "#F7FAFE",
                 borderRadius: "24px",
+                maxHeight: "90vh", // Ensure modal doesn't exceed viewport height
+                overflowY: "auto", // Add scroll if content exceeds modal height
               }}
             >
               <div className="flex items-center justify-center">
@@ -446,8 +447,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
           </div>
         </div>
       )}
-
-      {/* Confirmation Modal */}
+      
       {isConfirmationOpen && (
         <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
           <div className="inset-0 z-40 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
