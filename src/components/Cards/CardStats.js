@@ -282,7 +282,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
             <div
               className={`relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 ${isDropdownOpen ? "h-[700px]" : "h-[400px]"} sm:h-auto`}
               style={{
-                // top: "130px",
                 minWidth: "400px",
                 display: "flex",
                 flexDirection: "column",
@@ -356,9 +355,9 @@ export default function CardStats({ isHidden, selectedWallet }) {
                   />
 
                   {/* Token Selector */}
-                  <div className="absolute w-full" style={{ maxWidth: "90px", bottom: "1px", left: "1px" }}>
+                  <div className="absolute w-full" style={{ maxWidth: "90px", bottom: "0", left: "1px" }}>
                     <button
-                      className="text-left justify-between w-full px-3 py-2 rounded-lg text-green sm:text-base cursor-pointer transition-colors duration-200"
+                      className="text-left justify-between w-full px-2 py-2 rounded-lg text-green sm:text-base cursor-pointer transition-colors duration-200"
                       style={{
                         backgroundColor: selectedWalletState ? "#e0f7fa" : "white"
                       }}
@@ -450,21 +449,18 @@ export default function CardStats({ isHidden, selectedWallet }) {
       
       {isConfirmationOpen && (
         <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
-          <div className="inset-0 z-40 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
+          <div className="inset-0 z-40 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
             {/* Modal Content */}
             <div
-              className={`relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 ${isDropdownOpen ? "h-[700px]" : "h-[400px]"
-                }`}
+              className="relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300"
               style={{
-                top: "130px",
-                minWidth: "400px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "left",
-                padding: "8px 40px 40px",
-                width: "446px",
+                maxHeight: "90vh",
+                overflowY: "auto",
+                minWidth: "300px",
+                width: "90%",
                 background: "#F7FAFE",
                 borderRadius: "24px",
+                padding: "20px",
               }}
             >
               <div className="flex items-center justify-center">
@@ -482,13 +478,15 @@ export default function CardStats({ isHidden, selectedWallet }) {
               <img
                 src={require("../../assets/img/verify_icon_2.png")}
                 alt="Rejoice Icon"
-                className="relative item-center"
-                style={{ width: "150px", height: "150px", left: "30%", top: "0" }}
+                className="relative item-center mx-auto"
+                style={{ width: "150px", height: "150px" }}
               />
               <h3 className="text-lg text-center font-bold" style={{ lineHeight: "29px", color: "#9A7CF8" }}>Rejoice!</h3>
               <p className="text-sm text-center text-blueGray-500">You have sent 0.01 BTC to <br /><strong>0x473hfhyskjeyhden75hdgws73</strong></p>
-              <button className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-500 transition-colors duration-200 mt-4"
-                onClick={() => { setIsConfirmationOpen(false); setIsSendModalOpen(true); }}>
+              <button
+                className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-500 transition-colors duration-200 mt-4"
+                onClick={() => { setIsConfirmationOpen(false); setIsSendModalOpen(true); }}
+              >
                 Go Back
               </button>
             </div>
@@ -498,9 +496,19 @@ export default function CardStats({ isHidden, selectedWallet }) {
 
       {isReceiveModalOpen && (
         <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
-          <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
+          <div className="inset-0 z-50 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
             {/* Modal Content */}
-            <div className="relative p-4 z-10 shadow-lg" style={{ top: "100px", maxWidth: "350px", height: "550px", width: "100%", background: "#F7FAFE", borderRadius: "24px" }}>
+            <div
+              className="relative p-4 z-10 shadow-lg"
+              style={{
+                maxWidth: "350px",
+                width: "90%",
+                maxHeight: "90vh",
+                overflowY: "auto",
+                background: "#F7FAFE",
+                borderRadius: "24px",
+              }}
+            >
               <div className="flex items-center justify-center">
                 <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
               </div>
@@ -523,16 +531,18 @@ export default function CardStats({ isHidden, selectedWallet }) {
                   <h4 className="text-lg font-semibold text-blueGray-700">{selectedWallet ? selectedWallet.abbr : ""}</h4>
                 </div>
 
-                <div className="p-4 flex flex-col justify-center items-center rounded-lg " style={{ width: "300px", minWidth: "300px", height: "300px", minHeight: "320px", background: "rgba(122, 138, 152, 0.08)" }}>
-                  {/* The QR Code */}
+                <div
+                  className="p-4 flex flex-col justify-center items-center rounded-lg"
+                  style={{ width: "100%", minHeight: "300px", background: "rgba(122, 138, 152, 0.08)" }}
+                >
                   <QRCode
-                    value={walletAddress} // The wallet address is used to generate the QR code
-                    size={250} // Size of the QR code
-                    level="H" // Error correction level (L, M, Q, H)
-                    bgColor="rgba(118, 135, 150, 0.08)" // Background color of the QR code
+                    value={walletAddress}
+                    size={250}
+                    level="H"
+                    bgColor="rgba(118, 135, 150, 0.08)"
                     style={{ borderRadius: "8px" }}
                   />
-                  <h4 className="block text-sm font-medium text-blueGray-700 mt-2 text-center" style={{ width: "250px" }}>{walletAddress}</h4>
+                  <h4 className="block text-sm font-medium text-blueGray-700 mt-2 text-center" style={{ width: "100%" }}>{walletAddress}</h4>
                 </div>
                 <div className="flex items-center justify-between" style={{ width: "70%" }}>
                   <a
@@ -582,302 +592,293 @@ export default function CardStats({ isHidden, selectedWallet }) {
         </div>
       )}
 
-      {/* Scan Modal */}
       {isScanModalOpen && (
-        <div
-        className="bg-black h-screen w-full z-10 flex justify-center items-center"
-        style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}
-        >
-        <div
-          className="relative p-4 z-10 shadow-lg flex flex-col items-center"
-          style={{ maxWidth: "350px", height: "420px", width: "100%", background: "#F7FAFE", borderRadius: "24px" }}
-        >
-          <div className="flex items-center justify-center w-full">
-          <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
-          </div>
-
-          <button
-          className="absolute top-2 text-blueGray-500 hover:text-gray-700"
-          onClick={() => setIsScanModalOpen(false)}
-          style={{ right: "30px" }}
-          >
-          <i className="fa fa-times"></i>
-          </button>
-
-          <div className="p-4 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
-          <h4 className="text-lg font-semibold text-blueGray-700">Scan QR Code</h4>
-
+        <div className="bg-black h-screen w-full z-10 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
           <div
-            className="flex flex-col justify-center items-center rounded-lg relative"
-            style={{ width: "300px", height: "280px", background: "rgba(118, 135, 150, 0.08)" }}
+            className="relative p-4 z-10 shadow-lg flex flex-col items-center"
+            style={{ maxWidth: "350px", width: "90%", maxHeight: "90vh", overflowY: "auto", background: "#F7FAFE", borderRadius: "24px" }}
           >
-            <QrReader
-            delay={300}
-            constraints={{ facingMode: "environment" }}
-            onResult={(result, error) => {
-              if (result?.text) {
-              setRecipientAddress(result.text);
-              setIsScanModalOpen(false);
-              setIsSendModalOpen(true);
-              }
-              if (error) {
-              setErrorMessage("Failed to scan QR code. Try again.");
-              }
-            }}
-            style={{ width: "100%", height: "100%" }}
-            />
-
-            {/* Error message */}
-            {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
+            <div className="flex items-center justify-center w-full">
+              <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
             </div>
 
-            {/* Torchlight Button */}
             <button
-            className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
-            onClick={() => {
-              const video = document.querySelector("video");
-              const track = video.srcObject.getVideoTracks()[0];
-              const imageCapture = new ImageCapture(track);
-              imageCapture.getPhotoCapabilities().then(() => {
-              if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
-                track.applyConstraints({
-                advanced: [{ torch: true }]
-                });
-              } else {
-                alert("Torch is available only on mobile devices.");
-              }
-              });
-            }}
+              className="absolute top-2 text-blueGray-500 hover:text-gray-700"
+              onClick={() => setIsScanModalOpen(false)}
+              style={{ right: "30px" }}
             >
-            Turn on Torch
+              <i className="fa fa-times"></i>
             </button>
-            </div>
-          </div>
-          </div>
-          )}
 
-          {isBuySellModalOpen && (
-          <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
-            <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
-            <div className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px", width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
-              <div className="p-4">
-              <div className="flex justify-between items-center mb-4">
-                <div className="inline-flex bg-gray-100 rounded-lg p-1">
-                <button
-                  className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Buy' ? 'bg-white shadow-sm' : ''
-                  }`}
-                  onClick={() => setActiveTab('Buy')}
-                >
-                  Buy
-                </button>
-                <button
-                  className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Sell' ? 'bg-white shadow-sm' : ''
-                  }`}
-                  onClick={() => setActiveTab('Sell')}
-                >
-                  Sell
-                </button>
-                </div>
-                <button
-                onClick={() => setIsBuySellModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
-                >
-                <X size={20} />
-                </button>
+            <div className="p-4 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
+              <h4 className="text-lg font-semibold text-blueGray-700">Scan QR Code</h4>
+
+              <div
+                className="flex flex-col justify-center items-center rounded-lg relative"
+                style={{ width: "100%", height: "280px", background: "rgba(118, 135, 150, 0.08)" }}
+              >
+                <QrReader
+                  delay={300}
+                  constraints={{ facingMode: "environment" }}
+                  onResult={(result, error) => {
+                    if (result?.text) {
+                      setRecipientAddress(result.text);
+                      setIsScanModalOpen(false);
+                      setIsSendModalOpen(true);
+                    }
+                    if (error) {
+                      setErrorMessage("Failed to scan QR code. Try again.");
+                    }
+                  }}
+                  style={{ width: "100%", height: "100%" }}
+                />
+
+                {/* Error message */}
+                {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
               </div>
 
-              <div className="overflow-y-auto max-h-[70vh]">
-                {paymentOptions.map((option, index) => (
-                <div
-                  key={option.name}
-                  className={`flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer ${index !== paymentOptions.length - 1 ? 'border-b border-gray-100' : ''
-                  }`}
-                  onClick={() => {
-                  // Handle payment option click
-                  console.log(`Selected payment option: ${option.name}`);
-                  // Add your payment processing logic here
+              {/* Torchlight Button */}
+              <button
+                className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
+                onClick={() => {
+                  const video = document.querySelector("video");
+                  const track = video.srcObject.getVideoTracks()[0];
+                  const imageCapture = new ImageCapture(track);
+                  imageCapture.getPhotoCapabilities().then(() => {
+                    if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
+                      track.applyConstraints({
+                        advanced: [{ torch: true }]
+                      });
+                    } else {
+                      alert("Torch is available only on mobile devices.");
+                    }
+                  });
                 }}
               >
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                    {option.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-sm">{option.name}</h3>
-                    <p className="text-gray-500 text-xs">{option.description}</p>
-                  </div>
-                </div>
-                <div className="text-gray-400">
-                  →
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-
-
-      {isSwapModalOpen && (
-        <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
-          <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
-            {/* Modal Content */}
-            <div className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px", width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
-              <div className="p-4">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold">Swap Token</h2>
-                  <button
-                    onClick={closeSwapModal}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-blueGray-700 mb-2">From</label>
-                  <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
-                    <input
-                      type="text"
-                      placeholder="Enter amount"
-                      value={fromAmount}
-                      onChange={(e) => setFromAmount(e.target.value)}
-                      className="w-full focus:outline-none"
-                    />
-                    <select
-                      value={fromToken}
-                      onChange={(e) => setFromToken(e.target.value)}
-                      className="ml-2 p-1 border border-gray-300 rounded-lg"
-                    >
-                      <option value="BTC">BTC</option>
-                      <option value="ETH">ETH</option>
-                      <option value="BNB">BNB</option>
-                      <option value="SOL">SOL</option>
-                      <option value="DOGE">DOGE</option>
-                      <option value="USDT">USDT</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-blueGray-700 mb-2">To</label>
-                  <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
-                    <input
-                      type="text"
-                      placeholder="Enter amount"
-                      value={toAmount}
-                      onChange={(e) => setToAmount(e.target.value)}
-                      className="w-full focus:outline-none"
-                    />
-                    <select
-                      value={toToken}
-                      onChange={(e) => setToToken(e.target.value)}
-                      className="ml-2 p-1 border border-gray-300 rounded-lg"
-                    >
-                      <option value="BTC">BTC</option>
-                      <option value="ETH">ETH</option>
-                      <option value="BNB">BNB</option>
-                      <option value="SOL">SOL</option>
-                      <option value="DOGE">DOGE</option>
-                      <option value="USDT">USDT</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="text-sm text-blueGray-500 mb-4">
-                  0.1% Exchange Fee
-                </div>
-
-                <button
-                  className="bg-green-500 w-full text-white px-4 py-2 rounded-lg"
-                  onClick={() => {
-                    // Handle swap logic here
-                    alert("Swap functionality not implemented yet");
-                  }}
-                >
-                  Swap
-                </button>
-              </div>
+                Turn on Torch
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* P2P Modal */}
-      {isP2PModalOpen && (
+      {isBuySellModalOpen && (
         <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
-          <div className="inset-0 z-50 flex justify-center" style={{ position: "fixed", top: "-10%", left: 0, right: 0, bottom: "40%" }}>
-            {/* Modal Content */}
-            <div className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden" style={{ top: "130px", minWidth: "400px", display: "flex", flexDirection: "column", alignItems: "left", padding: "8px 40px 40px", width: "446px", background: "#F7FAFE", borderRadius: "24px" }}>
+          <div className="inset-0 z-50 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
+            <div
+              className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden"
+              style={{ width: "90%", maxWidth: "400px", background: "#F7FAFE", borderRadius: "24px", padding: "20px" }}
+            >
               <div className="p-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold">P2P</h2>
-                  <button
-                    onClick={closeP2PModal}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-
-                <div className="mb-4">
                   <div className="inline-flex bg-gray-100 rounded-lg p-1">
                     <button
-                      className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Buy' ? 'bg-white shadow-sm' : ''
-                        }`}
+                      className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Buy' ? 'bg-white shadow-sm' : ''}`}
                       onClick={() => setActiveTab('Buy')}
                     >
                       Buy
                     </button>
                     <button
-                      className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Sell' ? 'bg-white shadow-sm' : ''
-                        }`}
+                      className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Sell' ? 'bg-white shadow-sm' : ''}`}
                       onClick={() => setActiveTab('Sell')}
                     >
                       Sell
                     </button>
                   </div>
+                  <button
+                    onClick={() => setIsBuySellModalOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
 
-                <div className="mb-4">
-                  <h3 className="text-sm font-medium text-blueGray-700 mb-2">My Ads</h3>
-                  <div className="p-3 border border-gray-300 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <span>1,000 USDT</span>
-                      <span>1,665 NGN</span>
+                <div className="overflow-y-auto max-h-[70vh]">
+                  {paymentOptions.map((option, index) => (
+                    <div
+                      key={option.name}
+                      className={`flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer ${index !== paymentOptions.length - 1 ? 'border-b border-gray-100' : ''}`}
+                      onClick={() => {
+                        console.log(`Selected payment option: ${option.name}`);
+                      }}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                          {option.icon}
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-sm">{option.name}</h3>
+                          <p className="text-gray-500 text-xs">{option.description}</p>
+                        </div>
+                      </div>
+                      <div className="text-gray-400">→</div>
                     </div>
-                    <div className="text-sm text-blueGray-500">30,000 - 25,000,000 NGN</div>
-                    <div className="text-sm text-blueGray-500">Price per 1 USDT: 1,665 NGN</div>
-                  </div>
+                  ))}
                 </div>
-
-                <div className="mb-4">
-                  <h3 className="text-sm font-medium text-blueGray-700 mb-2">My Orders</h3>
-                  <div className="p-3 border border-gray-300 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <span>1,000 USDT</span>
-                      <span>1,665,000 NGN</span>
-                    </div>
-                    <div className="text-sm text-blueGray-500">1,665 NGN per 1 USDT</div>
-                  </div>
-                </div>
-
-                <button
-                  className="bg-green-500 w-full text-white px-4 py-2 rounded-lg"
-                  onClick={() => {
-                    // Handle create ad logic here
-                    alert("Create Ad functionality not implemented yet");
-                  }}
-                >
-                  Create Ad
-                </button>
               </div>
             </div>
           </div>
         </div>
       )}
+
+
+    {isSwapModalOpen && (
+      <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+        <div className="inset-0 z-50 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
+          <div
+            className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden"
+            style={{ width: "90%", maxWidth: "400px", background: "#F7FAFE", borderRadius: "24px", padding: "20px" }}
+          >
+            <div className="p-4">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold">Swap Token</h2>
+                <button
+                  onClick={closeSwapModal}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-blueGray-700 mb-2">From</label>
+                <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
+                  <input
+                    type="text"
+                    placeholder="Enter amount"
+                    value={fromAmount}
+                    onChange={(e) => setFromAmount(e.target.value)}
+                    className="w-full focus:outline-none"
+                  />
+                  <select
+                    value={fromToken}
+                    onChange={(e) => setFromToken(e.target.value)}
+                    className="ml-2 p-1 border border-gray-300 rounded-lg"
+                  >
+                    <option value="BTC">BTC</option>
+                    <option value="ETH">ETH</option>
+                    <option value="BNB">BNB</option>
+                    <option value="SOL">SOL</option>
+                    <option value="DOGE">DOGE</option>
+                    <option value="USDT">USDT</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-blueGray-700 mb-2">To</label>
+                <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
+                  <input
+                    type="text"
+                    placeholder="Enter amount"
+                    value={toAmount}
+                    onChange={(e) => setToAmount(e.target.value)}
+                    className="w-full focus:outline-none"
+                  />
+                  <select
+                    value={toToken}
+                    onChange={(e) => setToToken(e.target.value)}
+                    className="ml-2 p-1 border border-gray-300 rounded-lg"
+                  >
+                    <option value="BTC">BTC</option>
+                    <option value="ETH">ETH</option>
+                    <option value="BNB">BNB</option>
+                    <option value="SOL">SOL</option>
+                    <option value="DOGE">DOGE</option>
+                    <option value="USDT">USDT</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="text-sm text-blueGray-500 mb-4">
+                0.1% Exchange Fee
+              </div>
+
+              <button
+                className="bg-green-500 w-full text-white px-4 py-2 rounded-lg"
+                onClick={() => {
+                  alert("Swap functionality not implemented yet");
+                }}
+              >
+                Swap
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {isP2PModalOpen && (
+    <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+      <div className="inset-0 z-50 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
+        <div
+          className="relative bg-white rounded-xl shadow-lg w-96 max-h-[90vh] overflow-hidden"
+          style={{ width: "90%", maxWidth: "400px", background: "#F7FAFE", borderRadius: "24px", padding: "20px" }}
+        >
+          <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold">P2P</h2>
+              <button
+                onClick={closeP2PModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <div className="inline-flex bg-gray-100 rounded-lg p-1">
+                <button
+                  className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Buy' ? 'bg-white shadow-sm' : ''}`}
+                  onClick={() => setActiveTab('Buy')}
+                >
+                  Buy
+                </button>
+                <button
+                  className={`px-6 py-1 rounded-md text-sm ${activeTab === 'Sell' ? 'bg-white shadow-sm' : ''}`}
+                  onClick={() => setActiveTab('Sell')}
+                >
+                  Sell
+                </button>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <h3 className="text-sm font-medium text-blueGray-700 mb-2">My Ads</h3>
+              <div className="p-3 border border-gray-300 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span>1,000 USDT</span>
+                  <span>1,665 NGN</span>
+                </div>
+                <div className="text-sm text-blueGray-500">30,000 - 25,000,000 NGN</div>
+                <div className="text-sm text-blueGray-500">Price per 1 USDT: 1,665 NGN</div>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <h3 className="text-sm font-medium text-blueGray-700 mb-2">My Orders</h3>
+              <div className="p-3 border border-gray-300 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span>1,000 USDT</span>
+                  <span>1,665,000 NGN</span>
+                </div>
+                <div className="text-sm text-blueGray-500">1,665 NGN per 1 USDT</div>
+              </div>
+            </div>
+
+            <button
+              className="bg-green-500 w-full text-white px-4 py-2 rounded-lg"
+              onClick={() => {
+                alert("Create Ad functionality not implemented yet");
+              }}
+            >
+              Create Ad
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+  )}
+  </div>
   );
 }
