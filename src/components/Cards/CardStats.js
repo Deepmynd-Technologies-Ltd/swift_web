@@ -138,6 +138,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
     //   alert("Insufficient balance.");
     //   return;
     }
+    
 
     sendTransactionToBackend(); // Call the function to send the transaction
   };
@@ -287,7 +288,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
               display: "flex",
               flexDirection: "column",
               alignItems: "left",
-              padding: "20px", // Adjusted padding for better spacing
+              padding: "40px", // Adjusted padding for better spacing
               background: "#F7FAFE",
               borderRadius: "24px",
               maxHeight: "90vh", // Ensure modal doesn't exceed viewport height
@@ -388,7 +389,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
                   maxHeight: isDropdownOpen ? '150px' : '0',
                   opacity: isDropdownOpen ? 1 : 0,
                   marginTop: '2px',
-                  width: "90%",
+                  width: "80%",
                   transition: "max-height 0.3s ease, opacity 0.3s ease",
                 }}
               >
