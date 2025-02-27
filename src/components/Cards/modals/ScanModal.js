@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types';
 import { QrReader } from "react-qr-reader";
 
 const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen }) => {
@@ -47,11 +48,9 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
               style={{ width: "100%", height: "100%" }}
             />
 
-            {/* Error message */}
             {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
           </div>
 
-          {/* Torchlight Button */}
           <button
             className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
             onClick={() => {
@@ -75,6 +74,13 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
       </div>
     </div>
   );
+};
+
+ScanModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  setRecipientAddress: PropTypes.func.isRequired,
+  setIsSendModalOpen: PropTypes.func.isRequired,
 };
 
 export default ScanModal;

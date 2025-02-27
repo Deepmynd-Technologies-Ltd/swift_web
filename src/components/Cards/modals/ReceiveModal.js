@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { QRCodeCanvas as QRCode } from "qrcode.react";
 
 const ReceiveModal = ({ isOpen, onClose, walletAddress, selectedWallet }) => {
@@ -107,6 +108,13 @@ const ReceiveModal = ({ isOpen, onClose, walletAddress, selectedWallet }) => {
       </div>
     </div>
   );
+};
+
+ReceiveModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  walletAddress: PropTypes.string.isRequired,
+  selectedWallet: PropTypes.object,
 };
 
 export default ReceiveModal;

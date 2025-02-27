@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types';
 
 export default function SendModal({
   isOpen,
@@ -191,4 +192,22 @@ export default function SendModal({
       </div>
     </div>
   );
+};
+
+SendModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  recipientAddress: PropTypes.string.isRequired,
+  setRecipientAddress: PropTypes.func.isRequired,
+  amount: PropTypes.string.isRequired,
+  setAmount: PropTypes.func.isRequired,
+  walletBalance: PropTypes.number.isRequired,
+  selectedWalletState: PropTypes.object,
+  selectedWallet: PropTypes.object,
+  isDropdownOpen: PropTypes.bool.isRequired,
+  setIsDropdownOpen: PropTypes.func.isRequired,
+  tokenNames: PropTypes.object.isRequired,
+  setSelectedWalletState: PropTypes.func.isRequired,
+  setIsScanModalOpen: PropTypes.func.isRequired,
+  handleSendToken: PropTypes.func.isRequired,
 };

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types';
 import { X } from "lucide-react";
 
 const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
@@ -102,6 +103,12 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
       </div>
     </div>
   );
+};
+
+BuySellModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  selectedWallet: PropTypes.object,
 };
 
 export default BuySellModal;

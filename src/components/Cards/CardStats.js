@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { QRCodeCanvas as QRCode } from "qrcode.react";
+import { QrReader } from "react-qr-reader";
+import { X } from "lucide-react";
 import SendModal from "./modals/SendModal";
 import ConfirmationModal from "./modals/ConfirmationModal";
 import ReceiveModal from "./modals/ReceiveModal";
@@ -68,6 +71,30 @@ export default function CardStats({ isHidden, selectedWallet }) {
     } catch (error) {
       console.error("Error fetching wallet balance:", error);
     }
+  };
+
+  const closeSendModal = () => {
+    setIsSendModalOpen(false);
+  };
+
+  const closeConfirmationModal = () => {
+    setIsConfirmationOpen(false);
+  };
+
+  const closeReceiveModal = () => {
+    setIsReceiveModalOpen(false);
+  };
+
+  const closeSwapModal = () => {
+    setIsSwapModalOpen(false);
+  };
+
+  const closeP2PModal = () => {
+    setIsP2PModalOpen(false);
+  };
+
+  const handleError = (err) => {
+    console.error(err);
   };
 
   const handleSendToken = () => {
@@ -195,7 +222,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
       {/* Modals */}
       <SendModal
         isOpen={isSendModalOpen}
-        onClose={() => setIsSendModalOpen(false)}
+        onClose={closeSendModal}
         recipientAddress={recipientAddress}
         setRecipientAddress={setRecipientAddress}
         amount={amount}
@@ -213,19 +240,22 @@ export default function CardStats({ isHidden, selectedWallet }) {
 
       <ConfirmationModal
         isOpen={isConfirmationOpen}
-        onClose={() => setIsConfirmationOpen(false)}
+        onClose={closeConfirmationModal}
         setIsSendModalOpen={setIsSendModalOpen}
       />
 
       <ReceiveModal
         isOpen={isReceiveModalOpen}
-        onClose={() => setIsReceiveModalOpen(false)}
+        onClose={closeReceiveModal}
         walletAddress={walletAddress}
+        selectedWallet={selectedWallet}
       />
 
       <ScanModal
         isOpen={isScanModalOpen}
         onClose={() => setIsScanModalOpen(false)}
+        setRecipientAddress={setRecipientAddress}
+        setIsSendModalOpen={setIsSendModalOpen}
       />
 
       <BuySellModal

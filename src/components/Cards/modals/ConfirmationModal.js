@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 
 const ConfirmationModal = ({ isOpen, onClose, setIsSendModalOpen }) => {
   if (!isOpen) return null;
@@ -51,6 +52,12 @@ const ConfirmationModal = ({ isOpen, onClose, setIsSendModalOpen }) => {
       </div>
     </div>
   );
+};
+
+ConfirmationModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  setIsSendModalOpen: PropTypes.func.isRequired,
 };
 
 export default ConfirmationModal;
