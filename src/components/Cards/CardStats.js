@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { QRCodeCanvas as QRCode } from "qrcode.react";
-import { QrReader } from "react-qr-reader";
-import { X } from "lucide-react";
 import SendModal from "./modals/SendModal";
 import ConfirmationModal from "./modals/ConfirmationModal";
 import ReceiveModal from "./modals/ReceiveModal";
