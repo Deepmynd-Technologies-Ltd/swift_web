@@ -11,7 +11,7 @@ import P2PModal from "./modals/P2PModal";
 import Modal from "./modals/WalletsModal";
 
 const CardLineChart = ({ wallet, isMobile = false }) => {
-  const [walletBalance, setWalletBalance] = useState("");
+  const [walletBalance, setWalletBalance] = useState(0); // Initialize to 0
   const [walletAddress, setWalletAddress] = useState("");
   const [walletPrivateKey, setWalletPrivateKey] = useState("");
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
@@ -34,10 +34,10 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
   // Add state for chart data
   const [activePeriod, setActivePeriod] = useState("1D");
   const [svgPath, setSvgPath] = useState("");
-  const [priceData, setPriceData] = useState(null);
+  const [priceData, setPriceData] = useState(0); // Initialize to 0
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [marketData, setMarketData] = useState(null);
+  const [marketData, setMarketData] = useState(null); // Initialize to null
 
   // Get transactions from Redux store
   const transactions = useSelector((state) => state.transactions?.transactions || []);
@@ -288,7 +288,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
         <div className="items-center">
           {!wallet ? (
             <div className="text-center text-gray-500 mt-4">
-              Select a Wallet
+              Getting Wallets...
             </div>
           ) : (
             <>
