@@ -9,6 +9,7 @@ import BuySellModal from "./modals/BuySellModal";
 import SwapModal from "./modals/SwapModal";
 import P2PModal from "./modals/P2PModal";
 import Modal from "./modals/WalletsModal";
+import Loading from "react-loading";
 
 const CardLineChart = ({ wallet, isMobile = false }) => {
   const [walletBalance, setWalletBalance] = useState(0); // Initialize to 0
@@ -66,7 +67,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     BNB: require("../../assets/img/bnb_icon.png"),
     BTC: require("../../assets/img/btc_icon.png"),
     DOGE: require("../../assets/img/xrp_icon_.png"),
-    ETH: require("../../assets/img/doge_icon.png"),
+    ETH: require("../../assets/img/eth_icon.png"),
     SOL: require("../../assets/img/sol_icon.png"),
     USDT: require("../../assets/img/usdt_icon.png"),
   };
@@ -295,77 +296,79 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     <div className={`relative flex flex-col min-w-0 break-words w-full ${!isMobile && 'mb-6'} md:shadow-lg rounded bg-white`}>
       <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
         <div className="items-center">
-          {!wallet ? (
+          {!selectedWallet ? (
             <div className="text-center text-gray-500 mt-4">
               Getting Wallets...
             </div>
           ) : (
             <>
-              {marketData && currentCoinData && (
-                <>
-                  <img src={tokenImages[wallet.abbr]} alt={wallet.abbr} className="w-12 h-12 mx-auto" />
-                  <h2 className="text-3xl text-center font-bold mb-1">
-                    {currentCoinData.usd.toFixed(2)} {wallet.abbr}
-                  </h2>
-                  <p className="text-xs text-center mb-4 text-blueGray-500">
-                    {wallet.equivalenceValueAmount}
-                  </p>
-                  <p className="text-base font-bold font-medium mt-8 hidden md:block">
-                    Current {wallet?.title} Price
-                  </p>
-                  <p className="text-xs text-blueGray-500 hidden md:block">
-                    {wallet?.equivalenceValue} {wallet?.abbr}{" "}
-                    <span className={`${currentCoinData.usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                      {currentCoinData.usd_24h_change.toFixed(2)}%
-                    </span>
-                  </p>
-                </>
-              )}
+              <img src={tokenImages[selectedWallet.abbr]} alt={selectedWallet.abbr} className="w-12 h-12 mx-auto" />
+              <h2 className="text-3xl text-center font-bold mb-1">
+                {currentCoinData ? currentCoinData.usd.toFixed(2) : '0.00'} {selectedWallet.abbr}
+              </h2>
+              <p className="text-xs text-center mb-4 text-blueGray-500">
+                {selectedWallet.equivalenceValueAmount || '0.00'}
+              </p>
+              <p className="text-base font-bold font-medium mt-8 hidden md:block">
+                Current {selectedWallet?.title} Price
+              </p>
+              <p className="text-xs text-blueGray-500 hidden md:block">
+                {selectedWallet?.equivalenceValue || '0.00'} {selectedWallet?.abbr}{" "}
+                <span className={`${currentCoinData && currentCoinData.usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                  {currentCoinData ? currentCoinData.usd_24h_change.toFixed(2) : '0.00'}%
+                </span>
+              </p>
             </>
           )}
         </div>
         
         <div className="flex-auto">
           <div className="relative h-48 md:h-64 mt-4">
-            <svg
-              width="100%"
-              maxWidth="350"
-              height="120"
-              viewBox="0 0 350 120"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full"
-            >
-              <g clipPath="url(#clip0_932_4270)">
-                <path
-                  d={svgPath}
-                  stroke="#006A4E"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d={`${svgPath} L350 120 L0 120 Z`}
-                  fill="url(#paint0_linear_932_4270)"
-                  fillOpacity="0.4"
-                />
-              </g>
-              <defs>
-                <linearGradient
-                  id="paint0_linear_932_4270"
-                  x1="175"
-                  y1="50"
-                  x2="175"
-                  y2="250"
-                  gradientUnits="userSpaceOnUse"
-                >
-                  <stop stopColor="#00FFBC" stopOpacity="0.30" />
-                  <stop offset="1" stopColor="#F7FAFE" stopOpacity="0" />
-                </linearGradient>
-                <clipPath id="clip0_932_4270">
-                  <rect width="350" height="120" fill="white" />
-                </clipPath>
-              </defs>
-            </svg>
+            {loading ? (
+              <div className="flex justify-center items-center h-full">
+                <Loading type="spin" color="#006A4E" height={50} width={50} />
+              </div>
+            ) : (
+              <svg
+                width="100%"
+                maxWidth="350"
+                height="120"
+                viewBox="0 0 350 120"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-full"
+              >
+                <g clipPath="url(#clip0_932_4270)">
+                  <path
+                    d={svgPath}
+                    stroke="#006A4E"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d={`${svgPath} L350 120 L0 120 Z`}
+                    fill="url(#paint0_linear_932_4270)"
+                    fillOpacity="0.4"
+                  />
+                </g>
+                <defs>
+                  <linearGradient
+                    id="paint0_linear_932_4270"
+                    x1="175"
+                    y1="50"
+                    x2="175"
+                    y2="250"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stopColor="#00FFBC" stopOpacity="0.30" />
+                    <stop offset="1" stopColor="#F7FAFE" stopOpacity="0" />
+                  </linearGradient>
+                  <clipPath id="clip0_932_4270">
+                    <rect width="350" height="120" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+            )}
           </div>
           <div className="flex flex-wrap w-full justify-between gap-2 mt-4 overflow-x-auto">
             {periods.map((period) => (
@@ -552,7 +555,7 @@ const CardTransactionTrack = () => {
                 d="M7 13H17M7 17H13"
               />
             </svg>
-            <p>You have not made any transactions yet</p>
+            <p>You have not make any transactions yet</p>
           </div>
         )}
       </div>

@@ -134,6 +134,20 @@ export default function CardStats({ isHidden, selectedWallet }) {
     }
   };
 
+  useEffect(() => {
+    if (!walletAddress) {
+      const walletDetails = JSON.parse(localStorage.getItem("walletDetails"));
+      if (walletDetails && walletDetails.walletAddresses && Array.isArray(walletDetails.walletAddresses)) {
+        const ethWallet = walletDetails.walletAddresses.find((wallet) => wallet.name === "Ethereum");
+        if (ethWallet) {
+          setWalletAddress(ethWallet.address);
+          setWalletPrivateKey(ethWallet.private_key);
+          fetchWalletBalance(ethWallet.balance);
+        }
+      }
+    }
+  }, [walletAddress]);
+
   return (
     <div className="relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 min-h-[300px] items-center justify-center">
       <div className="flex-auto p-4">
@@ -141,10 +155,10 @@ export default function CardStats({ isHidden, selectedWallet }) {
           <div className="relative flex flex-col bg-white rounded-my shadow-lg p-4 mb-4 xl:mb-0 w-full lg:w-auto max-h-[300px] justify-center  md:items-left" style={{ maxHeight: "120px", minWidth: "220px" }}>
             <div className="relative mt-4 text-center md:text-left">
               <p className="font-semibold text-3xl text-blueGray-700">
-                {hidden ? "••••••••" : `$${walletBalance}.00`}
+                {hidden ? "••••••••" : `$${walletBalance || 0}.00`}
               </p>
               <p className="text-sm mt-2 text-blueGray-400 whitespace-nowrap overflow-hidden text-ellipsis"></p>
-              {walletAddress.slice(0, 4)}...{walletAddress.slice(-4)}
+              {walletAddress ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}` : "Wallet address"}
               <button className="text-xs bg-primary-color-3 text-green ml-3 w-8 rounded">WS</button>
             </div>
           </div>

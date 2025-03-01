@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllWalletData, setSelectedWallet, updateWallets } from "../../features/wallet/walletSlice";
+import Loading from "react-loading";
 
 const tokenNames = {
   BNB: "BNB BEP20",
@@ -22,7 +23,7 @@ const tokenImages = {
 
 export default function CardWalletOverview({ onSelectWallet }) {
   const dispatch = useDispatch();
-  const { wallets, loading, selectedWallet, isFetched } = useSelector((state) => state.wallet);
+  const { wallets, loading, selectedWallet } = useSelector((state) => state.wallet);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
@@ -58,6 +59,11 @@ export default function CardWalletOverview({ onSelectWallet }) {
   return (
     <div className="relative flex flex-col min-w-0 break-words w-full md:w-2/3 mb-6 rounded mx-auto bg-gradient-to-r from-blue-500 to-green-500">
       <div className="block w-full overflow-x-auto">
+        {loading && (
+          <div className="flex justify-center items-center py-4">
+            <Loading type="spinningBubbles" color="#006A4E" height={50} width={50} />
+          </div>
+        )}
         <div className="flex flex-col space-y-4"></div>
           <div className="flex justify-between bg-gray-100 px-6 py-3 rounded-t">
             <div className="w-1/3 text-left text-xs font-semibold text-blueGray-700">Token</div>
@@ -65,7 +71,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
             <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
           </div>
 
-          {Object.keys(tokenNames).map((token, index) => {
+          {Object.keys(tokenNames).map((token) => {
             const wallet = wallets.find(w => w.abbr === token) || {};
             return (
               <div
@@ -105,7 +111,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
                           <span className="text-xs block font-semibold md:mt-0" style={{ maxWidth: "100px" }}>
                             {tokenNames[token]}
                           </span>
-                          <div className="flex items-center md:hidden">
+                          <div className="flex items-center md:hidden w-full">
                             <span className="text-xs">{wallet.marketPrice || "$0.00"}</span>
                             <span className={`text-xs ml-2 ${parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
                               {wallet.marketPricePercentage || "0.0%"}
