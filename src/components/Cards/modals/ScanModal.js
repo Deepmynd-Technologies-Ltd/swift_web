@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from 'prop-types';
 import { QrReader } from "react-qr-reader";
 
@@ -7,6 +7,7 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
   const [torchOn, setTorchOn] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const videoRef = useRef(null);
 
   // Check if the device is mobile
   useEffect(() => {
@@ -23,7 +24,12 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
       
       // Request camera permission
       navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-        .then(() => setHasPermission(true))
+        .then((stream) => {
+          setHasPermission(true);
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        })
         .catch(() => {
           setHasPermission(false);
           setErrorMessage("Camera permission denied. Please allow camera access.");
@@ -34,7 +40,7 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
   // Toggle flashlight/torch
   const toggleTorch = async () => {
     try {
-      const videoElement = document.querySelector('video');
+      const videoElement = videoRef.current;
       if (!videoElement || !videoElement.srcObject) {
         setErrorMessage("Camera not initialized yet.");
         return;
@@ -46,12 +52,16 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
         return;
       }
 
-      // Toggle torch state
-      const newTorchState = !torchOn;
-      await track.applyConstraints({
-        advanced: [{ torch: newTorchState }]
-      });
-      setTorchOn(newTorchState);
+      // Check if torch is supported
+      if (track.getCapabilities().torch) {
+        const newTorchState = !torchOn;
+        await track.applyConstraints({
+          advanced: [{ torch: newTorchState }]
+        });
+        setTorchOn(newTorchState);
+      } else {
+        setErrorMessage("Torch is not supported on this device.");
+      }
     } catch (error) {
       console.error("Error toggling torch:", error);
       setErrorMessage(isMobile ? 
@@ -122,11 +132,11 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
             >
               <QrReader
                 constraints={{
-                  facingMode: "environment",
-                  aspectRatio: 1
+                  facingMode: "environment"
                 }}
                 onResult={handleScan}
                 videoId="qr-video-element"
+                videoRef={videoRef}
                 videoStyle={{ 
                   width: '100%',
                   height: '100%',
@@ -158,24 +168,11 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
 
           {hasPermission && isMobile && (
             <button
-            className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
-            onClick={() => {
-              const video = document.querySelector("video");
-              const track = video.srcObject.getVideoTracks()[0];
-              const imageCapture = new ImageCapture(track);
-              imageCapture.getPhotoCapabilities().then(() => {
-                if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
-                  track.applyConstraints({
-                    advanced: [{ torch: true }]
-                  });
-                } else {
-                  alert("Torch is available only on mobile devices.");
-                }
-              });
-            }}
-          >
-            Turn on Torch
-          </button>
+              className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
+              onClick={toggleTorch}
+            >
+              {torchOn ? "Turn off Torch" : "Turn on Torch"}
+            </button>
           )}
         </div>
       </div>
