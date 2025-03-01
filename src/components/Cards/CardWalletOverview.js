@@ -73,13 +73,24 @@ export default function CardWalletOverview({ onSelectWallet }) {
 
             {Object.keys(tokenNames).map((token) => {
               const wallet = wallets.find(w => w.abbr === token) || {};
-                const formatNumber = (num) => {
-                  if (num === undefined || num === null) return "0.0";
-                  if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
-                  if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
-                  if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
-                  return num.toString();
-                };
+              const formatNumber = (num) => {
+                if (num === undefined || num === null) return "0.0";
+                
+                // For billion values (≥1e9)
+                if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
+                
+                // For million values (≥1e6)
+                if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
+                
+                // For thousand values (≥1e3)
+                if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+                
+                // For numbers less than 1, limit to 3 decimal places
+                if (num > 0 && num < 1) return num.toFixed(3);
+                
+                // For integers and other numbers
+                return num.toString();
+              };
 
                 return (
                 <div
