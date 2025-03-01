@@ -59,33 +59,41 @@ export default function CardWalletOverview({ onSelectWallet }) {
   return (
     <div className="relative flex flex-col min-w-0 break-words w-full md:w-2/3 mb-6 rounded mx-auto bg-gradient-to-r from-blue-500 to-green-500">
       <div className="block w-full overflow-x-auto">
-        {loading && (
+        {loading || isRefreshing ? (
           <div className="flex justify-center items-center py-4">
             <Loading type="spinningBubbles" color="#006A4E" height={50} width={50} />
           </div>
-        )}
-        <div className="flex flex-col space-y-4"></div>
-          <div className="flex justify-between bg-gray-100 px-6 py-3 rounded-t">
-            <div className="w-1/3 text-left text-xs font-semibold text-blueGray-700">Token</div>
-            <div className="w-1/3 text-center text-xs font-semibold text-blueGray-700 hidden md:block">Market Price</div>
-            <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
-          </div>
+        ) : (
+          <div className="flex flex-col space-y-4">
+            <div className="flex justify-between bg-gray-100 px-6 py-3 rounded-t">
+              <div className="w-1/3 text-left text-xs font-semibold text-blueGray-700">Token</div>
+              <div className="w-1/3 text-center text-xs font-semibold text-blueGray-700 hidden md:block">Market Price</div>
+              <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
+            </div>
 
-          {Object.keys(tokenNames).map((token) => {
-            const wallet = wallets.find(w => w.abbr === token) || {};
-            return (
-              <div
-                key={token}
-                className={`rounded-my overflow-hidden ${
-                  !loading && selectedWallet?.abbr === token ? "bg-blue-50" : ""
-                }`}
-                style={{ height: "80px", width: "100%" }}
-              >
-                <a
-                  href={loading ? "#" : `/wallet/${token}`}
+            {Object.keys(tokenNames).map((token) => {
+              const wallet = wallets.find(w => w.abbr === token) || {};
+                const formatNumber = (num) => {
+                  if (num === undefined || num === null) return "0.0";
+                  if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
+                  if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
+                  if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+                  return num.toString();
+                };
+
+                return (
+                <div
+                  key={token}
+                  className={`rounded-my overflow-hidden ${
+                  selectedWallet?.abbr === token ? "bg-blue-50" : ""
+                  }`}
+                  style={{ height: "80px", width: "100%" }}
+                >
+                  <a
+                  href={`/wallet/${token}`}
                   onClick={(e) => {
                     e.preventDefault();
-                    if (!loading) handleWalletClick(wallet);
+                    handleWalletClick(wallet);
                   }}
                   style={{
                     display: "block",
@@ -95,49 +103,51 @@ export default function CardWalletOverview({ onSelectWallet }) {
                     color: "inherit",
                     transition: "color 0.2s",
                   }}
-                  className={`wallet-row ${!loading && selectedWallet?.abbr === token ? "active" : ""}`}
-                >
-                  <div className="flex  md:flex-row justify-between">
+                  className={`wallet-row ${selectedWallet?.abbr === token ? "active" : ""}`}
+                  >
+                  <div className="flex md:flex-row justify-between">
                     <div className="w-full md:w-1/3 px-6 py-3">
-                      <div className="flex items-center text-left">
-                        <img
-                          src={tokenImages[token]}
-                          alt={token}
-                          className="w-8 h-8 rounded mr-4"
-                          style={{ objectFit: "cover" }}
-                        />
-                        <div>
-                          <span className="text-sm font-bold hidden md:block">{token}</span>
-                          <span className="text-xs block font-semibold md:mt-0" style={{ maxWidth: "100px" }}>
-                            {tokenNames[token]}
-                          </span>
-                          <div className="flex items-center md:hidden w-full">
-                            <span className="text-xs">{wallet.marketPrice || "$0.00"}</span>
-                            <span className={`text-xs ml-2 ${parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
-                              {wallet.marketPricePercentage || "0.0%"}
-                            </span>
-                          </div>
-                        </div>
+                    <div className="flex items-center text-left">
+                      <img
+                      src={tokenImages[token]}
+                      alt={token}
+                      className="w-8 h-8 rounded mr-4"
+                      style={{ objectFit: "cover" }}
+                      />
+                      <div>
+                      <span className="text-sm font-bold hidden md:block">{token}</span>
+                      <span className="text-xs block font-semibold md:mt-0" style={{ maxWidth: "100px" }}>
+                        {tokenNames[token]}
+                      </span>
+                      <div className="flex items-center md:hidden w-full">
+                        <span className="text-xs">{formatNumber(wallet.marketPrice) || "$0.00"}</span>
+                        <span className={`text-xs ml-2 ${parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
+                        {wallet.marketPricePercentage || "0.0%"}
+                        </span>
                       </div>
+                      </div>
+                    </div>
                     </div>
                     <div className="w-full md:w-1/3 px-6 py-3 text-xs text-center hidden md:block">
-                      {wallet.marketPrice || "$0.00"}
-                      <span className={`text-xs ml-2 ${parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
-                        {wallet.marketPricePercentage || "0.0%"}
-                      </span>
+                    {formatNumber(wallet.marketPrice) || "$0.00"}
+                    <span className={`text-xs ml-2 ${parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
+                      {wallet.marketPricePercentage || "0.0%"}
+                    </span>
                     </div>
                     <div className="w-full md:w-1/3 px-6 py-3 text-xs text-right">
-                      <div>
-                        <span className="text-sm font-semibold">{wallet.equivalenceValue || "0.0"}</span>
-                        <span className="text-xs block">{wallet.equivalenceValueAmount || "$0.00"}</span>
-                      </div>
+                    <div>
+                      <span className="text-sm font-semibold">{formatNumber(wallet.equivalenceValue) || "0.0"}</span>
+                      <span className="text-xs block">{formatNumber(wallet.equivalenceValueAmount) || "$0.00"}</span>
+                    </div>
                     </div>
                   </div>
-                </a>
-              </div>
-            );
-          })}
-        </div>
+                  </a>
+                </div>
+                );
+            })}
+          </div>
+        )}
       </div>
+    </div>
   );
 }
