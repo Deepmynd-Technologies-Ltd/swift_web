@@ -61,6 +61,15 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     DOGE: "dogecoin",
     USDT: "tether",
   };
+
+  const tokenImages = {
+    BNB: require("../../assets/img/bnb_icon.png"),
+    BTC: require("../../assets/img/btc_icon.png"),
+    DOGE: require("../../assets/img/xrp_icon_.png"),
+    ETH: require("../../assets/img/doge_icon.png"),
+    SOL: require("../../assets/img/sol_icon.png"),
+    USDT: require("../../assets/img/usdt_icon.png"),
+  };
   
   const periods = ["1H", "1D", "1W", "1M", "1Y", "2Y", "ALL"];
 
@@ -294,16 +303,17 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
             <>
               {marketData && currentCoinData && (
                 <>
+                  <img src={tokenImages[wallet.abbr]} alt={wallet.abbr} className="w-12 h-12 mx-auto" />
                   <h2 className="text-3xl text-center font-bold mb-1">
                     {currentCoinData.usd.toFixed(2)} {wallet.abbr}
                   </h2>
                   <p className="text-xs text-center mb-4 text-blueGray-500">
                     {wallet.equivalenceValueAmount}
                   </p>
-                  <p className="text-base font-bold font-medium mt-8">
+                  <p className="text-base font-bold font-medium mt-8 hidden md:block">
                     Current {wallet?.title} Price
                   </p>
-                  <p className="text-xs text-blueGray-500">
+                  <p className="text-xs text-blueGray-500 hidden md:block">
                     {wallet?.equivalenceValue} {wallet?.abbr}{" "}
                     <span className={`${currentCoinData.usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
                       {currentCoinData.usd_24h_change.toFixed(2)}%
@@ -357,7 +367,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
               </defs>
             </svg>
           </div>
-          <div className="flex flex-wrap justify-start md:justify-between gap-2 mt-4 overflow-x-auto">
+          <div className="flex flex-wrap w-full justify-between gap-2 mt-4 overflow-x-auto">
             {periods.map((period) => (
               <button
                 key={period}
@@ -365,7 +375,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
                 className={`px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm font-medium transition-colors flex-shrink-0 ${
                   activePeriod === period
                     ? "bg-green-500 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    : "bg-primary-color text-gray-600 hover:bg-primary-color-4"
                 }`}
               >
                 {period}
@@ -478,10 +488,10 @@ const CardTransactionTrack = () => {
 
   return (
     <div className="block w-full overflow-x-auto">
-      <div className="relative w-full px-4 max-w-full flex-grow flex-1">
+      <div className="relative w-full px-4 max-w-full flex-grow flex-1 hidden md:block">
         <h3 className="font-semibold text-sm text-blueGray-700">Transactions</h3>
       </div>
-      <div className="h-2 mx-4 my-2 border border-solid border-blueGray-100" />
+      <div className="h-2  hidden md:block mx-4 my-2 border border-solid border-blueGray-100" />
       <div className="space-y-4">
         {transactions && transactions.length > 0 ? (
           transactions.map((transaction, index) => (

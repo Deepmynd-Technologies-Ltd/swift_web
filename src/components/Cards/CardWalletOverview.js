@@ -91,7 +91,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
                   }}
                   className={`wallet-row ${!loading && selectedWallet?.abbr === token ? "active" : ""}`}
                 >
-                  <div className="flex flex-col md:flex-row justify-between">
+                  <div className="flex  md:flex-row justify-between">
                     <div className="w-full md:w-1/3 px-6 py-3">
                       <div className="flex items-center text-left">
                         <img
