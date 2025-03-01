@@ -169,26 +169,9 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
           {hasPermission && isMobile && (
             <button
             className="mt-4 md:hidden bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
-            onClick={() => {
-              const video = document.querySelector("video");
-              const track = video.srcObject.getVideoTracks()[0];
-              if ('ImageCapture' in window) {
-                const imageCapture = new ImageCapture(track);
-                imageCapture.getPhotoCapabilities().then(() => {
-                  if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
-                    track.applyConstraints({
-                      advanced: [{ torch: true }]
-                    });
-                  } else {
-                    alert("Torch is available only on mobile devices.");
-                  }
-                });
-              } else {
-                alert("ImageCapture API is not supported in this browser.");
-              }
-            }}
+            onClick={toggleTorch}
           >
-            Turn on Torch
+            {torchOn ? "Turn off Torch" : "Turn on Torch"}
           </button>
           )}
         </div>
