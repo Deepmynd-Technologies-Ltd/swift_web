@@ -21,43 +21,43 @@ export default function Navbar() {
       <nav className="top-0 left-0 w-full z-10 bg-transparent flex flex-row items-center p-4">
         <div className="w-full mx-auto flex justify-between items-center flex-row px-4">
           {/* Brand */}
-          {window.location.pathname === "/admin/dashboard" && (
-            <a
-              className="text-green text-sm lg:inline-block font-bold flex items-center bg-primary-color-4 p-2 rounded-lg justify-center text-center lg:justify-start lg:text-left"
-              style={{
-                marginTop: "20px",
-                fontWeight: 700,
-                marginLeft: window.innerWidth < 768 ? "auto" : "0",
-                marginRight: window.innerWidth < 768 ? "auto" : "0",
-              }}
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="true"
-            >
-              <i className="fas fa-wal mr-2"></i>
-              Wallets
-              <i className="fa fa-chevron-down ml-2"></i>
-            </a>
-          )}
+                {window.location.pathname === "/admin/dashboard" && (
+                <a
+                  className="text-green text-sm lg:inline-block font-bold flex items-center bg-primary-color-4 p-2 rounded-lg justify-center text-center lg:justify-start lg:text-left"
+                  style={{
+                  marginTop: "20px",
+                  fontWeight: 700,
+                  marginLeft: window.innerWidth < 768 ? "auto" : "0",
+                  marginRight: window.innerWidth < 768 ? "auto" : "0",
+                  }}
+                  type="button"
+                  aria-haspopup="true"
+                  aria-expanded="true"
+                >
+                  <i className="fas fa-wal mr-2"></i>
+                  Wallets
+                  <i className="fa fa-chevron-down ml-2"></i>
+                </a>
+                )}
 
-          {window.location.pathname === "/admin/history" && (
-            <h2
-              className="text-black text-2xl lg:inline-block font-bold flex items-center p-2"
-              style={{
-                marginTop: "20px",
-                fontWeight: 700,
-                marginLeft: window.innerWidth < 768 ? "auto" : "0",
-                marginRight: window.innerWidth < 768 ? "auto" : "0",
-              }}
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="true"
-            >
-              History
-            </h2>
-          )}
+                {window.location.pathname === "/admin/history" && (
+                <h2
+                  className="text-black text-left text-2xl lg:inline-block font-bold flex items-start md:items-center p-2"
+                  style={{
+                  marginTop: "20px",
+                  fontWeight: window.innerWidth < 768 ? 500 : 700,
+                  marginLeft: "0",
+                  marginRight: "0",
+                  }}
+                  type="button"
+                  aria-haspopup="true"
+                  aria-expanded="true"
+                >
+                  History
+                </h2>
+                )}
 
-          {/* Navbar Items */}
+                {/* Navbar Items */}
           <ul className="hidden md:flex flex-col md:flex-row list-none items-center flex mt-4 md:mt-0  ">
             {/* Notifications */}
             <div className="mr-1">

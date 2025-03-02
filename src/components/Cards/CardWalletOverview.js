@@ -75,7 +75,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
             const wallet = wallets.find(w => w.abbr === token) || {};
             const formatNumber = (value) => {
               // If value is undefined or null, return a default string
-              if (value === undefined || value === null) return "0.00";
+              if (value === undefined || value === null) return "0";
               
               // Check if the value can be converted to a number
               const num = Number(value);
@@ -154,8 +154,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
                 </div>
                 <div className="w-full md:w-1/3 px-6 py-3 text-xs text-right">
                   <div>
-                  <span className="text-sm font-semibold">{formatNumber(wallet.equivalenceValue) + '.0' || "0.0"}</span>
-                  <span className="text-xs block">{formatNumber(wallet.equivalenceValueAmount) + '.0' || "$0.00"}</span>
+                  <span className="text-sm font-semibold">{formatNumber(wallet.equivalenceValue) + '.0' || "0"}</span>
+                  <span className="text-xs block">{formatNumber(wallet.equivalenceValueAmount) + '.0' || "$0"}</span>
                   </div>
                 </div>
                 </div>
