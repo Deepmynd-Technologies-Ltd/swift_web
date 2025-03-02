@@ -134,10 +134,10 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
           <i className="fa fa-times"></i>
         </button>
 
-        <div className="p-4 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
-          <h4 className="text-lg font-semibold text-blueGray-700 mb-4">
+        <div className="p-4 w-full flex flex-col max-w-md rounded-lg justify-center ">
+          <h4 className="text-left text-lg font-semibold text-blueGray-700 mb-4">
             Scan QR Code 
-            {isMobile ? " (Using back camera)" : " (Using front camera)"}
+            {/* {isMobile ? " (Using back camera)" : " (Using front camera)"} */}
           </h4>
 
           {!hasPermission ? (
@@ -211,12 +211,21 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
           )}
 
           {hasPermission && isMobile && (
-            <button
-              className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
-              onClick={toggleTorch}
-            >
-              {torchOn ? "Turn off Torch" : "Turn on Torch"}
-            </button>
+            <div className="flex justify-center mt-4">
+              <button
+                className="h-12 w-12 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors duration-200 flex items-center justify-center"
+                onClick={toggleTorch}
+                title={torchOn ? "Turn off torch" : "Turn on torch"}
+                aria-label={torchOn ? "Turn off torch" : "Turn on torch"}
+              >
+                <img 
+                  src="https://icons.veryicon.com/png/o/object/material-design-icons-1/flashlight-16.png" 
+                  alt={torchOn ? "Turn off torch" : "Turn on torch"} 
+                  className="h-8 w-8"
+                  style={{ filter: "invert(1)" }}
+                />
+              </button>
+            </div>
           )}
         </div>
       </div>
