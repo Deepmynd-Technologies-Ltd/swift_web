@@ -57,7 +57,7 @@ export default function Login() {
                                         type="tel"
                                         pattern="[0-9]*"
                                         inputMode="numeric"
-                                        value={value}
+                                        value={value ? "•" : ""}
                                         maxLength="1"
                                         onChange={(e) => handleChange(e.target.value, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
