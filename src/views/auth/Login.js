@@ -54,7 +54,9 @@ export default function Login() {
                                     <input
                                         key={index}
                                         id={`pin-input-${index}`}
-                                        type="password"
+                                        type="tel"
+                                        pattern="[0-9]*"
+                                        inputMode="numeric"
                                         value={value}
                                         maxLength="1"
                                         onChange={(e) => handleChange(e.target.value, index)}

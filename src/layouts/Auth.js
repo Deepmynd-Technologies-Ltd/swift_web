@@ -31,37 +31,37 @@ export default function Auth() {
     <PinProvider>
       <Switch>
         <Route path="/auth/register" exact>
-          <AuthLayout NavbarComponent={CreateAccountNavbar}>
+          <AuthLayout NavbarComponent={() => <div className="hidden md:block"><CreateAccountNavbar /></div>}>
             <Register />
           </AuthLayout>
         </Route>
 
         <Route path="/auth/createpin" exact>
-          <AuthLayout NavbarComponent={CreateAccountNavbar}>
+          <AuthLayout NavbarComponent={() => <div className="hidden md:block"><CreateAccountNavbar /></div>}>
             <CreatePin />
           </AuthLayout>
         </Route>
 
         <Route path="/auth/login" exact>
-          <AuthLayout NavbarComponent={CreateAccountNavbar}>
+          <AuthLayout NavbarComponent={() => <div className="hidden md:block"><CreateAccountNavbar /></div>}>
             <Login />
           </AuthLayout>
         </Route>
 
         <Route path="/auth/confirmpin" exact>
-          <AuthLayout NavbarComponent={CreateAccountNavbar}>
+          <AuthLayout NavbarComponent={() => <div className="hidden md:block"><CreateAccountNavbar /></div>}>
             <ConfirmPin />
           </AuthLayout>
         </Route>
 
         <Route path="/auth/securewallet" exact>
-          <AuthLayout NavbarComponent={CreateAccountNavbar}>
+          <AuthLayout NavbarComponent={() => <div className="hidden md:block"><CreateAccountNavbar /></div>}>
             <SecureWallet />
           </AuthLayout>
         </Route>
 
         <Route path="/auth/createwallet" exact>
-          <AuthLayout NavbarComponent={CreateAccountNavbar}>
+          <AuthLayout NavbarComponent={() => <div className="hidden md:block"><CreateAccountNavbar /></div>}>
             <CreateWallet />
           </AuthLayout>
         </Route>
