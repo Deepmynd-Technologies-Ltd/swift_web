@@ -7,55 +7,77 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
   const [torchOn, setTorchOn] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const videoRef = useRef(null);
+  const [stream, setStream] = useState(null);
+  const qrReaderRef = useRef(null);
 
-  // Check if the device is mobile
+  // Check if the device is mobile or tablet
   useEffect(() => {
     const checkIfMobile = () => {
-      return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      // This regex checks for common mobile and tablet user agents
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(navigator.userAgent);
     };
     setIsMobile(checkIfMobile());
   }, []);
 
-  // Reset error when modal opens
+  // Reset error and initialize camera when modal opens
   useEffect(() => {
+    let currentStream = null;
+    
     if (isOpen) {
       setErrorMessage("");
       
-      // Request camera permission with the appropriate facingMode
-      const facingMode = isMobile ? "environment" : "user"; // Use rear camera on mobile, front camera on desktop
-      navigator.mediaDevices.getUserMedia({ video: { facingMode } })
-        .then((stream) => {
+      // Select camera based on device type
+      // Use environment (back) camera for mobile/tablet, user (front) camera for desktop
+      const facingMode = isMobile ? "environment" : "user";
+      console.log(`Using camera facing mode: ${facingMode} for ${isMobile ? "mobile/tablet" : "desktop"}`);
+      
+      navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: facingMode,
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      })
+        .then((mediaStream) => {
           setHasPermission(true);
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-          }
+          setStream(mediaStream);
+          currentStream = mediaStream;
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error("Camera error:", err);
           setHasPermission(false);
           setErrorMessage("Camera permission denied. Please allow camera access.");
         });
     }
+    
+    // Cleanup function to stop tracks when component unmounts or modal closes
+    return () => {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+      }
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      setTorchOn(false);
+    };
   }, [isOpen, isMobile]);
 
-  // Toggle flashlight/torch
+  // Toggle flashlight/torch (only available on mobile with back camera)
   const toggleTorch = async () => {
     try {
-      const videoElement = videoRef.current;
-      console.log(videoElement)
-      // if (!videoElement || !videoElement.srcObject) {
-      //   setErrorMessage("Camera not initialized yet.");
-      //   return;
-      // }
+      if (!stream) {
+        setErrorMessage("Camera not initialized yet.");
+        return;
+      }
 
-      const track = videoElement.srcObject.getVideoTracks()[0];
+      const track = stream.getVideoTracks()[0];
       if (!track) {
         setErrorMessage("Camera track not found.");
         return;
       }
 
       // Check if torch is supported
-      if (track.getCapabilities().torch) {
+      if (track.getCapabilities && track.getCapabilities().torch) {
         const newTorchState = !torchOn;
         await track.applyConstraints({
           advanced: [{ torch: newTorchState }]
@@ -73,13 +95,16 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
   };
 
   // Handle QR code scan result
-  const handleScan = (result, error) => {
-    if (result?.text) {
+  const handleScan = (result) => {
+    if (result && result.text) {
+      console.log("QR Code scanned:", result.text);
       setRecipientAddress(result.text);
       onClose();
       setIsSendModalOpen(true);
     }
-    
+  };
+
+  const handleError = (error) => {
     if (error && !errorMessage) {
       console.error("QR Scan Error:", error);
       setErrorMessage("Failed to scan QR code. Please ensure good lighting and that the QR code is visible.");
@@ -110,7 +135,10 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
         </button>
 
         <div className="p-4 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
-          <h4 className="text-lg font-semibold text-blueGray-700 mb-4">Scan QR Code</h4>
+          <h4 className="text-lg font-semibold text-blueGray-700 mb-4">
+            Scan QR Code 
+            {isMobile ? " (Using back camera)" : " (Using front camera)"}
+          </h4>
 
           {!hasPermission ? (
             <div className="flex flex-col items-center justify-center p-6 bg-gray-100 rounded-lg" 
@@ -119,9 +147,18 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
               <button 
                 className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
                 onClick={() => {
-                  const facingMode = isMobile ? "environment" : "user"; // Use rear camera on mobile, front camera on desktop
-                  navigator.mediaDevices.getUserMedia({ video: { facingMode } })
-                    .then(() => setHasPermission(true))
+                  const facingMode = isMobile ? "environment" : "user";
+                  navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                      facingMode: facingMode,
+                      width: { ideal: 1280 },
+                      height: { ideal: 720 }
+                    } 
+                  })
+                    .then((mediaStream) => {
+                      setHasPermission(true);
+                      setStream(mediaStream);
+                    })
                     .catch(() => setErrorMessage("Camera permission denied"));
                 }}
               >
@@ -134,17 +171,22 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
               style={{ width: "100%", height: "280px", background: "rgba(118, 135, 150, 0.08)" }}
             >
               <QrReader
-                onResult={handleScan}
-                onError={(error) => console.error("QR Reader Error:", error)}
-                facingMode={isMobile ? "environment" : "user"} // Use rear camera on mobile, front camera on desktop
-                videoId="qr-video-element"
-                ref={videoRef}
-                videoStyle={{ 
+                ref={qrReaderRef}
+                delay={300}
+                onError={handleError}
+                onScan={handleScan}
+                facingMode={isMobile ? "environment" : "user"}
+                constraints={{
+                  video: {
+                    facingMode: isMobile ? "environment" : "user",
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                  }
+                }}
+                style={{ 
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover'
                 }}
-                scanDelay={200}
                 ViewFinder={() => (
                   <div 
                     style={{ 
@@ -170,11 +212,11 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
 
           {hasPermission && isMobile && (
             <button
-            className="mt-4 md:hidden bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
-            onClick={toggleTorch}
-          >
-            {torchOn ? "Turn off Torch" : "Turn on Torch"}
-          </button>
+              className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
+              onClick={toggleTorch}
+            >
+              {torchOn ? "Turn off Torch" : "Turn on Torch"}
+            </button>
           )}
         </div>
       </div>
