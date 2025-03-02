@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import PropTypes from 'prop-types';
 import QrReader from "react-qr-scanner";
 
-
 const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [torchOn, setTorchOn] = useState(false);
@@ -23,8 +22,9 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
     if (isOpen) {
       setErrorMessage("");
       
-      // Request camera permission
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      // Request camera permission with the appropriate facingMode
+      const facingMode = isMobile ? "environment" : "user"; // Use rear camera on mobile, front camera on desktop
+      navigator.mediaDevices.getUserMedia({ video: { facingMode } })
         .then((stream) => {
           setHasPermission(true);
           if (videoRef.current) {
@@ -36,12 +36,13 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
           setErrorMessage("Camera permission denied. Please allow camera access.");
         });
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   // Toggle flashlight/torch
   const toggleTorch = async () => {
     try {
       const videoElement = videoRef.current;
+      console.log(videoElement)
       if (!videoElement || !videoElement.srcObject) {
         setErrorMessage("Camera not initialized yet.");
         return;
@@ -118,7 +119,8 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
               <button 
                 className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
                 onClick={() => {
-                  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                  const facingMode = isMobile ? "environment" : "user"; // Use rear camera on mobile, front camera on desktop
+                  navigator.mediaDevices.getUserMedia({ video: { facingMode } })
                     .then(() => setHasPermission(true))
                     .catch(() => setErrorMessage("Camera permission denied"));
                 }}
@@ -134,7 +136,7 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
               <QrReader
                 onResult={handleScan}
                 onError={(error) => console.error("QR Reader Error:", error)}
-                facingMode="environment"
+                facingMode={isMobile ? "environment" : "user"} // Use rear camera on mobile, front camera on desktop
                 videoId="qr-video-element"
                 ref={videoRef}
                 videoStyle={{ 
