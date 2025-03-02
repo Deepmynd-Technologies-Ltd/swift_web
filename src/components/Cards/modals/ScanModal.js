@@ -43,10 +43,10 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
     try {
       const videoElement = videoRef.current;
       console.log(videoElement)
-      if (!videoElement || !videoElement.srcObject) {
-        setErrorMessage("Camera not initialized yet.");
-        return;
-      }
+      // if (!videoElement || !videoElement.srcObject) {
+      //   setErrorMessage("Camera not initialized yet.");
+      //   return;
+      // }
 
       const track = videoElement.srcObject.getVideoTracks()[0];
       if (!track) {
