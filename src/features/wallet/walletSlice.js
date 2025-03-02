@@ -111,12 +111,12 @@ export const fetchAllWalletData = createAsyncThunk(
           title: config.title,
           symbol: config.symbol,
           address: walletAddress?.address || '',
-          marketPrice: `$ ${config.marketData.usd.toFixed(config.symbol === 'doge' ? 4 : 2)}`,
-          marketPricePercentage: `${config.marketData.usd_24h_change.toFixed(2)}%`,
+          marketPrice: config.marketData.usd,  // Store as number
+          marketPricePercentage: config.marketData.usd_24h_change,  // Store as number
           equivalenceValue: balance,
-          equivalenceValueAmount: `$ ${(config.marketData.usd * balance).toFixed(2)}`,
+          equivalenceValueAmount: (config.marketData.usd * balance),  // Store as number
           typeImage: config.typeImage,
-          rawMarketPrice: config.marketData.usd, // Store raw value for calculations
+          rawMarketPrice: config.marketData.usd
         };
       });
 
@@ -164,7 +164,7 @@ const walletSlice = createSlice({
       const wallet = state.wallets.find(w => w.symbol === symbol);
       if (wallet) {
         wallet.equivalenceValue = balance;
-        wallet.equivalenceValueAmount = `$ ${(wallet.rawMarketPrice * balance).toFixed(2)}`;
+        wallet.equivalenceValueAmount = (wallet.rawMarketPrice * balance);  // Store as number
         if (state.selectedWallet?.symbol === symbol) {
           state.selectedWallet = { ...wallet };
         }
