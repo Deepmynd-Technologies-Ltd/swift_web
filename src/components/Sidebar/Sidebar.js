@@ -99,7 +99,7 @@ export default function Sidebar() {
         {/* Desktop Logo */}
         <Link
           className="hidden lg:block md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-lg font-bold p-2 px-0"
-          to="/"
+          to="/auth/login"
           style={{ margin: "10%" }}
         >
           Swift<span style={{ color: "#006A4E" }}>Aza</span>

@@ -1,11 +1,22 @@
 /*eslint-disable*/
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import IndexNavbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footers/Footer.js";
 
 export default function Index() {
+  const history = useHistory();
+
+  const handleCreateWallet = () => {
+    // Clear wallet details from local storage
+    localStorage.removeItem('walletDetails');
+    localStorage.removeItem('walletPin');
+    localStorage.removeItem('walletPin2');
+    // Redirect to create wallet page
+    history.push('/auth/createpin');
+  };
+
   return (
     <>
       {/* <IndexNavbar fixed /> */}
@@ -26,12 +37,12 @@ export default function Index() {
               </p>
               <div className="mt-48"></div>
               <div className="mt-16 justify-between flex ">
-                <a
-                  href="/auth/createpin"
+                <button
+                  onClick={handleCreateWallet}
                   className=" text-white w-full font-bold px-6 py-4 mr-9 rounded-lg outline-none focus:outline-none bg-green-500 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
                 >
                   Create Wallet
-                </a>
+                </button>
                 <a href="#"
                   className=" text-green w-full font-bold px-6 py-4 ml-9 rounded-lg outline-none focus:outline-none bg-primary-color-3 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
                   >

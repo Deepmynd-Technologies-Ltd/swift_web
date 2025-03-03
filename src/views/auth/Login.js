@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import Index from "../Index"; // Adjust the path as necessary
 
 export default function Login() {
     const [pin, setPin] = useState(["", "", "", ""]);
@@ -43,7 +44,7 @@ export default function Login() {
         <div className="container mx-auto px-4 h-screen flex items-center justify-center" style={{ maxHeight: "100vh", overflow: "hidden" }}>
             <div className="relative flex flex-col w-full lg:w-6/12 px-4">
                 <div className="bg-white rounded-my shadow-lg p-8">
-                    <a className="relative left-90 text-black text-3xl font-bold" onClick={() => window.history.back()}>←</a>
+                    <a onClick={() => history.push("/index")} className="relative left-90 text-black text-3xl font-bold">←</a>
                     <h2 className="text-2xl font-bold mb-4 text-green">Enter Passcode</h2>
                     <p className="text-sm text-blueGray-500 mb-6 font-semibold">Passcode is required for security means</p>
                     {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
