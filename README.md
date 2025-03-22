@@ -8,6 +8,7 @@ Welcome to the frontend web repository for Deepmynd Technologies Ltd. This READM
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Launch Screen Assets](#launch-screen-assets)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -31,13 +32,13 @@ To get started with the project, follow these steps:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Deepmynd-Technologies-Ltd/frontend_web.git
+git clone https://github.com/Deepmynd-Technologies-Ltd/swift_web.git
 ```
 
 2. Navigate to the project directory:
 
 ```bash
-cd frontend_web
+cd swift_web
 ```
 
 3. Install the dependencies:
@@ -55,6 +56,12 @@ npm start
 ```
 
 This will launch the application in your default web browser. The development server will automatically reload the app if you make any changes to the source code.
+
+## Launch Screen Assets
+
+You can customize the launch screen with your own desired assets by replacing the image files in the `public/assets/launch` directory.
+
+You can also do it by opening your preferred code editor, selecting the `public/assets/launch` directory, and dropping in the desired images.
 
 ## Contributing
 
