@@ -1,174 +1,83 @@
-import { Twitter, Facebook, Instagram, Linkedin, Github, ExternalLink } from "lucide-react";
+import React from 'react';
+import { ArrowRight } from 'lucide-react';
+import "../assets/styles/footer.css";
 
-const FooterSection = () => {
-  const currentYear = new Date().getFullYear();
-
+const Footer = () => {
   return (
-    <footer className="bg-gray-900 pt-16 pb-8">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Company info */}
-          <div>
-            <div className="mb-6">
-              <a href="/" className="flex items-center">
-                <span className="text-2xl font-bold text-white">Swift<span className="text-purple-500">Aza</span></span>
-              </a>
+    <footer className="footer mt-16 -mb-8">
+      <div className="footer-container w-10/12 justify-center mx-auto mb-0">
+        <div className="footer-grid">
+          {/* Product Column */}
+          <div className="footer-column">
+            <h3 className="footer-column-title">Product</h3>
+            <ul className="footer-list">
+              <li>Wallet</li>
+              <li>Swap Funds</li>
+              <li>Cards</li>
+              <li>P2P</li>
+              <li>Investment</li>
+              <li>Business</li>
+            </ul>
+          </div>
+
+          {/* Information Column */}
+          <div className="footer-column">
+            <h3 className="footer-column-title">Information</h3>
+            <ul className="footer-list">
+              <li>FAQ</li>
+              <li>Blog</li>
+              <li>Support</li>
+            </ul>
+          </div>
+
+          {/* Company Column */}
+          <div className="footer-column">
+            <h3 className="footer-column-title">Company</h3>
+            <ul className="footer-list">
+              <li>About us</li>
+              <li>Careers</li>
+              <li>Contact us</li>
+              <li>SwiftAza</li>
+            </ul>
+          </div>
+
+          {/* Subscribe Section - Updated to match image */}
+          <div className="footer-subscribe">
+            <h3 className="footer-column-title">Subscribe</h3>
+            <div className="footer-input-container">
+              <input 
+                type="email" 
+                placeholder="Email address" 
+                className="footer-input"
+              />
+              <span className="footer-input-icon">→</span>
             </div>
-            <p className="text-white opacity-70 mb-6">
-              Your all-in-one platform for secure, fast cryptocurrency trading. Join thousands of traders today.
+            <p className="footer-subscribe-text">
+              Hello, we are SwiftAza. Our goal is to allow users deal in crypto transaction with any fiat currency from anywhere in the world.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-white opacity-70 hover:text-purple-500 transition-colors">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className="text-white opacity-70 hover:text-purple-500 transition-colors">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="text-white opacity-70 hover:text-purple-500 transition-colors">
-                <Instagram size={20} />
-              </a>
-              <a href="#" className="text-white opacity-70 hover:text-purple-500 transition-colors">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="text-white opacity-70 hover:text-purple-500 transition-colors">
-                <Github size={20} />
-              </a>
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="#features" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Features
-                </a>
-              </li>
-              <li>
-                <a href="#how-it-works" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  How It Works
-                </a>
-              </li>
-              <li>
-                <a href="#testimonials" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Testimonials
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Pricing
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  FAQ
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="text-lg font-bold mb-4">Company</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Press
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="text-lg font-bold mb-4">Legal</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Terms of Service
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Cookie Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Security
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white opacity-70 hover:text-white transition-colors flex items-center">
-                  <ExternalLink size={14} className="mr-2" />
-                  Licenses
-                </a>
-              </li>
-            </ul>
           </div>
         </div>
+        
+        <div className="footer-divider"></div>
 
-        <div className="border-t border-gray-100 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-sm mb-4 md:mb-0">
-              &copy; {currentYear} SwiftAza. All rights reserved.
-            </p>
-            <div className="flex space-x-6">
-              <a href="#" className="text-gray-500 hover:text-white text-sm transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="text-gray-500 hover:text-white text-sm transition-colors">
-                Terms of Service
-              </a>
-              <a href="#" className="text-gray-500 hover:text-white text-sm transition-colors">
-                Cookies
-              </a>
+        <div className="footer-bottom flex flex-row w-full">
+            <p className="footer-brand text-xl">Swift<span className="text-green">Aza</span></p>
+            
+            <div className="footer-links justify-center mx-auto">
+              <a href="#">Terms</a>
+              <a href="#">Privacy</a>
+              <a href="#">Cookies</a>
+            </div>
+            
+            <div className="footer-social-media">
+              <a href="#"><i className="fab fa-linkedin"></i></a>
+              <a href="#"><i className="fab fa-facebook"></i></a>
+              <a href="#"><i className="fab fa-twitter"></i></a>
             </div>
           </div>
-        </div>
       </div>
     </footer>
   );
 };
 
-export default FooterSection;
+export default Footer;

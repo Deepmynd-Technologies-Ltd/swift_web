@@ -6,7 +6,6 @@ import store from './Store';
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "assets/styles/tailwind.css";
-import './index.css';
 
 // layouts
 import Admin from "layouts/Admin.js";
@@ -16,7 +15,7 @@ import Auth from "layouts/Auth.js";
 import CreateAccountNavbar from "components/Navbars/CreateAccountNavbar";
 import Landing from "views/Landing.js";
 import Profile from "views/Profile.js";
-// import Index from "views/Index.js";
+import GetStarted from "views/GetStarted.js";
 import Login from "views/auth/Login.js";
 import AuthLayout from "layouts/Auth.js";
 import Index from "./components/pages/Index";
@@ -44,6 +43,8 @@ ReactDOM.render(
             <Index />
           )}
         </Route>
+        <Route path="/get-started" exact component={GetStarted} />
+        <Route path="/auth/login" exact component={Login} />
 
         {/* Catch-all redirect */}
         <Redirect to="/" />

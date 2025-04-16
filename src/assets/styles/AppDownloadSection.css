@@ -1,0 +1,107 @@
+App Download Section Styles
+.app-download-section {
+    padding: 4rem 1rem;
+    background-color: #000;
+    margin-top: 2rem;
+  }
+  
+  .container {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+  
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+  
+  /* Phone Container Styles */
+  .phone-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .purple-glow {
+    position: absolute;
+    width: 480px;
+    height: 320px;
+    left: 10%;
+    top: 166px;
+    border-radius: 8px;
+    background-color: #9A7CF8;
+    opacity: 0.3;
+    filter: blur(25px);
+    z-index: 0;
+  }
+  
+  .phone-image-wrapper {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .phone-image {
+    width: 289px;
+    height: 486px;
+    border-radius: 1.5rem;
+  }
+  
+  /* Download Info Styles */
+  .download-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+  }
+  
+  .description {
+    font-size: 1.125rem;
+    color: white;
+    max-width: 32rem;
+    margin-top: 2rem;
+    margin-bottom: 0;
+  }
+  
+  .download-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .store-button {
+    display: inline-block;
+  }
+  
+  .store-button img {
+    height: 3rem;
+  }
+  
+  /* Responsive Design */
+  @media (min-width: 1024px) {
+    .content-wrapper {
+      flex-direction: row;
+    }
+  
+    .phone-container {
+      width: 50%;
+    }
+  
+    .download-info {
+      width: 50%;
+    }
+  }

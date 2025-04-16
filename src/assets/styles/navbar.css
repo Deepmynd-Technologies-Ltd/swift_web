@@ -1,0 +1,152 @@
+/* navbar.css */
+.navbar-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    height: 90px;
+    transition: all 0.3s;
+  }
+  
+  .navbar-header.scrolled {
+    background: rgb(12, 12, 12);
+    backdrop-filter: blur(12px);
+    padding: 12px 0;
+  }
+  
+  
+  .navbar-header:not(.scrolled) {
+    background: transparent;
+    padding: 20px 0;
+  }
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+  }
+  
+  .navbar-logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+  }
+  
+  .navbar-logo span {
+    color: #22c55e;
+  }
+  
+  .desktop-nav {
+    display: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .nav-menu-list {
+    display: flex;
+    gap: 4px;
+    background: rgb(41, 41, 41);
+    backdrop-filter: blur(20px);
+    border-radius: 10px;
+    padding: 6px 12px;
+  }
+  
+  .nav-menu-item {
+    list-style: none;
+  }
+  
+  
+  .nav-trigger {
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .nav-trigger.active {
+    background: rgba(39, 196, 153, 0.24);
+    color: white;
+  }
+  
+  .nav-trigger:hover {
+    color: white;
+    background: rgba(39, 196, 153, 0.24);
+  }
+  
+  .nav-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    padding: 16px;
+    min-width: 200px;
+  }
+  
+  .nav-link {
+    display: block;
+    padding: 12px;
+    border-radius: 6px;
+    color: #374151;
+  }
+  
+  .nav-link:hover {
+    background: #f3f4f6;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+  }
+  
+  .login-button {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .login-button:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .get-started-button {
+    background: #047857;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .get-started-button:hover {
+    background: #059669;
+  }
+  
+  @media (min-width: 768px) {
+    .desktop-nav {
+      display: block;
+    }
+    .navbar-container {
+      padding: 0 32px;
+    }
+  }
+  

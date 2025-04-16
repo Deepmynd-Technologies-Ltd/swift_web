@@ -1348,6 +1348,11 @@ select {
   background-color: #006A4E;
 }
 
+.bg-green-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(39, 196, 153, 0.24);
+}
+
 .bg-primary-color-2 {
   --tw-bg-opacity: 1;
   background-color:  #FFFFFF;
@@ -1367,6 +1372,11 @@ select {
 .bg-purple-500 {
   --tw-bg-opacity: 1;
   background-color: rgba(168, 85, 247, var(--tw-bg-opacity));
+}
+
+.bg-purple-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(126, 34, 206, var(--tw-bg-opacity));
 }
 
 .bg-indigo-500 {
@@ -1877,6 +1887,10 @@ select {
   line-height: 1;
 }
 
+.text-6xl {
+  font-size: 3.75rem;
+  line-height: 1;
+}
 .text-aeonik {
   font-family: 'Aeonik';
 }
@@ -2887,6 +2901,10 @@ select {
 
 .w-6\/12 {
   width: 50%;
+}
+
+.w-7\/12 {
+  width: 58.333333%;
 }
 
 .w-10\/12 {

@@ -1,0 +1,643 @@
+/* ContentSections.css */
+/* New sections styles - won't affect existing hero styles */
+
+/* Base Section Styles */
+
+/* Hero Section Styles */
+
+.hero-section {
+    position: relative;
+    padding: 12rem 0 4rem;
+    background: linear-gradient(180deg, #000000, #003328,#000000, #003328, to-right);
+    overflow: hidden;
+    color: white;
+  }
+  
+  /* Background Elements */
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  
+  .background-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+  }
+  
+  .green-circle {
+    top: 8%;
+    left: 25%;
+    width: 600px;
+    height: 600px;
+    background: rgba(7, 49, 35, 0.3);
+  }
+  
+  .blue-circle {
+    bottom: 0;
+    right: 20%;
+    width: 500px;
+    height: 500px;
+    background: rgba(59, 130, 246, 0.1);
+  }
+  
+  /* Main Container */
+  .hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Tag Styles */
+  .tag-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3.5rem;
+  }
+  
+  .feature-tag {
+    background: rgba(39, 39, 42, 0.6);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 2rem;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  /* Hero Content */
+  .hero-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 4rem;
+  }
+  
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+  
+  .hero-description {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+  
+  /* CTA Button */
+  .hero-cta {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+  
+  .cta-button {
+    background: #059669;
+    color: white;
+    padding: 0.75rem 2.5rem;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background: #047857;
+  }
+  
+  /* Dashboard Images */
+  .dashboard-images {
+    position: relative;
+    max-width: 1000px;
+    margin: 4rem auto;
+  }
+  
+  .image-wrapper {
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-image,
+  .dashboard-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* Features Grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin: 4rem auto;
+    max-width: 1000px;
+  }
+  
+  .feature-card {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .feature-icon-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .feature-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.5rem;
+    background: rgba(109, 40, 217, 0.4);
+    border-radius: 50%;
+    color: #a78bfa;
+  }
+  
+  .feature-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #10b981;
+  }
+  
+  .feature-description {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+  }
+  
+  /* Worldwide Section */
+  .worldwide-section {
+    text-align: center;
+    margin: 6rem auto;
+    max-width: 800px;
+  }
+  
+  .section-tag {
+    background: rgba(39, 39, 42, 0.6);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 2rem;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.9);
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+  
+  .section-heading {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+  
+  .highlight {
+    color: #10b981;
+  }
+  
+  .section-description {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+  
+    .features-grid {
+      grid-template-columns: 1fr;
+      max-width: 600px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 8rem 0 3rem;
+    }
+  
+    .hero-title {
+      font-size: 2rem;
+    }
+  
+    .dashboard-images {
+      margin: 2rem auto;
+    }
+  
+    .features-grid {
+      gap: 1.5rem;
+    }
+  
+    .section-heading {
+      font-size: 2rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .hero-container {
+      padding: 0 1rem;
+    }
+  
+    .hero-title {
+      font-size: 1.75rem;
+    }
+  
+    .feature-tag,
+    .section-tag {
+      font-size: 0.75rem;
+    }
+  }
+
+.content-section-block {
+    padding: 5rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .section-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  
+  .section-grid-layout.reverse-order {
+    direction: rtl;
+  }
+  
+  .section-grid-layout.reverse-order > * {
+    direction: ltr;
+  }
+  
+  .section-visual {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .section-visual img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .section-details {
+    padding: 0 2rem;
+  }
+  
+  .section-marker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    color: #8b5cf6;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  
+  .section-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #8b5cf6;
+  }
+  
+  .section-main-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+  }
+  
+  .section-description-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+  }
+  
+  /* Feature List */
+  .benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .benefit-marker {
+    color: #10b981;
+    font-weight: bold;
+    font-size: 1.25rem;
+  }
+  
+  .benefit-text {
+    font-size: 0.9375rem;
+    color: rgba(255, 255, 255, 0.8);
+    flex: 1;
+  }
+  
+  /* Action Link */
+  .section-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #8b5cf6;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .section-action:hover {
+    gap: 0.75rem;
+    color: #7c3aed;
+  }
+  
+  /* Data Tables */
+  .data-display-section {
+    padding: 3rem 0;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 2rem 0;
+  }
+  
+  .data-tables-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1.5rem;
+    padding: 0 2rem;
+  }
+  
+  .investment-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .investment-data-table th,
+  .investment-data-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .investment-data-table th {
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+    color: #ffffff;
+  }
+  
+  .investment-data-table td {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  /* Centered Section */
+  .centered-section {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .centered-section .section-marker {
+    justify-content: center;
+  }
+  
+  .centered-section .section-description-text {
+    text-align: center;
+  }
+  
+  /* Responsive Design */
+  @media (min-width: 768px) {
+    .section-grid-layout {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .data-tables-container {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .section-main-heading {
+      font-size: 2.5rem;
+    }
+  }
+
+  /* Portfolio Management Specific Styles */
+.portfolio-management-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  
+  .portfolio-content {
+    padding-right: 2rem;
+  }
+  
+  .portfolio-image {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .portfolio-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* Existing styles (keep these from your current CSS) */
+  .section-marker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    color: #8b5cf6;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  
+  .section-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #8b5cf6;
+  }
+  
+  .section-main-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+  }
+  
+  .section-description-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+  }
+  
+  .benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .benefit-marker {
+    color: #10b981;
+    font-weight: bold;
+  }
+  
+  .benefit-text {
+    font-size: 0.9375rem;
+    color: rgba(255, 255, 255, 0.8);
+    flex: 1;
+  }
+  
+  .section-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #8b5cf6;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .section-action:hover {
+    gap: 0.75rem;
+    color: #7c3aed;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .portfolio-management-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .portfolio-content {
+      padding-right: 0;
+      order: 2;
+    }
+    
+    .portfolio-image {
+      order: 1;
+      margin-bottom: 2rem;
+    }
+  }
+
+/* Security Section Specific Styles */
+.security-section {
+    padding: 5rem 0;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    margin: 4rem auto;
+    max-width: 1200px;
+  }
+  
+  .security-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  
+  .security-content {
+    padding: 0 2rem;
+    text-align: left;
+  }
+  
+  .security-image {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .security-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* Center align the section marker only */
+  .security-section .section-marker {
+    justify-content: flex-start;
+  }
+  
+  .security-section .benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: left;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .security-section {
+      padding: 3rem 1rem;
+      margin: 2rem auto;
+    }
+    
+    .security-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .security-content {
+      padding: 0;
+      order: 2;
+      text-align: center;
+    }
+    
+    .security-image {
+      order: 1;
+      margin-bottom: 2rem;
+    }
+    
+    .security-section .section-marker {
+      justify-content: center;
+    }
+    
+    .security-section .benefits-list {
+      align-items: center;
+    }
+  }
