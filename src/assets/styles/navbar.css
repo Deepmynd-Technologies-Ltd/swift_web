@@ -35,7 +35,7 @@
   }
   
   .navbar-logo span {
-    color: #22c55e;
+    color: #059669;
   }
   
   .desktop-nav {
@@ -45,43 +45,53 @@
     transform: translateX(-50%);
   }
   
+  .nav-menu-item {
+    list-style: none;
+  }
+  
+  
   .nav-menu-list {
+    position: relative;
     display: flex;
     gap: 4px;
     background: rgb(41, 41, 41);
     backdrop-filter: blur(20px);
     border-radius: 10px;
     padding: 6px 12px;
+    overflow: hidden;
   }
   
-  .nav-menu-item {
-    list-style: none;
+  .nav-indicator {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    background: #059669;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    z-index: 0; /* Should be below the nav items */
   }
-  
   
   .nav-trigger {
+    position: relative;
+    z-index: 1; /* Above the indicator */
     padding: 6px 16px;
     border-radius: 6px;
     font-size: 14px;
     font-weight: 500;
     border: none;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: color 0.2s;
     display: flex;
     align-items: center;
-    background: transparent;
     color: rgba(255, 255, 255, 0.8);
+    background: transparent;
   }
   
-  .nav-trigger.active {
-    background: rgba(39, 196, 153, 0.24);
-    color: white;
-  }
-  
+  .nav-trigger.active,
   .nav-trigger:hover {
     color: white;
-    background: rgba(39, 196, 153, 0.24);
   }
+  
   
   .nav-content {
     position: absolute;

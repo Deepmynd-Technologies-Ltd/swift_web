@@ -35,18 +35,19 @@ ReactDOM.render(
         <Route path="/landing" exact component={Landing} />
         <Route path="/profile" exact component={Profile} />
 
-        {/* Fixing the "/" route */}
         <Route path="/" exact>
           {walletDetails && walletDetails.walletAddresses ? (
             <Redirect to="/auth/login" />
           ) : (
-            <Index />
+            <Redirect to="/products" />
           )}
         </Route>
         <Route path="/get-started" exact component={GetStarted} />
         <Route path="/auth/login" exact component={Login} />
-
-        {/* Catch-all redirect */}
+        <Route path="/products" exact component={Index} />
+        <Route path="/about-us" exact component={Index} />
+        <Route path="/contact-us" exact component={Index} />
+        <Redirect to="/products" />
         <Redirect to="/" />
       </Switch>
     </BrowserRouter>,
