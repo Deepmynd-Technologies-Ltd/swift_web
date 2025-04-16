@@ -31,7 +31,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white" style={{ marginBottom: "-30px" }}>
       <Navbar />
       <main>
         {section}
