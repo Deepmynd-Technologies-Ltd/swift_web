@@ -33,7 +33,7 @@ const Navbar = () => {
                 className={`nav-trigger ${activeTab === "products" ? "active" : ""}`}
                 onClick={() => setActiveTab("products")}
               >
-                Products <ChevronDown className="chevron-icon" />
+                Products
               </button>
             </div>
 

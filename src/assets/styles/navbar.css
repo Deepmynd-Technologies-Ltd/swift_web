@@ -61,7 +61,7 @@
   
   .nav-trigger {
     padding: 6px 16px;
-    border-radius: 9999px;
+    border-radius: 6px;
     font-size: 14px;
     font-weight: 500;
     border: none;
