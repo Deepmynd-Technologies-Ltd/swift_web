@@ -1826,6 +1826,10 @@ select {
   height: 70px;
 }
 
+.h-150-px {
+  height: 210px;
+}
+
 .h-350-px {
   height: 350px;
 }
@@ -2934,6 +2938,7 @@ select {
 .z-50 {
   z-index: 50;
 }
+
 
 .transform {
   --tw-translate-x: 0;

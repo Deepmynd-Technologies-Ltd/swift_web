@@ -12,6 +12,8 @@ import ConfirmPin from "views/auth/Confirmpin.js";
 import SecureWallet from "views/auth/Securewallet.js";
 import CreatePin from "views/auth/Createpin.js";
 import { PinProvider } from "../context/PinContext";
+import ImportWallet12 from "views/auth/ImportWallet12.js";
+import ImportWallet24 from "views/auth/ImportWallet24.js";
 
 const AuthLayout = ({ children, NavbarComponent }) => {
   return (
@@ -63,6 +65,19 @@ export default function Auth() {
         <Route path="/auth/createwallet" exact>
           <AuthLayout NavbarComponent={() => <div className="hidden md:block"><CreateAccountNavbar /></div>}>
             <CreateWallet />
+          </AuthLayout>
+        </Route>
+
+        <Route path="/auth/importwallet12" exact>
+          <AuthLayout NavbarComponent={() => <div className="hidden md:block"><CreateAccountNavbar /></div>}>
+            <ImportWallet12 />
+          </AuthLayout>
+        </Route>
+
+
+        <Route path="/auth/importwallet24" exact>
+          <AuthLayout NavbarComponent={() => <div className="hidden md:block"><CreateAccountNavbar /></div>}>
+            <ImportWallet24 />
           </AuthLayout>
         </Route>
         
