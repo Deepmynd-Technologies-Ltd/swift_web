@@ -1,71 +1,60 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { PinContext } from "../../context/PinContext";
+import CryptoJS from "crypto-js";
 
 export default function SecureWallet() {
-    const [walletDetails, setWalletDetails] = useState(null);
-    const [loading, setLoading] = useState(true); // Initialize loading as true
+    const [seedWords, setSeedWords] = useState([]);
     const history = useHistory();
-    const { setWalletDetails: setContextWalletDetails } = useContext(PinContext);
+    const [loading, setLoading] = useState(true);
+    const { setWalletDetails } = useContext(PinContext);
+
+    const deriveKey = (pin, salt) => {
+        return CryptoJS.PBKDF2(pin, salt, {
+            keySize: 256 / 32,
+            iterations: 1000,
+        });
+    };
+
+    const encryptSeed = (seed, key, iv) => {
+        return CryptoJS.AES.encrypt(seed, key, { iv }).toString();
+    };
 
     const generateWalletPhrase = async () => {
-        setLoading(true); // Set loading to true at the start
-        try {
-            // Generate Wallet Phrase
-            const phraseResponse = await fetch('https://swift-api-g7a3.onrender.com/api/wallet/phrase/', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+        const pin = sessionStorage.getItem("walletPin");
+        if (!pin) return;
 
-            if (!phraseResponse.ok) {
-                throw new Error('Failed to generate wallet phrase');
-            }
+        const salt = CryptoJS.lib.WordArray.random(16);
+        const iv = CryptoJS.lib.WordArray.random(16);
+        const key = deriveKey(pin, salt);
 
-            const phraseData = await phraseResponse.json();
-            console.log(phraseData.data);
+        const res = await fetch('https://swift-api-g7a3.onrender.com/api/wallet/phrase/');
+        const { data: phrase } = await res.json();
 
-            const details = {
-                seedWords: phraseData.data.split(' '), // Split phrase into seed words
-            };
-            console.log('Wallet Details:', details);
+        const encryptedSeed = encryptSeed(phrase, key, iv);
 
-            localStorage.setItem("walletDetails", JSON.stringify(details));
-            setWalletDetails(details);
-            setContextWalletDetails(details);
-        } catch (error) {
-            console.error("Phrase Generation Error:", error);
-            throw error;
-        } finally {
-            setLoading(false); // Set loading to false when done
-        }
+        sessionStorage.setItem("encryptedWalletSeed", encryptedSeed);
+        sessionStorage.setItem("walletSalt", salt.toString());
+        sessionStorage.setItem("walletIV", iv.toString());
+
+        setSeedWords(phrase.split(" "));
+        setWalletDetails({ seedWords: phrase.split(" "), seedPhrase: phrase });
+        setLoading(false); // Set loading to false after seed generation is complete
     };
 
     useEffect(() => {
-        const details = JSON.parse(localStorage.getItem("walletDetails"));
-        if (details) {
-            setWalletDetails(details);
-            setContextWalletDetails(details);
-            setLoading(false); // Set loading to false if details are already available
-        } else {
-            generateWalletPhrase().catch(console.error);
-        }
+        generateWalletPhrase();
     }, []);
 
     const copyToClipboard = (text) => {
-        navigator.clipboard
-            .writeText(text)
+        navigator.clipboard.writeText(text)
             .then(() => alert("Copied to clipboard"))
             .catch(() => alert("Failed to copy"));
     };
 
     const handleNext = () => {
-        alert("Wallet secured!");
         history.push("/auth/createwallet");
     };
-
-    const { seedWords = [] } = walletDetails || {};
 
     return (
         <div

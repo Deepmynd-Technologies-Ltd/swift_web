@@ -1,81 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import CryptoJS from "crypto-js";
+import { useState } from "react";
 
 export default function CreateWallet() {
-    const [loading, setLoading] = useState(false);
     const history = useHistory();
+    const [loading, setLoading] = useState(true);
 
-    const generateWallet = async (phrase) => {
-        try {
-            const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/generate_wallet/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    phrase,
-                }),
-            });
+    const decryptSeed = (encryptedSeed, pin, salt, iv) => {
+        const key = CryptoJS.PBKDF2(pin, CryptoJS.enc.Hex.parse(salt), {
+            keySize: 256 / 32,
+            iterations: 1000,
+        });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Error details:", errorData);
-                throw new Error("Failed to create wallet");
-            }
+        const decrypted = CryptoJS.AES.decrypt(encryptedSeed, key, {
+            iv: CryptoJS.enc.Hex.parse(iv),
+        });
 
-            const walletData = await response.json();
-            console.log("Wallet created successfully:", walletData);
-
-            const details = {
-                walletAddresses: walletData.data,
-                seedWords: phrase.split(" "),
-            };
-            localStorage.setItem("walletDetails", JSON.stringify(details));
-
-            return true;
-        } catch (error) {
-            console.error("Error generating wallet:", error);
-            return false;
-        }
+        return decrypted.toString(CryptoJS.enc.Utf8);
     };
 
-    const handleNext = async () => {
-        setLoading(true);
+    const generateWallet = async () => {
+        const encryptedSeed = sessionStorage.getItem("encryptedWalletSeed");
+        const salt = sessionStorage.getItem("walletSalt");
+        const iv = sessionStorage.getItem("walletIV");
+        const pin = sessionStorage.getItem("walletPin");
 
-        try {
-            const phraseResponse = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/phrase/", {
-                method: "GET",
-                headers: {
-                    Accept: "application/json",
-                },
-            });
+        if (!encryptedSeed || !salt || !iv || !pin) return;
 
-            if (!phraseResponse.ok) {
-                throw new Error("Failed to generate wallet phrase");
-            }
+        const seedPhrase = decryptSeed(encryptedSeed, pin, salt, iv);
+        const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/generate_wallet/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phrase: seedPhrase }),
+        });
 
-            const phraseData = await phraseResponse.json();
-            const phrase = phraseData.data;
-
-            const success = await generateWallet(phrase);
-
-            setLoading(false);
-
-            if (success) {
-                history.push("/admin/dashboard");
-            } else {
-                alert("Failed to create wallet. Please try again.");
-            }
-        } catch (error) {
-            console.error("Error during wallet creation:", error);
-            setLoading(false);
-            alert("Failed to create wallet. Please try again.");
-        }
+        const result = await response.json();
+        localStorage.setItem("walletAddresses", JSON.stringify(result.data));
+        history.push("/admin/dashboard");
     };
 
     useEffect(() => {
-        handleNext();
+        generateWallet();
     }, []);
+
+    const handleTryAgain = () => {
+        history.push("/auth/createwallet");
+    }
 
     return (
         <div className="container mx-auto px-4 h-screen flex items-center justify-center" style={{ maxHeight: "100vh", overflow: "hidden" }}>
@@ -114,7 +85,7 @@ export default function CreateWallet() {
                                 Generate Wallet Address
                             </p>
                         )}
-                        <a className="mt-4 text-blueGray-500 font-semibold p-3 rounded-my" onClick={handleNext}>
+                        <a className="mt-4 text-blueGray-500 font-semibold p-3 rounded-my" onClick={handleTryAgain}>
                             Try Again
                         </a>
                     </div>

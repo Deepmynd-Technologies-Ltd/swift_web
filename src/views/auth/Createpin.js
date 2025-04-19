@@ -4,34 +4,26 @@ import { PinContext } from "../../context/PinContext";
 
 export default function CreatePin() {
     const [pin, setPin] = useState(["", "", "", ""]);
-    const [error, setError] = useState(null);
     const history = useHistory();
+    const [error, setError] = useState(null);
     const { setPin: setContextPin } = useContext(PinContext);
-
-    useEffect(() => {
-        const savedPin = localStorage.getItem("walletPin");
-        console.log("Saved PIN:", savedPin);
-        if (savedPin) {
-            setPin(savedPin.split(""));
-        }
-    }, []);
 
     const handleNext = () => {
         const pinCode = pin.join("");
-        // Save pin to local storage
-        localStorage.setItem("walletPin", pinCode);
+        if (pinCode.length !== 4) return;
+
+        const encryptedPin = btoa(pinCode);
+        sessionStorage.setItem("walletPin", encryptedPin);
         setContextPin(pinCode);
         history.push("/auth/confirmpin");
-        console.log("PIN:", pinCode);
     };
 
     const handleChange = (value, index) => {
-        if (value.length > 1) return; // Prevent more than one character
+        if (value.length > 1) return;
         const newPin = [...pin];
         newPin[index] = value;
         setPin(newPin);
 
-        // Move focus to the next input box
         if (value && index < 3) {
             document.getElementById(`pin-input-${index + 1}`).focus();
         }
@@ -44,21 +36,13 @@ export default function CreatePin() {
     };
 
     return (
-        <div
-            className="container mx-auto px-4 h-screen flex items-center justify-center"
-            style={{ maxHeight: "100vh", overflow: "hidden" }}
-        >
+        <div className="container mx-auto px-4 h-screen flex items-center justify-center">
             <div className="relative flex flex-col w-full lg:w-6/12 px-4">
                 <div className="bg-white rounded-my shadow-lg p-8">
-                    <a
-                        className="relative left-90 text-black text-3xl font-bold font-weight-900"
-                        onClick={() => window.history.back()}
-                    >
+                    <a className="relative left-90 text-black text-3xl font-bold font-weight-900" onClick={() => window.history.back()}>
                         ←
                     </a>
-                    <h2 className="text-2xl font-bold mb-4 text-green">
-                        Create Wallet Pin
-                    </h2>
+                    <h2 className="text-2xl font-bold mb-4 text-green">Create Wallet Pin</h2>
                     <p className="text-sm text-blueGray-500 mb-6 font-semibold">
                         Create a pin for your wallet, this will also be used to perform transactions.
                     </p>

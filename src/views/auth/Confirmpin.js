@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 export default function ConfirmPin() {
@@ -6,41 +6,25 @@ export default function ConfirmPin() {
     const [error, setError] = useState(null);
     const history = useHistory();
 
+    const decryptPin = (encryptedPin) => {
+        return atob(encryptedPin);
+    };
 
     const handleConfirm = () => {
-        const confirmPinCode = confirmPin.join("");  
-        const pin = localStorage.getItem("walletPin");  
+        const pinCode = confirmPin.join("");
+        const encryptedPin = sessionStorage.getItem("walletPin");
+        const originalPin = decryptPin(encryptedPin);
 
-        if (!pin) {
-            setError("PIN is missing.");
+        if (!originalPin || pinCode !== originalPin) {
+            setError("PIN does not match");
             return;
         }
-
-        if (confirmPinCode.length !== 4) {
-            setError("PIN must be exactly 4 digits.");
-            return;
-        }
-
-        if (confirmPinCode !== pin) {
-            setError("PIN does not match.");
-            return;
-        }
-
-        localStorage.setItem("walletPin2", confirmPinCode);
-        console.log("Saved PIN:", confirmPinCode);
 
         history.push("/auth/securewallet");
     };
 
-    useEffect(() => {
-        const savedPin = localStorage.getItem("walletPin2");
-        if (savedPin) {
-            setConfirmPin(savedPin.split(""));
-        }
-    }, []);
-
     const handleChange = (value, index) => {
-        if (value.length > 1) return;  
+        if (value.length > 1) return;
         const newPin = [...confirmPin];
         newPin[index] = value;
         setConfirmPin(newPin);
@@ -57,21 +41,13 @@ export default function ConfirmPin() {
     };
 
     return (
-        <div
-            className="container mx-auto px-4 h-screen flex items-center justify-center"
-            style={{ maxHeight: "100vh", overflow: "hidden" }}
-        >
+        <div className="container mx-auto px-4 h-screen flex items-center justify-center">
             <div className="relative flex flex-col w-full lg:w-6/12 px-4">
                 <div className="bg-white rounded-my shadow-lg p-8">
-                    <a
-                        className="relative left-90 text-black text-3xl font-bold font-weight-900"
-                        onClick={() => window.history.back()}
-                    >
+                    <a className="relative left-90 text-black text-3xl font-bold font-weight-900" onClick={() => window.history.back()}>
                         ←
                     </a>
-                    <h2 className="text-2xl font-bold mb-4 text-green">
-                        Confirm Wallet Pin
-                    </h2>
+                    <h2 className="text-2xl font-bold mb-4 text-green">Confirm Wallet Pin</h2>
                     <p className="text-sm text-blueGray-500 mb-6 font-semibold">
                         Sorry for the troubles, we just had to make sure you remember the pin.
                     </p>

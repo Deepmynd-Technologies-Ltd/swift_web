@@ -10,7 +10,7 @@
   }
   
   .navbar-header.scrolled {
-    background: rgb(12, 12, 12);
+    background: #000;
     backdrop-filter: blur(12px);
     padding: 12px 0;
   }
