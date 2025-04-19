@@ -1806,6 +1806,10 @@ select {
   height: 5rem;
 }
 
+.h-80 {
+  height: 80px;
+}
+
 .h-auto {
   height: auto;
 }

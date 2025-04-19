@@ -65,10 +65,10 @@ export default function CardWalletOverview({ onSelectWallet }) {
           </div>
         ) : null}
         <div className="flex flex-col space-y-4">
-          <div className="flex justify-between bg-gray-100 px-6 py-3 rounded-t hidden md:block">
-            <div className="w-1/3 text-left text-xs font-semibold text-blueGray-700">Token</div>
-            <div className="w-1/3 text-center text-xs font-semibold text-blueGray-700 hidden md:block">Market Price</div>
-            <div className="w-1/3 text-right text-xs font-semibold text-blueGray-700">USD Equivalent</div>
+          <div className="w-full flex flex-row justify-between items-center bg-gray-100 rounded-t-lg py-3 px-4">
+            <div className="text-sm font-semibold text-blueGray-700 flex-1">Token</div>
+            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-center">Market Price</div>
+            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-right">USD Equivalent</div>
           </div>
 
           {Object.keys(tokenNames).map((token) => {
@@ -99,67 +99,75 @@ export default function CardWalletOverview({ onSelectWallet }) {
               return num.toString();
             };
 
+            const isSelected = selectedWallet?.abbr === token;
+            const textColorClass = isSelected ? "text-white" : "";
+
             return (
               <div
-              key={token}
-              className={`rounded-my overflow-hidden ${
-                selectedWallet?.abbr === token ? "bg-blue-50" : ""
-              }`}
-              style={{ height: "80px", width: "100%" }}
+                key={token}
+                className={`rounded-my overflow-hidden
+                }`}
               >
-              <a
-                href={`/wallet/${token}`}
-                onClick={(e) => {
-                e.preventDefault();
-                handleWalletClick(wallet);
-                }}
-                style={{
-                display: "block",
-                margin: "0.375rem 0",
-                borderRadius: "0.375rem",
-                textDecoration: "none",
-                color: "inherit",
-                transition: "color 0.2s",
-                }}
-                className={`wallet-row ${selectedWallet?.abbr === token ? "active" : ""}`}
-              >
-                <div className="flex md:flex-row justify-between">
-                <div className="w-full md:w-1/3 px-6 py-3">
-                  <div className="flex items-center text-left">
-                  <img
-                    src={tokenImages[token]}
-                    alt={token}
-                    className="w-12 h-12 rounded mr-4"
-                    style={{ objectFit: "cover" }}
-                  />
-                  <div>
-                    <span className="text-sm font-bold hidden md:block">{token}</span>
-                    <span className="text-xs block font-semibold md:mt-0" style={{ maxWidth: "100px" }}>
-                    {tokenNames[token]}
-                    </span>
-                    <div className="flex items-center md:hidden w-full">
-                    <span className="text-xs"> ${formatNumber(wallet.marketPrice) || "0.00"}</span>
-                    <span className={`text-xs ml-2 ${parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
-                      {formatNumber(wallet.marketPricePercentage) || "0.0"}%
-                    </span>
+                <a
+                  href={`/wallet/${token}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleWalletClick(wallet);
+                  }}
+                  style={{
+                    display: "block",
+                    margin: "0.375rem 0",
+                    borderRadius: "12px",
+                    textDecoration: "none",
+                    color: "inherit",
+                    transition: "color 0.2s",
+                    gap: "32px",
+                  }}
+                  className={`wallet-row ${isSelected ? "active" : ""}`}
+                >
+                  <div className="flex md:flex-row justify-between items-center h-full">
+                    <div className="w-full md:w-1/3 px-6 py-3">
+                      <div className="flex items-center text-left">
+                        <img
+                          src={tokenImages[token]}
+                          alt={token}
+                          className="w-12 h-12 rounded mr-4"
+                          style={{ objectFit: "cover" }}
+                        />
+                        <div>
+                          <span className={`text-sm font-bold hidden md:block ${textColorClass}`}>{token}</span>
+                          <span className={`text-xs block font-semibold md:mt-0 ${textColorClass}`} style={{ maxWidth: "100px" }}>
+                            {tokenNames[token]}
+                          </span>
+                          <div className="flex items-center md:hidden w-full">
+                            <span className={`text-sm ${textColorClass}`}> ${formatNumber(wallet.marketPrice) || "0.00"}</span>
+                            <span className={`text-sm ml-2 ${
+                              isSelected ? "text-white" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
+                            }`}>
+                              {formatNumber(wallet.marketPricePercentage) || "0.0"}%
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`w-full md:w-1/3 px-6 h-full flex items-center justify-center hidden md:flex ${textColorClass}`}>
+                      <div>
+                        <span className={`text-sm ${textColorClass}`}>${formatNumber(wallet.marketPrice) || "0.00"}</span>
+                        <span className={`text-sm ml-2 ${
+                          isSelected ? "text-white" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
+                        }`}>
+                          {formatNumber(wallet.marketPricePercentage) || "0.0"}%
+                        </span>
+                      </div>
+                    </div>
+                    <div className={`w-full md:w-1/3 px-6 py-3 text-sm text-right ${textColorClass}`}>
+                      <div>
+                        <span className={`text-sm font-semibold ${textColorClass}`}>{formatNumber(wallet.equivalenceValue) + '.0' || "0"}</span>
+                        <span className={`text-sm block ${textColorClass}`}>{formatNumber(wallet.equivalenceValueAmount) + '.0' || "$0"}</span>
+                      </div>
                     </div>
                   </div>
-                  </div>
-                </div>
-                <div className="w-full md:w-1/3 px-6 py-3 text-xs text-center hidden md:block">
-                   ${formatNumber(wallet.marketPrice) || "0.00"}
-                  <span className={`text-xs ml-2 ${parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"}`}>
-                  {formatNumber(wallet.marketPricePercentage) || "0.0"}%
-                  </span>
-                </div>
-                <div className="w-full md:w-1/3 px-6 py-3 text-xs text-right">
-                  <div>
-                  <span className="text-sm font-semibold">{formatNumber(wallet.equivalenceValue) + '.0' || "0"}</span>
-                  <span className="text-xs block">{formatNumber(wallet.equivalenceValueAmount) + '.0' || "$0"}</span>
-                  </div>
-                </div>
-                </div>
-              </a>
+                </a>
               </div>
             );
           })}
