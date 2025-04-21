@@ -1323,7 +1323,7 @@ select {
   background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
 }
 
-.bg-white {
+.bg- {
   --tw-bg-opacity: 1;
   background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
 }
@@ -2775,6 +2775,7 @@ select {
 .text-red-500 {
   --tw-text-opacity: 1;
   color: rgba(239, 68, 68, var(--tw-text-opacity));
+  
 }
 
 .text-blueGray-100 {
@@ -2845,6 +2846,19 @@ select {
 .uppercase {
   text-transform: uppercase;
 }
+
+/* hide scrollbar but keep scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  overflow: auto;
+  display: none;
+}
+
+.no-scrollbar {
+  overflow: auto;
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+
 
 .no-underline {
   text-decoration: none;

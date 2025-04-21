@@ -33,7 +33,7 @@ const NotificationDropdown = () => {
         ref={popoverDropdownRef}
         className={
           (dropdownPopoverShow ? "block " : "hidden ") +
-          "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg mt-1 min-w-48"
+          "bg-black text-base z-50 float-left py-2 list-none text-left rounded shadow-lg mt-1 min-w-48"
         }
       >
         <a

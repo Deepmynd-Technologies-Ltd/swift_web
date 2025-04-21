@@ -293,126 +293,127 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
   const currentCoinData = getCurrentCoinData();
 
   return (
-    <div className={`relative flex flex-col min-w-0 break-words w-full ${!isMobile && 'mb-6'} md:shadow-lg rounded bg-white`}>
-      <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
-        <div className="items-center">
-          {!selectedWallet ? (
-            <div className="text-center text-gray-500 mt-4">
-              Getting Wallets...
-            </div>
-          ) : (
-            <>
-              <img src={tokenImages[selectedWallet.abbr]} alt={selectedWallet.abbr} className="w-12 h-12 mx-auto" />
-              <h2 className="text-3xl text-center font-bold mb-1">
-                {currentCoinData ? currentCoinData.usd.toFixed(2) : '0.00'} {selectedWallet.abbr}
-              </h2>
-              <p className="text-xs text-center mb-4 text-blueGray-500">
-                {selectedWallet.equivalenceValueAmount || '0.00'}
-              </p>
-              <p className="text-base font-bold font-medium mt-8 hidden md:block">
-                Current {selectedWallet?.title} Price
-              </p>
-              <p className="text-xs text-blueGray-500 hidden md:block">
-                {selectedWallet?.equivalenceValue || '0.00'} {selectedWallet?.abbr}{" "}
-                <span className={`${currentCoinData && currentCoinData.usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                  {currentCoinData ? currentCoinData.usd_24h_change.toFixed(2) : '0.00'}%
-                </span>
-              </p>
-            </>
-          )}
-        </div>
-        
-        <div className="flex-auto">
-          <div className="relative h-48 md:h-64 mt-4">
-            {loading ? (
-              <div className="flex justify-center items-center h-full">
-                <Loading type="spin" color="#006A4E" height={50} width={50} />
+    <div className="mt-4 text-aeonik"><p className="font-bold text-xl">Token</p>
+      <div className={`relative mt-4 flex flex-col min-w-0 break-words w-full ${!isMobile && 'mb-6'} md:shadow-lg rounded bg-black`}>
+        <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
+          <div className="items-center">
+            {!selectedWallet ? (
+              <div className="text-center text-gray-500 mt-4">
+                Getting Wallets...
               </div>
             ) : (
-              <svg
-                width="100%"
-                maxWidth="350"
-                height="120"
-                viewBox="0 0 350 120"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-full"
-              >
-                <g clipPath="url(#clip0_932_4270)">
-                  <path
-                    d={svgPath}
-                    stroke="#006A4E"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d={`${svgPath} L350 120 L0 120 Z`}
-                    fill="url(#paint0_linear_932_4270)"
-                    fillOpacity="0.4"
-                  />
-                </g>
-                <defs>
-                  <linearGradient
-                    id="paint0_linear_932_4270"
-                    x1="175"
-                    y1="50"
-                    x2="175"
-                    y2="250"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop stopColor="#00FFBC" stopOpacity="0.30" />
-                    <stop offset="1" stopColor="#F7FAFE" stopOpacity="0" />
-                  </linearGradient>
-                  <clipPath id="clip0_932_4270">
-                    <rect width="350" height="120" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
+              <>
+                <img src={tokenImages[selectedWallet.abbr]} alt={selectedWallet.abbr} className="w-12 h-12 mx-auto" />
+                <h2 className="text-3xl text-center font-bold mb-1">
+                  {currentCoinData ? currentCoinData.usd.toFixed(2) : '0.00'} {selectedWallet.abbr}
+                </h2>
+                <p className="text-xs text-center mb-4 text-blueGray-500">
+                  {selectedWallet.equivalenceValueAmount || '0.00'}
+                </p>
+                <p className="text-base font-bold font-medium mt-8 hidden md:block">
+                  Current {selectedWallet?.title} Price
+                </p>
+                <p className="text-xs text-blueGray-500 hidden md:block">
+                  {selectedWallet?.equivalenceValue || '0.00'} {selectedWallet?.abbr}{" "}
+                  <span className={`${currentCoinData && currentCoinData.usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                    {currentCoinData ? currentCoinData.usd_24h_change.toFixed(2) : '0.00'}%
+                  </span>
+                </p>
+              </>
             )}
           </div>
-          <div className="flex flex-wrap w-full justify-between gap-2 mt-4 overflow-x-auto">
-            {periods.map((period) => (
-              <button
-                key={period}
-                onClick={() => setActivePeriod(period)}
-                className={`px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm font-medium transition-colors flex-shrink-0 ${
-                  activePeriod === period
-                    ? "bg-green-500 text-white"
-                    : "bg-primary-color text-gray-600 hover:bg-primary-color-4"
-                }`}
-              >
-                {period}
-              </button>
-            ))}
-          </div>
-        </div>
+          
+          <div className="flex-auto">
+            <div className="relative h-48 md:h-64 mt-4">
+              {loading ? (
+                <div className="flex justify-center items-center h-full">
+                  <Loading type="spin" color="#006A4E" height={50} width={50} />
+                </div>
+              ) : (
+                <svg
+                  viewBox="0 0 350 120"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-full h-[120px]"
+                  preserveAspectRatio="none"
+                >
+                  <g clipPath="url(#clip0_932_4270)">
+                    <path
+                      d={svgPath}
+                      stroke="#006A4E"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d={`${svgPath} L350 120 L0 120 Z`}
+                      fill="url(#paint0_linear_932_4270)"
+                      fillOpacity="0.4"
+                    />
+                  </g>
+                  <defs>
+                    <linearGradient
+                      id="paint0_linear_932_4270"
+                      x1="175"
+                      y1="50"
+                      x2="175"
+                      y2="250"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stopColor="#00FFBC" stopOpacity="0.30" />
+                      <stop offset="1" stopColor="#F7FAFE" stopOpacity="0" />
+                    </linearGradient>
+                    <clipPath id="clip0_932_4270">
+                      <rect width="350" height="120" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
 
-        <div className="flex mt-6 grid grid-cols-1 lg:grid-cols-2 md:grid-cols-3 gap-6 block lg:hidden">
-          <div className="flex-1 group flex justify-center items-end">
-            <a href="#" onClick={(e) => {e.preventDefault(); setIsSendModalOpen(true);}} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
-              <span className="block px-1 pt-1 pb-1 text-red-500">
-                <i className="fas fa-send text-red-500 text-2xl pt-1 mb-1 block text-center group-hover:text-red-500"></i>
-                <span className="block text-xs font-semibold text-red-500 pb-2">Send</span>
-                <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
-              </span>
-            </a>
+              )}
+            </div>
+            <div className="flex flex-wrap w-full justify-between gap-2 mt-4 overflow-x-auto">
+              {periods.map((period) => (
+                <button
+                  key={period}
+                  onClick={() => setActivePeriod(period)}
+                  className={`px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm font-medium transition-colors flex-shrink-0 ${
+                    activePeriod === period
+                      ? "bg-green-500 text-white"
+                      : "bg-primary-color text-gray-600 hover:bg-primary-color-4"
+                  }`}
+                >
+                  {period}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex-1 group flex justify-center items-end">
-            <a href="#" onClick={(e) => {e.preventDefault(); setIsReceiveModalOpen(true);}} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
-              <span className="block px-1 pt-1 pb-1">
-                <i className="fas fa-receive text-2xl pt-1 mb-1 block text-center group-hover:text-green"></i>
-                <span className="block text-xs font-semibold pb-2 text-green">Receive</span>
-                <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
-              </span>
-            </a>
-          </div>
-          <div className="flex-1 group flex justify-center items-end">
-            <a href="#" onClick={(e) => {e.preventDefault(); setIsBuySellModalOpen(true);}} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
-              <span className="block px-1 pt-1 pb-1">
-                <i className="fas fa-bAs text-2xl pt-1 mb-1 block text-center group-hover:text-lightBlue-500"></i>
-                <span className="block text-xs font-semibold pb-2 text-lightBlue-500 whitespace-nowrap">Buy & Sell</span>
-              </span>
-            </a>
+
+          <div className="flex mt-6 grid grid-cols-1 lg:grid-cols-2 md:grid-cols-3 gap-6 block lg:hidden">
+            <div className="flex-1 group flex justify-center items-end">
+              <a href="#" onClick={(e) => {e.preventDefault(); setIsSendModalOpen(true);}} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                <span className="block px-1 pt-1 pb-1 text-red-500">
+                  <i className="fas fa-send text-red-500 text-2xl pt-1 mb-1 block text-center group-hover:text-red-500"></i>
+                  <span className="block text-xs font-semibold text-red-500 pb-2">Send</span>
+                  <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
+                </span>
+              </a>
+            </div>
+            <div className="flex-1 group flex justify-center items-end">
+              <a href="#" onClick={(e) => {e.preventDefault(); setIsReceiveModalOpen(true);}} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                <span className="block px-1 pt-1 pb-1">
+                  <i className="fas fa-receive text-2xl pt-1 mb-1 block text-center group-hover:text-green"></i>
+                  <span className="block text-xs font-semibold pb-2 text-green">Receive</span>
+                  <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
+                </span>
+              </a>
+            </div>
+            <div className="flex-1 group flex justify-center items-end">
+              <a href="#" onClick={(e) => {e.preventDefault(); setIsBuySellModalOpen(true);}} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
+                <span className="block px-1 pt-1 pb-1">
+                  <i className="fas fa-bAs text-2xl pt-1 mb-1 block text-center group-hover:text-lightBlue-500"></i>
+                  <span className="block text-xs font-semibold pb-2 text-lightBlue-500 whitespace-nowrap">Buy & Sell</span>
+                </span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -490,7 +491,7 @@ const CardTransactionTrack = () => {
   const transactions = useSelector((state) => state.transactions?.transactions || []);
 
   return (
-    <div className="block w-full overflow-x-auto">
+    <div className="block w-full text-aeonik overflow-x-auto">
       <div className="relative w-full px-4 max-w-full flex-grow flex-1 hidden md:block">
         <h3 className="font-semibold text-sm text-blueGray-700">Transactions</h3>
       </div>
@@ -500,7 +501,7 @@ const CardTransactionTrack = () => {
           transactions.map((transaction, index) => (
             <div
               key={index}
-              className="bg-white my-1 rounded-my p-2 shadow-md"
+              className="bg-black my-1 rounded-my p-2 shadow-md"
               style={{ height: "70px", width: "100%", marginTop: "5px" }}
             >
               <div className="flex justify-between items-center">
@@ -583,13 +584,13 @@ const CombinedComponent = ({ wallet }) => {
   return (
     <>
       {/* Desktop view */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <CardLineChart wallet={wallet} />
         <CardTransactionTrack />
       </div>
 
       {/* Mobile view */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <Modal 
           isOpen={isModalOpen} 
           onClose={() => setIsModalOpen(false)}
@@ -602,3 +603,4 @@ const CombinedComponent = ({ wallet }) => {
 };
 
 export default CombinedComponent;
+

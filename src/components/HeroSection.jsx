@@ -109,25 +109,25 @@ const HeroSection = () => {
               <Zap className="section-icon" />
               <span>Real-Time Market Updates</span>
             </div>
-            <h2 className="section-main-heading">Startup-to-date with Real-time Market Updates</h2>
+            <h2 className="section-main-heading">Stay up-to-date with Real-time Market Updates</h2>
             <p className="section-description-text">
-              Stay ahead of the curve with SwiftMade real-time market updates, keeping you informed of the latest trends and opportunities in the financial world.
+              Stay ahead of the curve with SwiftAza's real-time market updates, keeping you informed of the latest trends and opportunities in the financial world.
             </p>
             <ul className="benefits-list">
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Index: market movement updates.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">Live market movement updates</span>
               </li>
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Trendy analysis and news alerts.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">Trend analysis and news alerts</span>
               </li>
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Customizable notifications.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">Customizable notifications</span>
               </li>
             </ul>
-            <a href="#" className="section-action">
+            <a href="#" className="section-action" style={{ position: "relative", right: "40%"}}>
               Learn more →
             </a>
           </div>
@@ -140,24 +140,24 @@ const HeroSection = () => {
           <div className="portfolio-content">
             <div className="section-marker">
               <PieChart className="section-icon" />
-              <span>Overview Portfolio Management</span>
+              <span>Portfolio Management</span>
             </div>
-            <h2 className="section-main-heading">Manage your Investments Portfolio seamlessly</h2>
+            <h2 className="section-main-heading">Manage your Investment Portfolio seamlessly</h2>
             <p className="section-description-text">
-              Manage your investments seamlessly with SwiftMade intuitive portfolio management tools, allowing you to track, analyze, and optimize your products with ease.
+              Manage your investments with SwiftAza's intuitive portfolio management tools, allowing you to track, analyze, and optimize your assets with ease.
             </p>
             <ul className="benefits-list">
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">View portfolio performance.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">View portfolio performance at a glance</span>
               </li>
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Decode index easily.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">Track investments easily</span>
               </li>
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Utilize advanced analytics.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">Utilize advanced analytics tools</span>
               </li>
             </ul>
             <a href="#" className="section-action">
@@ -183,23 +183,23 @@ const HeroSection = () => {
             </div>
             <h2 className="section-main-heading">Explore different investment options</h2>
             <p className="section-description-text">
-              Explore a wide range of investment options with SwiftAge, offering access to stocks, bonds, cryptocurrencies, and more, all in our convenient platform.
+              Explore a wide range of investment options with SwiftAza, offering access to stocks, bonds, cryptocurrencies, and more, all in one convenient platform.
             </p>
             <ul className="benefits-list">
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Rise(s), bonds, and cryptocurrencies.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">Stocks, bonds, and cryptocurrencies</span>
               </li>
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Alternative assets like real estate.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">Alternative assets like real estate</span>
               </li>
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Disaster for risk mitigation.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">Diversify for risk mitigation</span>
               </li>
             </ul>
-            <a href="#" className="section-action">
+            <a href="#" className="section-action" style={{ position: "relative", right: "40%"}}>
               Learn more →
             </a>
           </div>
@@ -212,23 +212,24 @@ const HeroSection = () => {
           <div className="security-content">
             <div className="section-marker">
               <Shield className="section-icon" />
-              <span>Truist that SwiftAza cares about your security.</span>
+              <span>Security First</span>
             </div>
+            <h2 className="section-main-heading">Trust that SwiftAza cares about your security</h2>
             <p className="section-description-text">
-              Truist SwiftAza is prioritising your security with robust measures to safeguard your assets and personal information from unauthorized access and cyber threats.
+              SwiftAza prioritizes your security with robust measures to safeguard your assets and personal information from unauthorized access and cyber threats.
             </p>
             <ul className="benefits-list">
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Two-factor authentication.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">Two-factor authentication protection</span>
               </li>
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Encryption for data and transactions.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">End-to-end encryption for all transactions</span>
               </li>
               <li className="benefit-item">
-                <span className="benefit-marker">*</span>
-                <span className="benefit-text">Monitor account activity.</span>
+                <span className="benefit-marker">🟊</span>
+                <span className="benefit-text">24/7 account activity monitoring</span>
               </li>
             </ul>
             <a href="#" className="section-action">
@@ -241,7 +242,7 @@ const HeroSection = () => {
         </div>
       </div>
       </div>
-  </section>
+    </section>
   );
 };
 

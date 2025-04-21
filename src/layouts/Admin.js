@@ -5,14 +5,9 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 // components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-import HeaderStats from "components/Headers/HeaderStats.js";
-import FooterAdmin from "components/Footers/FooterAdmin.js";
 
 // views
 import Dashboard from "views/admin/Dashboard.js";
-import Maps from "views/admin/Maps.js";
-import Settings from "views/admin/Settings.js";
-import Tables from "views/admin/Tables.js";
 import History from "views/admin/History.js";
 import Browser from "views/admin/Browser.js";
 
@@ -28,7 +23,7 @@ export default function Admin() {
   return (
     <>
       <Sidebar />
-      <div className="relative md:ml-64 bg-primary-color min-h-screen flex flex-col">
+      <div className="relative md:ml-64 bg-primary-color flex flex-col" style={{ marginBottom: "-30px"}}>
         {/* Background overlay */}
         {isModalOpen && (
           <>
@@ -61,18 +56,6 @@ export default function Admin() {
               <Route path="/admin/history" exact>
                 <AdminNavbar />
                 <History />
-                {/* <FooterAdmin /> */}
-              </Route>
-              <Route path="/admin/maps" exact>
-                <Maps />
-                {/* <FooterAdmin /> */}
-              </Route>
-              <Route path="/admin/settings" exact>
-                <Settings />
-                {/* <FooterAdmin /> */}
-              </Route>
-              <Route path="/admin/tables" exact>
-                <Tables />
                 {/* <FooterAdmin /> */}
               </Route>
               <Redirect from="/admin" to="/admin/dashboard" />

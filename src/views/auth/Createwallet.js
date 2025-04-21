@@ -80,7 +80,7 @@ export default function CreateWallet() {
     return (
         <div className="container mx-auto px-4 h-screen flex items-center justify-center" style={{ maxHeight: "100vh", overflow: "hidden" }}>
             <div className="relative flex flex-col w-full lg:w-6/12 px-4">
-                <div className="bg-white rounded-my shadow-lg p-8">
+                <div className="bg-black rounded-my shadow-lg p-8">
                     <div className="flex justify-center items-center">
                         <div className="loader items-center">
                             <div className="flex flex-row gap-2 square-bar-container">

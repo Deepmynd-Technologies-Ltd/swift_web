@@ -23,33 +23,33 @@ export default function SendModal({
     <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
       <div className="inset-0 z-40 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
         <div
-          className={`relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 ${isDropdownOpen ? "h-[700px]" : "h-[400px]"} sm:h-auto`}
+          className={`relative flex flex-col gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 h-[400px]`}
           style={{
             width: "90%",
             maxWidth: "400px",
             display: "flex",
             flexDirection: "column",
             alignItems: "left",
-            padding: "40px",
+            padding: " 15px 35px",
             background: "#F7FAFE",
             borderRadius: "24px",
             maxHeight: "90vh",
-            overflowY: "auto",
           }}
         >
           <div className="flex items-center justify-center">
             <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
           </div>
+          
+          <h2 className="text-lg font-bold ">Send Token</h2>
+          <h4 className="text-sm text-blueGray-500">Enter recipient's details</h4>
+
           <button
-            className="absolute top-2 text-blueGray-500 hover:text-gray-700 mt-8"
+            className="absolute top-2 text-blueGray-500 hover:text-gray-700"
             onClick={onClose}
             style={{ right: "30px" }}
           >
             <i className="fa fa-times"></i>
           </button>
-
-          <h2 className="text-lg font-bold mt-8">Send Token</h2>
-          <h4 className="text-sm text-blueGray-500">Enter recipient's details</h4>
 
           {/* Recipient Address Input */}
           <div className="w-full">
@@ -64,10 +64,10 @@ export default function SendModal({
                 onChange={(e) => setRecipientAddress(e.target.value)}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
-              <div className="bg-white w-full h-10 justify-between rounded-lg" style={{ position: "absolute", top: "1px", right: "1px", maxWidth: "90px" }}>
+              <div className="bg-black w-full h-10 justify-between rounded-lg" style={{ position: "absolute", top: "1px", right: "1px", maxWidth: "90px" }}>
                 <button
-                  className="absolute transform text-xs bg-white text-green px-3 py-1 rounded"
-                  style={{ right: "40px", top: "10px" }}
+                  className="absolute transform text-xs bg-black text-green px-3 py-1 rounded"
+                  style={{ right: "40px", marginTop: "10px" }}
                   onClick={() => navigator.clipboard.readText().then(text => setRecipientAddress(text))}
                 >
                   Paste
@@ -103,8 +103,8 @@ export default function SendModal({
                   className="text-left justify-between w-full px-2 py-1 rounded-lg text-green sm:text-base cursor-pointer transition-colors duration-200"
                   style={{
                     backgroundColor: selectedWalletState ? "#e0f7fa" : "white",
-                    height: "36px",
-                    marginBottom: "3px",
+                    height: "40px",
+                    marginBottom: "1px",
                     border: "none",
                   }}
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -116,9 +116,9 @@ export default function SendModal({
                 </button>
               </div>
               <button
-                className="absolute right-0 text-xs bg-blue-500 text-green px-3 py-1 rounded"
+                className="absolute transform text-xs bg-black text-green px-3 py-1 rounded"
+                style={{ right: "10px", marginTop: "-30px" }}
                 onClick={() => setAmount(walletBalance)}
-                style={{ bottom: "10px" }}
               >
                 Max
               </button>
@@ -126,16 +126,16 @@ export default function SendModal({
 
             {/* Dropdown Content */}
             <div
-              className="absolute overflow-hidden duration-300 ease-in-out bg-white rounded-lg shadow-sm"
+              className="absolute overflow-hidden duration-300 ease-in-out bg-black shadow-sm"
               style={{
-                maxHeight: isDropdownOpen ? '150px' : '0',
+                maxHeight: isDropdownOpen ? '105px' : '0',
                 opacity: isDropdownOpen ? 1 : 0,
                 marginTop: '2px',
-                width: "80%",
+                width: "85%",
                 transition: "max-height 0.3s ease, opacity 0.3s ease",
               }}
             >
-              <div className="overflow-y-auto no-scrollbar" style={{ maxHeight: '130px' }}>
+              <div className="overflow-y-auto no-scrollbar" style={{ maxHeight: '130px', marginTop: "-10px" }}>
                 {Object.keys(tokenNames).map((key) => (
                   <div
                     key={key}

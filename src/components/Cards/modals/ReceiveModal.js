@@ -36,7 +36,7 @@ const ReceiveModal = ({ isOpen, onClose, walletAddress, selectedWallet }) => {
           >
             <i className="fa fa-times"></i>
           </button>
-          <h2 className="text-lg font-bold">Receive Token</h2>
+          <h2 className="text-lg font-bold mt-4">Receive Token</h2>
           <div className="p-4 gap-2 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
             <div className="flex items-center justify-center mt-2">
               <img

@@ -42,7 +42,7 @@ export default function Navbar(props) {
   }, []);
 
   return (
-    <div className="flex flex-col items-center w-full bg-white p-4">
+    <div className="flex flex-col items-center w-full bg-black p-4">
       <Link
         className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-base font-bold p-2 px-0"
         to="/"

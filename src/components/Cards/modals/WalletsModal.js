@@ -13,7 +13,7 @@ const Modal = ({ isOpen, onClose, children }) => {
       onClick={onClose}
     >
       <div 
-        className="bg-white w-full max-w-md rounded-lg overflow-auto min-h-[120vh]"
+        className="bg-black w-full max-w-md rounded-lg overflow-auto min-h-[120vh]"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between text-center items-center p-4 border-b">

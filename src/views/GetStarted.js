@@ -93,7 +93,7 @@ export default function GetStarted() {
                     setShowImportSelectionModal(false);
                     setShowImport12Modal(true);
                   }}
-                  className="text-green text-center font-bold px-6 py-3 mt-4 rounded-md outline-none focus:outline-none bg-white text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  className="text-green text-center font-bold px-6 py-3 mt-4 rounded-md outline-none focus:outline-none bg-black text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
                 >
                   Import Wallet (12)<br />
                   <span className="text-xs font-normal">

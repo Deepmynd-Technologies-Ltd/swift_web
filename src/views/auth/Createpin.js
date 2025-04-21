@@ -49,7 +49,7 @@ export default function CreatePin() {
             style={{ maxHeight: "100vh", overflow: "hidden" }}
         >
             <div className="relative flex flex-col w-full lg:w-6/12 px-4">
-                <div className="bg-white rounded-my shadow-lg p-8">
+                <div className="bg-black rounded-my shadow-lg p-8">
                     <a
                         className="relative left-90 text-black text-3xl font-bold font-weight-900"
                         onClick={() => window.history.back()}

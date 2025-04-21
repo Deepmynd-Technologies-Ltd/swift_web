@@ -51,7 +51,7 @@ export default function Register() {
   return (
     <div className="container mx-auto px-4 h-screen flex items-center justify-center">
       <div className="relative flex flex-col w-full lg:w-6/12 px-4">
-        <div className="bg-white rounded-my shadow-lg p-8">
+        <div className="bg-black rounded-my shadow-lg p-8">
           <a
             className="relative left-90 text-black text-3xl font-bold font-weight-900"
             onClick={() => window.history.back()}

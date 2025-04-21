@@ -1,54 +1,99 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import SettingsModal from "components/Cards/modals/SettingsModal";
+import { X } from "lucide-react";
 
-const NavigationItem = ({ to, icon, text, isActive, onClick, isMobile }) => (
-  <div className={`items-center ${isMobile ? 'flex-1 flex flex-col justify-center' : ''}`}>
-    <Link
-      to={to}
-      onClick={onClick}
-      style={{
-        fontSize: isMobile ? "12px" : "16px",
-        padding: "12px 16px",
-        width: "100%",
-        minWidth: isMobile ? "auto" : "200px",
-        maxHeight: isMobile ? "auto" : "50px",
-        fontWeight: "bold",
-        display: "flex",
-        alignItems: "center",
-        flexDirection: isMobile ? "column" : "row",
-        borderRadius: "1rem",
-        color: isActive ? "#006A4E" : "#6B7280",
-        backgroundColor: isMobile ? "transparent" : (isActive ? "#e7e7e7" : "transparent"),
-        transition: "all 0.2s",
-        marginBottom: "10px",
-        textAlign: "center",
-        fontFamily: "Aeonik",
-      }}
-    >
-      <div
-        className={`fas ${icon}`}
+const NavigationItem = ({ to, icon, text, isActive, onClick, isMobile, isModal }) => {
+  if (isModal) {
+    return (
+      <div className={`items-center ${isMobile ? 'flex-1 flex flex-col justify-center' : ''}`}>
+        <div
+          onClick={onClick}
+          style={{
+            fontSize: isMobile ? "12px" : "16px",
+            padding: "12px 16px",
+            width: "100%",
+            minWidth: isMobile ? "auto" : "200px",
+            maxHeight: isMobile ? "auto" : "40px",
+            fontWeight: "bold",
+            display: "flex",
+            alignItems: "center",
+            flexDirection: isMobile ? "column" : "row",
+            borderRadius: "1rem",
+            color: isActive ? "#006A4E" : "#6B7280",
+            backgroundColor: isMobile ? "transparent" : (isActive ? "#7A8A9829" : "transparent"),
+            transition: "all 0.2s",
+            marginBottom: "10px",
+            textAlign: "center",
+            fontFamily: "Aeonik",
+            cursor: "pointer"
+          }}
+        >
+          <div
+            className={`fas ${icon}`}
+            style={{
+              fontSize: isMobile ? "20px" : "16px",
+              backgroundColor: isActive ? "#006A4E" : "#6B7280",
+              marginBottom: isMobile ? "4px" : "10px",
+              marginRight: isMobile ? "0" : "16px",
+              width: "20px",
+              textAlign: "center",
+            }}
+          ></div>
+          <span style={{ fontSize: isMobile ? "10px" : "14px" }}>{text}</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`items-center ${isMobile ? 'flex-1 flex flex-col justify-center' : ''}`}>
+      <Link
+        to={to}
+        onClick={onClick}
         style={{
-          fontSize: isMobile ? "20px" : "16px",
+          fontSize: isMobile ? "12px" : "16px",
+          padding: "12px 16px",
+          width: "100%",
+          minWidth: isMobile ? "auto" : "200px",
+          maxHeight: isMobile ? "auto" : "40px",
+          fontWeight: "bold",
+          display: "flex",
+          alignItems: "center",
+          flexDirection: isMobile ? "column" : "row",
+          borderRadius: "1rem",
           color: isActive ? "#006A4E" : "#6B7280",
-          marginBottom: isMobile ? "4px" : "10px",
-          marginRight: isMobile ? "0" : "16px",
-          width: "20px",
+          backgroundColor: isMobile ? "transparent" : (isActive ? "#7A8A9829" : "transparent"),
+          transition: "all 0.2s",
+          marginBottom: "10px",
           textAlign: "center",
+          fontFamily: "Aeonik",
         }}
-      ></div>
-      <span style={{ fontSize: isMobile ? "10px" : "16px" }}>{text}</span>
-    </Link>
-  </div>
-);
-
+      >
+        <div
+          className={`fas ${icon}`}
+          style={{
+            fontSize: isMobile ? "20px" : "16px",
+            backgroundColor: isActive ? "#006A4E" : "#6B7280",
+            marginBottom: isMobile ? "4px" : "10px",
+            marginRight: isMobile ? "0" : "16px",
+            width: "20px",
+            textAlign: "center",
+          }}
+        ></div>
+        <span style={{ fontSize: isMobile ? "10px" : "14px" }}>{text}</span>
+      </Link>
+    </div>
+  );
+};
 
 // 📱 Mobile Sidebar Component
-const MobileSidebar = ({ items, activeItem, setActiveItem }) => {
+const MobileSidebar = ({ items, activeItem, setActiveItem, onSettingsClick }) => {
   const location = useLocation();
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-between items-center md:hidden"
+      className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-200 flex justify-between items-center md:hidden"
       style={{
         zIndex: 999,
         boxShadow: "0 -4px 6px -1px rgba(0, 0, 0, 0.1)",
@@ -62,8 +107,15 @@ const MobileSidebar = ({ items, activeItem, setActiveItem }) => {
             key={index}
             {...item}
             isActive={location.pathname === item.to || activeItem === item.to}
-            onClick={() => setActiveItem(item.to)}
+            onClick={() => {
+              if (item.key === "settings") {
+                onSettingsClick();
+              } else {
+                setActiveItem(item.to);
+              }
+            }}
             isMobile={true}
+            isModal={item.key === "settings"}
           />
         ))}
       </div>
@@ -72,12 +124,12 @@ const MobileSidebar = ({ items, activeItem, setActiveItem }) => {
 };
 
 // 💻 Desktop Sidebar Component
-const DesktopSidebar = ({ mainItems, secondaryItems, activeItem, setActiveItem }) => {
+const DesktopSidebar = ({ mainItems, secondaryItems, activeItem, setActiveItem, onSettingsClick }) => {
   const location = useLocation();
 
   return (
     <nav
-      className="hidden md:block md:fixed md:top-0 md:bottom-0 md:w-72  bg-white z-10 py-4 px-4"
+      className="hidden md:block md:fixed md:top-0 md:bottom-0 md:w-72 bg-black z-10 py-4 px-4"
       style={{ marginTop: "10px" }}
     >
       {/* Logo */}
@@ -102,7 +154,7 @@ const DesktopSidebar = ({ mainItems, secondaryItems, activeItem, setActiveItem }
         ))}
       </div>
 
-      <div style={{ height: "200px" }}></div>
+      <div style={{ height: "calc(100vh - 65vh)" }}></div>
 
       {/* Secondary Navigation */}
       <div className="flex flex-col" style={{ marginLeft: "2%", padding: "16px 10px" }}>
@@ -111,8 +163,15 @@ const DesktopSidebar = ({ mainItems, secondaryItems, activeItem, setActiveItem }
             key={index}
             {...item}
             isActive={location.pathname === item.to || activeItem === item.to}
-            onClick={() => setActiveItem(item.to)}
+            onClick={() => {
+              if (item.key === "settings") {
+                onSettingsClick();
+              } else {
+                setActiveItem(item.to);
+              }
+            }}
             isMobile={false}
+            isModal={item.key === "settings"}
           />
         ))}
       </div>
@@ -123,6 +182,11 @@ const DesktopSidebar = ({ mainItems, secondaryItems, activeItem, setActiveItem }
 // 🧩 Combined Sidebar Component
 export default function Sidebar() {
   const [activeItem, setActiveItem] = useState(null);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+
+  const handleSettingsClick = () => {
+    setShowSettingsModal(true);
+  };
 
   const mainNavigationItems = [
     { to: "/admin/dashboard", icon: "fa-wal", text: "Wallet" },
@@ -131,8 +195,8 @@ export default function Sidebar() {
   ];
 
   const secondaryNavigationItems = [
-    { to: "/admin/help", icon: "fa-ghelp", text: "Get Help", key: "help" },
-    { to: "/admin/settings", icon: "fa-set", text: "Settings", key: "settings" },
+    { to: "#", icon: "fa-ghelp", text: "Get Help", key: "help" },
+    { to: "#", icon: "fa-set", text: "Settings", key: "settings" },
   ];
 
   return (
@@ -142,11 +206,19 @@ export default function Sidebar() {
         secondaryItems={secondaryNavigationItems}
         activeItem={activeItem}
         setActiveItem={setActiveItem}
+        onSettingsClick={handleSettingsClick}
       />
       <MobileSidebar
-        items={mainNavigationItems}
+        items={[...mainNavigationItems, secondaryNavigationItems[1]]}
         activeItem={activeItem}
         setActiveItem={setActiveItem}
+        onSettingsClick={handleSettingsClick}
+      />
+      
+      {/* Render the Settings Modal */}
+      <SettingsModal 
+        isOpen={showSettingsModal} 
+        onClose={() => setShowSettingsModal(false)} 
       />
     </>
   );

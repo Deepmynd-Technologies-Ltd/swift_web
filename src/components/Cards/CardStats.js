@@ -149,82 +149,58 @@ export default function CardStats({ isHidden, selectedWallet }) {
   }, [walletAddress]);
 
   return (
-    <div className="relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 min-h-[300px] items-center justify-center">
-      <div className="flex-auto p-4">
-        <div className="container flex flex-col lg:flex-row lg:justify-between gap-4 w-full">
-          <div className="relative flex flex-col bg-white rounded-my shadow-lg p-4 mb-4 xl:mb-0 w-full lg:w-auto max-h-[300px] justify-center  md:items-left" style={{ maxHeight: "120px", minWidth: "220px" }}>
-            <div className="relative mt-4 text-center md:text-left">
-              <p className="font-semibold text-3xl text-blueGray-700">
-                {hidden ? "••••••••" : `$${walletBalance || 0}.00`}
-              </p>
-              <p className="text-sm mt-2 text-blueGray-400 whitespace-nowrap overflow-hidden text-ellipsis"></p>
-              {walletAddress ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}` : "Wallet address"}
-              <button className="text-xs bg-primary-color-3 text-green ml-3 w-8 rounded">WS</button>
+    <div className="relative text-aeonik flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 min-h-[300px] items-center justify-center">
+      <div className="flex-auto p-4 w-full">
+        <div className="flex flex-col lg:flex-row lg:justify-between gap-4 w-full">
+          
+          {/* Wallet Balance Box */}
+          <div
+            className="bg-black rounded-my shadow-lg p-4 w-full lg:w-auto flex flex-col items-center mx-auto"
+            style={{ maxHeight: "120px", maxWidth: "220px", minWidth: "220px" }}
+          >
+                  <div className="mt-2 text-center lg:text-left w-full">
+                    <p className="font-semibold text-2xl lg:text-3xl text-blueGray-700">
+                      {hidden ? "••••••••" : `$${walletBalance || 0}.00`}
+                    </p>
+                    <div className="flex justify-center lg:justify-start items-center mt-2 text-sm text-blueGray-400 whitespace-nowrap">
+                      {walletAddress ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}` : "Wallet address"}
+                      <button className="text-xs bg-primary-color-3 text-green ml-3 w-8 rounded">WS</button>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-black rounded-my shadow-lg p-4 w-full lg:w-2/3 min-h-[150px] mx-auto md:mx-0">
+                <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 flex w-full justify-between items-center" style={{ padding: "2px 7%"}}>
+                  {/* Top Actions */}
+              {[
+                { label: "Send", icon: "fa-send", color: "text-red-500", onClick: () => setIsSendModalOpen(true) },
+                { label: "Receive", icon: "fa-receive", color: "text-green", onClick: () => setIsReceiveModalOpen(true) },
+                { label: "Scan", icon: "fa-scan", color: "text-purple-500", onClick: () => setIsScanModalOpen(true) },
+              ].map(({ label, icon, color, onClick }, index) => (
+                <div key={index} className="flex justify-center items-end group">
+                  <a onClick={onClick} className="flex flex-col items-center w-full text-gray-400 hover:text-indigo-500 cursor-pointer">
+                    <i className={`fas ${icon} text-2xl mb-1 ${color}`}></i>
+                    <span className={`text-xs font-semibold ${color}`}>{label}</span>
+                    <span className="w-5 h-1 bg-transparent group-hover:bg-indigo-500 rounded-full mt-1"></span>
+                  </a>
+                </div>
+              ))}
             </div>
-          </div>
-
-          <div className="relative bg-white rounded-my shadow-lg p-4 w-full lg:w-2/3" style={{ minHeight: "170px", minWidth: "320px" }}>
-            <div className="flex grid grid-cols-1 lg:grid-cols-2 md:grid-cols-3 gap-6">
-              <div className="flex-1 group flex justify-center items-end">
-                <a href="#" onClick={() => setIsSendModalOpen(true)} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
-                  <span className="block px-1 pt-1 pb-1 text-red-500">
-                    <i className="fas fa-send text-red-500 text-2xl pt-1 mb-1 block text-center group-hover:text-red-500"></i>
-                    <span className="block text-xs font-semibold text-red-500 pb-2">Send</span>
-                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
-                  </span>
-                </a>
-              </div>
-              <div className="flex-1 group flex justify-center items-end">
-                <a href="#" onClick={() => setIsReceiveModalOpen(true)} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
-                  <span className="block px-1 pt-1 pb-1">
-                    <i className="fas fa-receive text-2xl pt-1 mb-1 block text-center group-hover:text-green"></i>
-                    <span className="block text-xs font-semibold pb-2 text-green">Receive</span>
-                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
-                  </span>
-                </a>
-              </div>
-              <div className="flex-1 group flex justify-center items-end">
-                <a href="#" onClick={() => setIsScanModalOpen(true)} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
-                  <span className="block px-1 pt-1 pb-1">
-                    <i className="fas fa-scan text-2xl pt-1 mb-1 block text-center group-hover:text-purple-500"></i>
-                    <span className="block text-xs font-semibold pb-2 text-purple-500">Scan</span>
-                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
-                  </span>
-                </a>
-              </div>
-            </div>
-
-            <div className="flex grid grid-cols-1 lg:grid-cols-2 md:grid-cols-3 gap-6 mt-4">
-              <div className="flex-1 group flex justify-center items-end">
-                <a
-                  href="#"
-                  onClick={() => setIsSwapModalOpen(true)}
-                  className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500"
-                >
-                  <span className="block px-1 pt-1 pb-1">
-                    <i className="fas fa-swap text-2xl pt-1 mb-1 block text-center group-hover:text-orange-500"></i>
-                    <span className="block text-xs font-semibold pb-2 text-orange-500">Swap</span>
-                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
-                  </span>
-                </a>
-              </div>
-              <div className="flex-1 group flex justify-center items-end">
-                <a href="#" onClick={() => setIsBuySellModalOpen(true)} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
-                  <span className="block px-1 pt-1 pb-1">
-                    <i className="fas fa-bAs text-2xl pt-1 mb-1 block text-center group-hover:text-lightBlue-500"></i>
-                    <span className="block text-xs font-semibold pb-2 text-lightBlue-500 whitespace-nowrap">Buy & Sell</span>
-                  </span>
-                </a>
-              </div>
-              <div className="flex-1 group flex justify-center items-end">
-                <a href="#" onClick={() => setIsP2PModalOpen(true)} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
-                  <span className="block px-1 pt-1 pb-1">
-                    <i className="fas fa-p2p text-2xl pt-1 mb-1 block text-center group-hover:text-more-teal-500"></i>
-                    <span className="block text-xs font-semibold pb-2 text-more-teal-500">P2P</span>
-                    <span className="block w-5 mx-auto h-1 group-hover:bg-indigo-500 rounded-full"></span>
-                  </span>
-                </a>
-              </div>
+  
+            {/* Bottom Actions */}
+            <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 gap-4 mt-4 flex w-full justify-between items-center" style={{ padding: "2px 7%"}}>
+              {[
+                { label: "Swap", icon: "fa-swap", color: "text-orange-500", onClick: () => setIsSwapModalOpen(true) },
+                { label: "Buy & Sell", icon: "fa-bAs", color: "text-lightBlue-500", onClick: () => setIsBuySellModalOpen(true) },
+                { label: "P2P", icon: "fa-p2p", color: "text-more-teal-500", onClick: () => setIsP2PModalOpen(true) },
+              ].map(({ label, icon, color, onClick }, index) => (
+                <div key={index} className="flex justify-center items-end group">
+                  <a onClick={onClick} className="flex flex-col items-center w-full text-gray-400 hover:text-indigo-500 cursor-pointer">
+                    <i className={`fas ${icon} text-2xl mb-1 ${color}`}></i>
+                    <span className={`text-xs font-semibold ${color}`}>{label}</span>
+                    <span className="w-5 h-1 bg-transparent group-hover:bg-indigo-500 rounded-full mt-1"></span>
+                  </a>
+                </div>
+              ))}
             </div>
           </div>
         </div>

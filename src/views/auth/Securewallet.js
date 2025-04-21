@@ -72,7 +72,7 @@ export default function SecureWallet() {
             className="container mx-auto h-screen flex items-center justify-center"
             style={{ maxHeight: "100vh", overflow: "hidden" }}
         >
-            <div className="bg-white rounded-my shadow-lg p-8" style={{ width: "420px", overflowX: "hidden" }}>
+            <div className="bg-black rounded-my shadow-lg p-8" style={{ width: "420px", overflowX: "hidden" }}>
                 <a
                     className="relative left-90 text-black text-3xl font-bold font-weight-900"
                     onClick={() => window.history.back()}

@@ -8,7 +8,7 @@ export default function CardPageVisits() {
   return (
     <>
       {transactions.length === 0 ? (
-        <div className="flex justify-center items-center h-full">
+        <div className="flex justify-center items-center ">
           <iframe
             src="https://lottie.host/embed/dd22a9f2-d975-4883-8056-1daba02d405d/nxIiStzba3.lottie"
             style={{ width: "500px", height: "500px" }}
@@ -50,7 +50,7 @@ export default function CardPageVisits() {
                     style={{ height: "80px", width: "100%" }}
                   >
                     <td colSpan="6" className="p-0">
-                      <div className="bg-white my-1.5 rounded-my">
+                      <div className="bg-black my-1.5 rounded-my">
                         <div className="flex">
                           <div className="w-1/6 px-6 py-3">
                             <div className="flex items-center">

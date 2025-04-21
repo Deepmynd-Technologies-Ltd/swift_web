@@ -113,6 +113,16 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
 
   if (!isOpen) return null;
 
+  // Styles for the corner brackets
+  const cornerStyle = {
+    position: 'absolute',
+    width: '30px',
+    height: '30px',
+    borderColor: '#62a1eb',
+    borderWidth: '3px',
+    borderStyle: 'solid',
+  };
+
   return (
     <div className="bg-black h-screen w-full z-10 flex justify-center items-center" 
          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
@@ -134,10 +144,9 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
           <i className="fa fa-times"></i>
         </button>
 
-        <div className="p-4 w-full flex flex-col max-w-md rounded-lg justify-center ">
+        <div className="p-4 w-full flex flex-col max-w-md rounded-lg justify-center">
           <h4 className="text-left text-lg font-semibold text-blueGray-700 mb-4">
             Scan QR Code 
-            {/* {isMobile ? " (Using back camera)" : " (Using front camera)"} */}
           </h4>
 
           {!hasPermission ? (
@@ -190,17 +199,60 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
                 ViewFinder={() => (
                   <div 
                     style={{ 
-                      border: '2px solid #62a1eb', 
                       position: 'absolute', 
                       top: '50%', 
                       left: '50%', 
                       width: '200px', 
                       height: '200px', 
                       transform: 'translate(-50%, -50%)',
-                      borderRadius: '12px',
-                      boxShadow: '0 0 0 5000px rgba(0, 0, 0, 0.5)'
+                      boxShadow: '0 0 0 5000px rgba(0, 0, 0, 0.5)',
+                      borderRadius: '8px'
                     }}
-                  />
+                  >
+                    {/* Top-left corner */}
+                    <div style={{
+                      ...cornerStyle,
+                      top: 0,
+                      left: 0,
+                      borderRight: 'none',
+                      borderBottom: 'none',
+                      borderTopLeftRadius: '8px',
+                      backgroundColor: 'bg-primary-color'
+                    }} />
+                    
+                    {/* Top-right corner */}
+                    <div style={{
+                      ...cornerStyle,
+                      top: 0,
+                      right: 0,
+                      borderLeft: 'none',
+                      borderBottom: 'none',
+                      borderTopRightRadius: '8px',
+                      backgroundColor: 'bg-primary-color'
+                    }} />
+                    
+                    {/* Bottom-left corner */}
+                    <div style={{
+                      ...cornerStyle,
+                      bottom: 0,
+                      left: 0,
+                      borderRight: 'none',
+                      borderTop: 'none',
+                      borderBottomLeftRadius: '8px',
+                      backgroundColor: 'bg-primary-color'
+                    }} />
+                    
+                    {/* Bottom-right corner */}
+                    <div style={{
+                      ...cornerStyle,
+                      bottom: 0,
+                      right: 0,
+                      borderLeft: 'none',
+                      borderTop: 'none',
+                      borderBottomRightRadius: '8px',
+                      backgroundColor: 'bg-primary-color'
+                    }} />
+                  </div>
                 )}
               />
             </div>
@@ -219,7 +271,7 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
                 aria-label={torchOn ? "Turn off torch" : "Turn on torch"}
               >
                 <img 
-                  src="https://icons.veryicon.com/png/o/object/material-design-icons-1/flashlight-16.png" 
+                  src={require("../../../assets/img/flashlight.png")} 
                   alt={torchOn ? "Turn off torch" : "Turn on torch"} 
                   className="h-8 w-8"
                   style={{ filter: "invert(1)" }}

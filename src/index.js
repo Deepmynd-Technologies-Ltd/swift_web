@@ -13,8 +13,6 @@ import Auth from "layouts/Auth.js";
 
 // views without layouts
 import CreateAccountNavbar from "components/Navbars/CreateAccountNavbar";
-import Landing from "views/Landing.js";
-import Profile from "views/Profile.js";
 import GetStarted from "views/GetStarted.js";
 import Login from "views/auth/Login.js";
 import AuthLayout from "layouts/Auth.js";
@@ -30,10 +28,6 @@ ReactDOM.render(
         {/* Routes with layouts */}
         <Route path="/admin" component={Admin} />
         <Route path="/auth" component={Auth} />
-
-        {/* Routes without layouts */}
-        <Route path="/landing" exact component={Landing} />
-        <Route path="/profile" exact component={Profile} />
 
         <Route path="/" exact>
           {walletDetails && walletDetails.walletAddresses ? (
