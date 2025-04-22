@@ -29,7 +29,7 @@ const DuckDuckGoSearch = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search or enter address"
-          className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200 focus:border-blue-500"
+          className="w-full pl-10 pr-12 py-2 bg-black border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200 focus:border-blue-500"
         />
       </form>
     </div>

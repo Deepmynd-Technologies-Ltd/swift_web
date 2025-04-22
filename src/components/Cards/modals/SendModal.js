@@ -20,7 +20,7 @@ export default function SendModal({
 }) {
   if (!isOpen) return null;
   return (
-    <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+    <div className="bg-blueGray-600 h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
       <div className="inset-0 z-40 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
         <div
           className={`relative flex flex-col gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 h-[400px]`}
@@ -31,7 +31,8 @@ export default function SendModal({
             flexDirection: "column",
             alignItems: "left",
             padding: " 15px 35px",
-            background: "#F7FAFE",
+            background: "#070707",
+            // F7FAFE
             borderRadius: "24px",
             maxHeight: "90vh",
           }}
@@ -40,7 +41,7 @@ export default function SendModal({
             <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
           </div>
           
-          <h2 className="text-lg font-bold ">Send Token</h2>
+          <h2 className="text-lg font-bold text-white">Send Token</h2>
           <h4 className="text-sm text-blueGray-500">Enter recipient's details</h4>
 
           <button
@@ -53,7 +54,7 @@ export default function SendModal({
 
           {/* Recipient Address Input */}
           <div className="w-full">
-            <label className="block text-sm font-medium font-semibold text-blueGray-700 mt-4">
+            <label className="block text-sm font-medium font-semibold text-white mt-4">
               Recipient Address
             </label>
             <div className="relative">
@@ -62,9 +63,9 @@ export default function SendModal({
                 placeholder="Enter recipient’s address"
                 value={recipientAddress}
                 onChange={(e) => setRecipientAddress(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="bg-primary-color block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
-              <div className="bg-black w-full h-10 justify-between rounded-lg" style={{ position: "absolute", top: "1px", right: "1px", maxWidth: "90px" }}>
+              <div className="w-full h-12 justify-between rounded-lg" style={{ position: "absolute", top: "0", right: "0", maxWidth: "90px", maxHeight: "42px" }}>
                 <button
                   className="absolute transform text-xs bg-black text-green px-3 py-1 rounded"
                   style={{ right: "40px", marginTop: "10px" }}
@@ -85,7 +86,7 @@ export default function SendModal({
 
           {/* Amount Input with Dropdown */}
           <div className="w-full mt-4">
-            <label className="block text-sm font-medium font-semibold text-blueGray-700">
+            <label className="block text-sm font-medium font-semibold text-white">
               Amount
             </label>
             <div className="relative">
@@ -94,7 +95,7 @@ export default function SendModal({
                 placeholder="Enter amount"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center"
+                className="bg-primary-color mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center"
               />
 
               {/* Token Selector */}
@@ -102,7 +103,8 @@ export default function SendModal({
                 <button
                   className="text-left justify-between w-full px-2 py-1 rounded-lg text-green sm:text-base cursor-pointer transition-colors duration-200"
                   style={{
-                    backgroundColor: selectedWalletState ? "#e0f7fa" : "white",
+                    backgroundColor: selectedWalletState ? "rgba(30, 41, 59, var(--tw-bg-opacity))" : "#000906",
+                    // #e0f7fa : white
                     height: "40px",
                     marginBottom: "1px",
                     border: "none",

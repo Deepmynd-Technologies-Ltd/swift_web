@@ -23,6 +23,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
           transform: `translateX(${activeButton.offsetLeft}px)`,
           transition: 'transform 0.3s ease',
           borderRadius: '4px',
+          color: "white",
         });
       }
     };
@@ -72,11 +73,11 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+    <div className="bg-blueGray-600 h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
       <div className="inset-0 z-50 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
         <div
           className="relative bg-black rounded-xl shadow-lg w-96 overflow-hidden"
-          style={{ width: "90%", maxWidth: "400px", maxHeight: "80vh", background: "#F7FAFE", borderRadius: "24px", padding: "20px" }}
+          style={{ width: "90%", maxWidth: "400px", maxHeight: "80vh", background: "#070707", borderRadius: "24px", padding: "20px" }}
         >
           {/* Handle bar */}
           <div className="flex items-center justify-center w-full mb-4">
@@ -98,7 +99,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
                   <a
                     ref={buyButtonRef}
                     className={`px-6 py-1 rounded-md text-sm relative z-10 ${
-                      activeTab === 'Buy' ? 'text-gray-800 font-medium' : 'text-gray-500'
+                      activeTab === 'Buy' ? 'text-white font-medium' : 'text-gray-500'
                     }`}
                     onClick={() => setActiveTab('Buy')}
                   >
@@ -107,7 +108,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
                   <a
                     ref={sellButtonRef}
                     className={`px-6 py-1 rounded-md text-sm relative z-10 ${
-                      activeTab === 'Sell' ? 'text-gray-800 font-medium' : 'text-gray-500'
+                      activeTab === 'Sell' ? 'text-white font-medium' : 'text-gray-500'
                     }`}
                     onClick={() => setActiveTab('Sell')}
                   >
@@ -118,7 +119,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
               
               {/* Close button */}
               <button
-                className="absolute top-2 text-blueGray-500 hover:text-gray-700"
+                className="absolute top-2 text-white hover:text-gray-700"
                 onClick={onClose}
                 style={{ right: "30px" }}
               >
@@ -140,11 +141,11 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
                       {option.icon}
                     </div>
                     <div className="ml-4">
-                      <h3 className="font-medium text-sm">{option.name}</h3>
+                      <h3 className="font-medium text-sm text-white">{option.name}</h3>
                       <p className="text-gray-500 text-xs" style={{ width: "214px"}}>{option.description}</p>
                     </div>
                   </div>
-                  <div className="text-gray-400 font-bold text-2xl" style={{ fontWeight: "400px"}}>→</div>
+                  <div className="text-white font-bold text-2xl" style={{ fontWeight: "400px"}}>→</div>
                 </div>
               ))}
             </div>

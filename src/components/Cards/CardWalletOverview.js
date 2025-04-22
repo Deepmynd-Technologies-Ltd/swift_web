@@ -61,7 +61,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
       <div className="block w-full overflow-x-auto">
         {loading || isRefreshing ? (
           <div className="flex justify-center items-center py-4">
-            <Loading type="spinningBubbles" color="#006A4E" height={50} width={50} />
+            <Loading type="spinningBubbles" color="#27C499" height={50} width={50} />
           </div>
         ) : null}
         <div className="flex flex-col space-y-4">
@@ -100,7 +100,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
             };
 
             const isSelected = selectedWallet?.abbr === token;
-            const textColorClass = isSelected ? "text-white" : "";
+            const textColorClass = isSelected ? "text-black" : "";
+            const textWhiteColouredClass = isSelected ? "text-black" : "text-white";
 
             return (
               <div
@@ -135,14 +136,14 @@ export default function CardWalletOverview({ onSelectWallet }) {
                           style={{ objectFit: "cover" }}
                         />
                         <div>
-                          <span className={`text-sm font-bold hidden md:block ${textColorClass}`}>{token}</span>
+                          <span className={`text-sm font-bold hidden md:block ${textWhiteColouredClass}`}>{token}</span>
                           <span className={`text-xs block font-semibold md:mt-0 ${textColorClass}`} style={{ maxWidth: "100px" }}>
                             {tokenNames[token]}
                           </span>
                           <div className="flex items-center md:hidden w-full">
                             <span className={`text-sm ${textColorClass}`}> ${formatNumber(wallet.marketPrice) || "0.00"}</span>
                             <span className={`text-sm ml-2 ${
-                              isSelected ? "text-white" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
+                              isSelected ? "text-black" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
                             }`}>
                               {formatNumber(wallet.marketPricePercentage) || "0.0"}%
                             </span>
@@ -154,7 +155,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
                       <div>
                         <span className={`text-sm ${textColorClass}`}>${formatNumber(wallet.marketPrice) || "0.00"}</span>
                         <span className={`text-sm ml-2 ${
-                          isSelected ? "text-white" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
+                          isSelected ? "text-black" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
                         }`}>
                           {formatNumber(wallet.marketPricePercentage) || "0.0"}%
                         </span>
@@ -162,7 +163,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
                     </div>
                     <div className={`w-full md:w-1/3 px-6 py-3 text-sm text-right ${textColorClass}`}>
                       <div>
-                        <span className={`text-sm font-semibold ${textColorClass}`}>{formatNumber(wallet.equivalenceValue) + '.0' || "0"}</span>
+                        <span className={`text-lg font-semibold ${textWhiteColouredClass}`}>{formatNumber(wallet.equivalenceValue) || "0"}</span>
                         <span className={`text-sm block ${textColorClass}`}>{formatNumber(wallet.equivalenceValueAmount) + '.0' || "$0"}</span>
                       </div>
                     </div>

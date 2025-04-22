@@ -54,7 +54,7 @@ export default function Admin() {
                 {/* <FooterAdmin /> */}
               </Route>
               <Route path="/admin/history" exact>
-                <AdminNavbar />
+                <AdminNavbar style={{ marginTop: "50px"}}/>
                 <History />
                 {/* <FooterAdmin /> */}
               </Route>

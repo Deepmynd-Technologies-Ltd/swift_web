@@ -1,6 +1,6 @@
 // HeroSection.jsx
 import { Button } from "./ui/button";
-import { Globe, Zap, Shield, PieChart } from "lucide-react";
+import { BarChart, Zap, Shield, Briefcase } from "lucide-react";
 import "../assets/styles/hero.css";
 
 const HeroSection = () => {
@@ -67,7 +67,7 @@ const HeroSection = () => {
           {/* Global Connectivity */}
           <div className="feature-card">
             <div className="feature-icon-container">
-              <Globe className="feature-icon" />
+              <BarChart className="feature-icon" />
             </div>
             <h3 className="feature-title">Global Connectivity</h3>
             <p className="feature-description">
@@ -90,7 +90,7 @@ const HeroSection = () => {
         {/* Trade Worldwide section */}
         <div className="worldwide-section">
           <div className="section-tag">Features</div>
-          <h2 className="section-heading">
+          <h2 className="section-heading text-dark-mode-1">
             Trade Worldwide with <span className="highlight">SwiftAza</span>
           </h2>
           <p className="section-description">
@@ -139,7 +139,7 @@ const HeroSection = () => {
         <div className="portfolio-management-grid">
           <div className="portfolio-content">
             <div className="section-marker">
-              <PieChart className="section-icon" />
+              <Briefcase className="section-icon" />
               <span>Portfolio Management</span>
             </div>
             <h2 className="section-main-heading">Manage your Investment Portfolio seamlessly</h2>
@@ -178,7 +178,7 @@ const HeroSection = () => {
           </div>
           <div className="section-details">
             <div className="section-marker">
-              <Globe className="section-icon" />
+              <BarChart className="section-icon" />
               <span>Diverse Investment Options</span>
             </div>
             <h2 className="section-main-heading">Explore different investment options</h2>

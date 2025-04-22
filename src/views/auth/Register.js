@@ -116,7 +116,7 @@ export default function Register() {
 
               <button
                 type="submit"
-                className="w-full mt-6 bg-green-500 text-white font-semibold p-3 rounded-my"
+                className="w-full mt-6 bg-green-500 text-dark-mode-1 font-semibold p-3 rounded-my"
               >
                 Create Account
               </button>

@@ -18,7 +18,7 @@ export default function FooterSmall(props) {
                 Copyright © {new Date().getFullYear()}{" "}
                 <a
                   href="https://www.creative-tim.com?ref=nr-footer-small"
-                  className="text-white hover:text-blueGray-300 text-sm font-semibold py-1"
+                  className="text-dark-mode-1 hover:text-blueGray-300 text-sm font-semibold py-1"
                 >
                   Creative Tim
                 </a>
@@ -29,7 +29,7 @@ export default function FooterSmall(props) {
                 <li>
                   <a
                     href="https://www.creative-tim.com?ref=nr-footer-small"
-                    className="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
+                    className="text-dark-mode-1 hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
                   >
                     Creative Tim
                   </a>
@@ -37,7 +37,7 @@ export default function FooterSmall(props) {
                 <li>
                   <a
                     href="https://www.creative-tim.com/presentation?ref=nr-footer-small"
-                    className="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
+                    className="text-dark-mode-1 hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
                   >
                     About Us
                   </a>
@@ -45,7 +45,7 @@ export default function FooterSmall(props) {
                 <li>
                   <a
                     href="http://blog.creative-tim.com?ref=nr-footer-small"
-                    className="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
+                    className="text-dark-mode-1 hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
                   >
                     Blog
                   </a>
@@ -53,7 +53,7 @@ export default function FooterSmall(props) {
                 <li>
                   <a
                     href="https://github.com/Deepmynd-Technologies-Ltd/swift_web//blob/main/LICENSE.md?ref=nr-footer-small"
-                    className="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
+                    className="text-dark-mode-1 hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
                   >
                     MIT License
                   </a>

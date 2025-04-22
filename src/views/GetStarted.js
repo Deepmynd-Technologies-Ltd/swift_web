@@ -33,19 +33,19 @@ export default function GetStarted() {
 
   return (
     <>
-      <section className="header relative pt-16 items-center flex h-screen max-h-860-px">
+      <section className="header relative bg-black pt-16 items-center flex h-screen max-h-860-px" style={{ marginBottom: "-30px"}}>
         <div className="container mx-auto items-center flex flex-wrap justify-center">
           <div className="w-full md:w-8/12 lg:w-6/12 xl:w-6/12 px-4">
             <div className="pt-32 sm:pt-0 text-center">
               <Link
-                className="md:block text-center md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-3xl font-bold p-2 px-0"
+                className="md:block text-center text-white md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-3xl font-bold p-2 px-0"
                 to="/"
-                style={{ margin: "15px" }}
+                style={{ margin: "15px", color: "#FFFFFF"}}
               >
-                Swift<span style={{ color: "#006A4E" }}>Aza</span>
+                Swift<span style={{ color: "#27C499" }}>Aza</span>
               </Link>
 
-              <p className="mt-4 text-lg leading-relaxed text-blueGray-500">
+              <p className="mt-4 text-lg leading-relaxed text-dark-mode-1">
                 Create a wallet or add an existing wallet
               </p>
 
@@ -106,7 +106,7 @@ export default function GetStarted() {
                     setShowImportSelectionModal(false);
                     setShowImport24Modal(true);
                   }}
-                  className="text-white text-center font-bold px-6 py-3 mt-4 rounded-md outline-none focus:outline-none bg-green-500 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  className="text-dark-mode-1 text-center font-bold px-6 py-3 mt-4 rounded-md outline-none focus:outline-none bg-green-500 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
                 >
                   Import Wallet (24)<br />
                   <span className="text-xs font-normal">

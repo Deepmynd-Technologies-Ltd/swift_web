@@ -17,7 +17,7 @@ import ImportWallet24 from "views/auth/ImportWallet24.js";
 
 const AuthLayout = ({ children, NavbarComponent }) => {
   return (
-    <main className="flex flex-col md:flex-row min-h-screen">
+    <main className="flex flex-col md:flex-row min-h-screen" style={{ marginBottom: "-30px"}}>
       <div className="w-full md:w-1/4 lg:w-1/5 xl:w-1/6">
         <NavbarComponent />
       </div>

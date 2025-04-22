@@ -50,7 +50,7 @@ const Footer = () => {
                 placeholder="Email address" 
                 className="footer-input"
               />
-              <span className="footer-input-icon">→</span>
+              <span className="footer-input-icon font-bold teext-3xl">→</span>
             </div>
             <p className="footer-subscribe-text">
               Hello, we are SwiftAza. Our goal is to allow users deal in crypto transaction with any fiat currency from anywhere in the world.
@@ -61,7 +61,7 @@ const Footer = () => {
         <div className="footer-divider"></div>
 
         <div className="footer-bottom flex flex-row w-full">
-            <p className="footer-brand text-xl">Swift<span className="text-green">Aza</span></p>
+            <p className="footer-brand text-xl">Swift<span style={{ color: "#27C499" }}>Aza</span></p>
             
             <div className="footer-links justify-center mx-auto">
               <a href="#">Terms</a>

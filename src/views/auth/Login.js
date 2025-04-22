@@ -43,7 +43,7 @@ export default function Login() {
         <div className="container mx-auto px-4 h-screen flex items-center justify-center" style={{ maxHeight: "100vh", overflow: "hidden" }}>
             <div className="relative flex flex-col w-full lg:w-6/12 px-4">
                 <div className="bg-black rounded-my shadow-lg p-8">
-                    <a className="relative left-90 text-black text-3xl font-bold" onClick={() => window.history.back()}>←</a>
+                    <a className="relative left-90 text-white text-3xl font-bold" onClick={() => window.history.back()}>←</a>
                     <h2 className="text-2xl font-bold mb-4 text-green">Enter Passcode</h2>
                     <p className="text-sm text-blueGray-500 mb-6 font-semibold">Passcode is required for security means</p>
                     {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
@@ -61,11 +61,11 @@ export default function Login() {
                                         maxLength="1"
                                         onChange={(e) => handleChange(e.target.value, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
-                                        className="w-12 h-12 border border-gray-300 text-center text-lg rounded-lg focus:ring focus:outline-none"
+                                        className="w-12 h-12 border border-gray-300 bg-black text-center text-lg rounded-lg focus:ring focus:outline-none"
                                     />
                                 ))}
                             </div>
-                            <button type="button" className="w-full mt-6 bg-green-500 text-white font-semibold p-3 rounded-my" onClick={handleLogin}>Login</button>
+                            <button type="button" className="w-full mt-6 bg-green-500 text-white text-dark-mode-1 font-semibold p-3 rounded-my" onClick={handleLogin}>Login</button>
                         </div>
                     </form>
                 </div>

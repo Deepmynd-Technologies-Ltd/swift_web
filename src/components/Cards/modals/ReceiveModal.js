@@ -13,7 +13,7 @@ const ReceiveModal = ({ isOpen, onClose, walletAddress, selectedWallet }) => {
   };
 
   return (
-    <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+    <div className="bg-blueGray-600 h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
       <div className="inset-0 z-50 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
         <div
           className="relative p-4 z-10 shadow-lg"
@@ -22,7 +22,7 @@ const ReceiveModal = ({ isOpen, onClose, walletAddress, selectedWallet }) => {
             width: "90%",
             maxHeight: "90vh",
             overflowY: "auto",
-            background: "#F7FAFE",
+            background: "#070707",
             borderRadius: "24px",
           }}
         >
@@ -36,7 +36,7 @@ const ReceiveModal = ({ isOpen, onClose, walletAddress, selectedWallet }) => {
           >
             <i className="fa fa-times"></i>
           </button>
-          <h2 className="text-lg font-bold mt-4">Receive Token</h2>
+          <h2 className="text-lg font-bold mt-4 text-white">Receive Token</h2>
           <div className="p-4 gap-2 w-full flex flex-col max-w-md rounded-lg justify-center items-center">
             <div className="flex items-center justify-center mt-2">
               <img
@@ -45,12 +45,13 @@ const ReceiveModal = ({ isOpen, onClose, walletAddress, selectedWallet }) => {
                 className="w-10 h-10 mr-2"
                 style={{ width: "24px", height: "24px" }}
               />
-              <h4 className="text-lg font-semibold text-blueGray-700">{selectedWallet ? selectedWallet.abbr : ""}</h4>
+              <h4 className="text-lg font-semibold text-white">{selectedWallet ? selectedWallet.abbr : ""}</h4>
             </div>
 
             <div
-              className="p-4 flex flex-col justify-center items-center rounded-lg"
-              style={{ width: "100%", minHeight: "300px", background: "rgba(122, 138, 152, 0.08)" }}
+              className="p-4 flex flex-col justify-center items-center rounded-lg bg-primary-color-4"
+              style={{ width: "100%", minHeight: "300px"}}
+              // #7A8A9814
             >
               <QRCode
                 value={walletAddress}

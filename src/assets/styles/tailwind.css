@@ -28,7 +28,7 @@ Use a better box model (opinionated).
 }
 
 .fas.active {
-  background-color: #006A4E;
+  background-color: #27C499;
 }
 
 .fa-hm { mask-image: url('../img/home_icon.png'); -webkit-mask-image: url('../img/home_icon.png'); }
@@ -78,7 +78,7 @@ Use a better box model (opinionated).
 .fa-receive { 
   mask-image: url('../img/receive_icon.png'); 
   -webkit-mask-image: url('../img/receive_icon.png'); 
-  background-color: #006A4E; 
+  background-color: #27C499; 
   display: block; 
   margin: 0 auto; 
 }
@@ -172,22 +172,17 @@ body {
 }
 
 .wallet-row {
-  background-color: #f9fafb;
-  color: #374151; /* blueGray-700 */
+  background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
+  color: white;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* .wallet-row:hover {
-  background-color: #9ae6d1;
-  color: white !important;
-} */
-
 .wallet-row.active {
-  background-color: #006A4E;
+  background-color: #27C499;
   color: white !important;
 }
 .wallet-row.selected {
-  background-color: #006A4E #21ffc4 #F7FAFE;
+  background-color: #27C499 #21ffc4 #070707;
   color: white !important;
 }
 
@@ -198,7 +193,8 @@ body {
 
 /* .wallet-row:hover img, */
 .wallet-row.active img {
-  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(100%) contrast(100%);
+  filter: brightness(0) saturate(100%);
+  /* filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(100%) contrast(100%); */
 }
 
 /* Loader Square Animation */
@@ -1323,14 +1319,15 @@ select {
   background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
 }
 
-.bg- {
+.bg-white {
   --tw-bg-opacity: 1;
   background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
 }
 
 .bg-primary-color {
   --tw-bg-opacity: 1;
-  background-color: #F4F4F4;
+  background-color: #000906; 
+  /* #F4F4F4 */
 }
 
 .bg-primary-color-3 {
@@ -1345,7 +1342,8 @@ select {
 
 .bg-green-500 {
   --tw-bg-opacity: 1;
-  background-color: #006A4E;
+  background-color: #27C499;
+  /* #27C499 */
 }
 
 .bg-green-600 {
@@ -2712,6 +2710,11 @@ select {
   color: rgba(0, 0, 0, var(--tw-text-opacity));
 }
 
+.text-dark-mode-1 {
+  --tw-text-opacity: 1;
+  color: #7A8A98;
+}
+
 .text-white {
   --tw-text-opacity: 1;
   color: rgba(255, 255, 255, var(--tw-text-opacity));
@@ -2719,7 +2722,7 @@ select {
 
 .text-green {
   --tw-text-opacity: 1;
-  color: #006A4E;
+  color: #27C499;
 }
 
 .text-pink-400 {
@@ -3402,7 +3405,7 @@ select {
     text-align: right;
   }
 
-  .lg\:text-white {
+  .lg\:text-dark-mode-1 {
     --tw-text-opacity: 1;
     color: rgba(255, 255, 255, var(--tw-text-opacity));
   }

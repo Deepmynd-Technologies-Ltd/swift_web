@@ -124,11 +124,11 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
   };
 
   return (
-    <div className="bg-black h-screen w-full z-10 flex justify-center items-center" 
+    <div className="bg-blueGray-600 h-screen w-full z-10 flex justify-center items-center" 
          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
       <div
         className="relative p-4 z-10 shadow-lg flex flex-col items-center"
-        style={{ maxWidth: "350px", width: "90%", maxHeight: "90vh", overflowY: "auto", background: "#F7FAFE", borderRadius: "24px" }}
+        style={{ maxWidth: "350px", width: "90%", maxHeight: "90vh", overflowY: "auto", background: "#070707", borderRadius: "24px" }}
       >
         {/* Handle bar */}
         <div className="flex items-center justify-center w-full mb-4">
@@ -145,7 +145,7 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
         </button>
 
         <div className="p-4 w-full flex flex-col max-w-md rounded-lg justify-center">
-          <h4 className="text-left text-lg font-semibold text-blueGray-700 mb-4">
+          <h4 className="text-left text-lg font-semibold text-white mb-4">
             Scan QR Code 
           </h4>
 
@@ -154,7 +154,7 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
                  style={{ width: "100%", height: "280px" }}>
               <p className="text-center text-gray-600">Camera permission is required to scan QR codes.</p>
               <button 
-                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                className="mt-4 bg-blue-500 text-dark-mode-1 px-4 py-2 rounded-lg hover:bg-blue-600"
                 onClick={() => {
                   const facingMode = isMobile ? "environment" : "user";
                   navigator.mediaDevices.getUserMedia({ 
@@ -265,7 +265,7 @@ const ScanModal = ({ isOpen, onClose, setRecipientAddress, setIsSendModalOpen })
           {hasPermission && isMobile && (
             <div className="flex justify-center mt-4">
               <button
-                className="h-12 w-12 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors duration-200 flex items-center justify-center"
+                className="h-12 w-12 bg-green-500 hover:bg-green-600 text-dark-mode-1 p-3 rounded-full transition-colors duration-200 flex items-center justify-center"
                 onClick={toggleTorch}
                 title={torchOn ? "Turn off torch" : "Turn on torch"}
                 aria-label={torchOn ? "Turn off torch" : "Turn on torch"}

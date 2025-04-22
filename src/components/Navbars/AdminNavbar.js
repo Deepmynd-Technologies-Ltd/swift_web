@@ -23,7 +23,7 @@ export default function Navbar() {
           {/* Brand */}
                 {window.location.pathname === "/admin/dashboard" && (
                 <a
-                  className="text-green text-sm lg:inline-block font-bold flex items-center bg-primary-color-4 p-2 rounded-lg justify-center text-center lg:justify-start lg:text-left"
+                  className="text-green text-sm lg:inline-block font-bold flex items-center bg-blueGray-700 p-2 rounded-lg justify-center text-center lg:justify-start lg:text-left"
                   style={{
                   marginTop: "20px",
                   fontWeight: 700,
@@ -34,7 +34,7 @@ export default function Navbar() {
                   aria-haspopup="true"
                   aria-expanded="true"
                 >
-                  <i className="fas fa-wal mr-2"></i>
+                  <i className="fas fa-wal mr-2" style={{ backgroundColor: "#27C499"}}></i>
                   Wallets
                   <i className="fa fa-chevron-down ml-2"></i>
                 </a>
@@ -72,8 +72,8 @@ export default function Navbar() {
             >
               <i
                 className={`fas ${
-                  theme === "light" ? "fa-lightmode" : "fa-darkmode"
-                } text-yellow-500 dark:text-gray-300`}
+                  theme === "light" ? "fa-darkmode" : "fa-lightmode"
+                } bg-white`}
               ></i>
             </a>
 

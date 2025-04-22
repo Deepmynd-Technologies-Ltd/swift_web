@@ -64,7 +64,7 @@ export default function ConfirmPin() {
             <div className="relative flex flex-col w-full lg:w-6/12 px-4">
                 <div className="bg-black rounded-my shadow-lg p-8">
                     <a
-                        className="relative left-90 text-black text-3xl font-bold font-weight-900"
+                        className="relative left-90 text-white text-3xl font-bold font-weight-900"
                         onClick={() => window.history.back()}
                     >
                         ←
@@ -88,7 +88,7 @@ export default function ConfirmPin() {
                                         maxLength="1"
                                         onChange={(e) => handleChange(e.target.value, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
-                                        className="w-12 h-12 border border-gray-300 text-center text-lg rounded-lg focus:ring focus:outline-none"
+                                        className="w-12 h-12 border border-gray-300 bg-black text-center text-lg rounded-lg focus:ring focus:outline-none"
                                     />
                                 ))}
                             </div>

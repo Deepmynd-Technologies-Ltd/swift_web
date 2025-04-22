@@ -11,7 +11,7 @@ export default function Navbar(props) {
             to="/"
             style={{ margin: "15px" }}
             >
-            Swift<span style={{color: "#006A4E"}}>Aza</span>
+            Swift<span style={{color: "#27C499"}}>Aza</span>
         </Link>
       
 
@@ -30,7 +30,7 @@ export default function Navbar(props) {
         {/* Title */}
       <h1 
         className="mt-6 text-center font-bold"
-        style={{ width: '288px', height: '29px', color: '#006A4E' }}
+        style={{ width: '288px', height: '29px', color: '#27C499' }}
       >
         Get Started with SwiftAza
       </h1>

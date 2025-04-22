@@ -48,7 +48,7 @@ const Navbar = () => {
       <div className="navbar-container mt-4">
         <a href="/" className="navbar-logo">
           <div className="text-2xl font-bold text-white">
-            Swift<span className="text-green">Aza</span>
+            Swift<span style={{ color: "#27C499" }}>Aza</span>
           </div>
         </a>
 

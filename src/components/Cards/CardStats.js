@@ -159,12 +159,12 @@ export default function CardStats({ isHidden, selectedWallet }) {
             style={{ maxHeight: "120px", maxWidth: "220px", minWidth: "220px" }}
           >
                   <div className="mt-2 text-center lg:text-left w-full">
-                    <p className="font-semibold text-2xl lg:text-3xl text-blueGray-700">
+                    <p className="font-semibold text-2xl lg:text-3xl text-white">
                       {hidden ? "••••••••" : `$${walletBalance || 0}.00`}
                     </p>
                     <div className="flex justify-center lg:justify-start items-center mt-2 text-sm text-blueGray-400 whitespace-nowrap">
                       {walletAddress ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}` : "Wallet address"}
-                      <button className="text-xs bg-primary-color-3 text-green ml-3 w-8 rounded">WS</button>
+                      <button className="text-xs bg-blueGray-700 text-green ml-3 w-8 rounded">WS</button>
                     </div>
                   </div>
                 </div>

@@ -26,7 +26,7 @@ ReactDOM.render(
     <BrowserRouter>
       <Switch>
         {/* Routes with layouts */}
-        <Route path="/admin" component={Admin} />
+        <Route path="/admin" component={Admin}/>
         <Route path="/auth" component={Auth} />
 
         <Route path="/" exact>

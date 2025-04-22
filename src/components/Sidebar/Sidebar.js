@@ -20,7 +20,7 @@ const NavigationItem = ({ to, icon, text, isActive, onClick, isMobile, isModal }
             alignItems: "center",
             flexDirection: isMobile ? "column" : "row",
             borderRadius: "1rem",
-            color: isActive ? "#006A4E" : "#6B7280",
+            color: isActive ? "#27C499" : "#6B7280",
             backgroundColor: isMobile ? "transparent" : (isActive ? "#7A8A9829" : "transparent"),
             transition: "all 0.2s",
             marginBottom: "10px",
@@ -33,7 +33,7 @@ const NavigationItem = ({ to, icon, text, isActive, onClick, isMobile, isModal }
             className={`fas ${icon}`}
             style={{
               fontSize: isMobile ? "20px" : "16px",
-              backgroundColor: isActive ? "#006A4E" : "#6B7280",
+              backgroundColor: isActive ? "#27C499" : "#6B7280",
               marginBottom: isMobile ? "4px" : "10px",
               marginRight: isMobile ? "0" : "16px",
               width: "20px",
@@ -62,7 +62,7 @@ const NavigationItem = ({ to, icon, text, isActive, onClick, isMobile, isModal }
           alignItems: "center",
           flexDirection: isMobile ? "column" : "row",
           borderRadius: "1rem",
-          color: isActive ? "#006A4E" : "#6B7280",
+          color: isActive ? "#27C499" : "#6B7280",
           backgroundColor: isMobile ? "transparent" : (isActive ? "#7A8A9829" : "transparent"),
           transition: "all 0.2s",
           marginBottom: "10px",
@@ -74,7 +74,7 @@ const NavigationItem = ({ to, icon, text, isActive, onClick, isMobile, isModal }
           className={`fas ${icon}`}
           style={{
             fontSize: isMobile ? "20px" : "16px",
-            backgroundColor: isActive ? "#006A4E" : "#6B7280",
+            backgroundColor: isActive ? "#27C499" : "#6B7280",
             marginBottom: isMobile ? "4px" : "10px",
             marginRight: isMobile ? "0" : "16px",
             width: "20px",
@@ -129,16 +129,16 @@ const DesktopSidebar = ({ mainItems, secondaryItems, activeItem, setActiveItem, 
 
   return (
     <nav
-      className="hidden md:block md:fixed md:top-0 md:bottom-0 md:w-72 bg-black z-10 py-4 px-4"
-      style={{ marginTop: "10px" }}
+      className="hidden md:block md:fixed md:top-0 md:bottom-0 md:w-72 bg-black z-10 py-6 px-6"
+      
     >
       {/* Logo */}
       <Link
         to="/"
-        className="text-left text-lg font-bold mb-6 block"
+        className="text-left text-white text-lg font-bold mb-6 block"
         style={{ fontFamily: "Aeonik", fontSize: "24px", marginLeft: "10%" }}
       >
-        Swift<span style={{ color: "#006A4E" }}>Aza</span>
+        Swift<span style={{ color: "#27C499" }}>Aza</span>
       </Link>
 
       {/* Main Navigation */}

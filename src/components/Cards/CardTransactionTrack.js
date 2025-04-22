@@ -293,7 +293,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
   const currentCoinData = getCurrentCoinData();
 
   return (
-    <div className="mt-4 text-aeonik"><p className="font-bold text-xl">Token</p>
+    <div className="mt-4 text-aeonik text-white"><p className="font-bold text-xl">Token</p>
       <div className={`relative mt-4 flex flex-col min-w-0 break-words w-full ${!isMobile && 'mb-6'} md:shadow-lg rounded bg-black`}>
         <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
           <div className="items-center">
@@ -315,7 +315,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
                 </p>
                 <p className="text-xs text-blueGray-500 hidden md:block">
                   {selectedWallet?.equivalenceValue || '0.00'} {selectedWallet?.abbr}{" "}
-                  <span className={`${currentCoinData && currentCoinData.usd_24h_change > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                  <span className={`${currentCoinData && currentCoinData.usd_24h_change > 0 ? "text-green" : "text-red-500"} ml-4`}>
                     {currentCoinData ? currentCoinData.usd_24h_change.toFixed(2) : '0.00'}%
                   </span>
                 </p>
@@ -327,7 +327,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
             <div className="relative h-48 md:h-64 mt-4">
               {loading ? (
                 <div className="flex justify-center items-center h-full">
-                  <Loading type="spin" color="#006A4E" height={50} width={50} />
+                  <Loading type="spin" color="#27C499" height={50} width={50} />
                 </div>
               ) : (
                 <svg
@@ -340,7 +340,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
                   <g clipPath="url(#clip0_932_4270)">
                     <path
                       d={svgPath}
-                      stroke="#006A4E"
+                      stroke="#27C499"
                       strokeWidth="2"
                       strokeLinecap="round"
                     />
@@ -360,7 +360,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
                       gradientUnits="userSpaceOnUse"
                     >
                       <stop stopColor="#00FFBC" stopOpacity="0.30" />
-                      <stop offset="1" stopColor="#F7FAFE" stopOpacity="0" />
+                      <stop offset="1" stopColor="#070707" stopOpacity="0" />
                     </linearGradient>
                     <clipPath id="clip0_932_4270">
                       <rect width="350" height="120" fill="white" />
@@ -375,10 +375,10 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
                 <button
                   key={period}
                   onClick={() => setActivePeriod(period)}
-                  className={`px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm font-medium transition-colors flex-shrink-0 ${
+                  className={`px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm border-none font-medium transition-colors flex-shrink-0 ${
                     activePeriod === period
-                      ? "bg-green-500 text-white"
-                      : "bg-primary-color text-gray-600 hover:bg-primary-color-4"
+                      ? "bg-green-500 text-black"
+                      : "bg-primary-color text-gray-600 hover:bg-primary-color-4 clicked:border-none"
                   }`}
                 >
                   {period}
@@ -493,7 +493,7 @@ const CardTransactionTrack = () => {
   return (
     <div className="block w-full text-aeonik overflow-x-auto">
       <div className="relative w-full px-4 max-w-full flex-grow flex-1 hidden md:block">
-        <h3 className="font-semibold text-sm text-blueGray-700">Transactions</h3>
+        <h3 className="font-semibold text-sm text-white">Transactions</h3>
       </div>
       <div className="h-2  hidden md:block mx-4 my-2 border border-solid border-blueGray-100" />
       <div className="space-y-4">
@@ -556,7 +556,7 @@ const CardTransactionTrack = () => {
                 d="M7 13H17M7 17H13"
               />
             </svg>
-            <p>You have not make any transactions yet</p>
+            <p className="text-white">You have not make any transactions yet</p>
           </div>
         )}
       </div>

@@ -42,13 +42,13 @@ export default function Navbar(props) {
   }, []);
 
   return (
-    <div className="flex flex-col items-center w-full bg-black p-4">
+    <div className="flex flex-col items-center w-full bg-black p-8">
       <Link
         className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-base font-bold p-2 px-0"
         to="/"
-        style={{ margin: "15px" }}
+        style={{ margin: "15px", color: "white" }}
       >
-        Swift<span style={{ color: "#006A4E" }}>Aza</span>
+        Swift<span style={{ color: "#27C499" }}>Aza</span>
       </Link>
 
       {/* Slide Navigation Buttons */}
@@ -87,7 +87,7 @@ export default function Navbar(props) {
         style={{
           width: "288px",
           height: "29px",
-          color: "#006A4E",
+          color: "#27C499",
           transition: "opacity 0.9s linear",
           opacity: isFadingOut ? 0 : isFadingIn ? 0.9 : 1,
         }}

@@ -5,7 +5,7 @@ const ConfirmationModal = ({ isOpen, onClose, setIsSendModalOpen }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="bg-black h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+    <div className="bg-blueGray-600 h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
       <div className="inset-0 z-40 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
         <div
           className="relative flex flex-col p-4 gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300"
@@ -14,7 +14,7 @@ const ConfirmationModal = ({ isOpen, onClose, setIsSendModalOpen }) => {
             overflowY: "auto",
             minWidth: "300px",
             width: "90%",
-            background: "#F7FAFE",
+            background: "#070707",
             borderRadius: "24px",
             padding: "20px",
           }}
@@ -40,7 +40,7 @@ const ConfirmationModal = ({ isOpen, onClose, setIsSendModalOpen }) => {
           <h3 className="text-lg text-center font-bold" style={{ lineHeight: "29px", color: "#9A7CF8" }}>Rejoice!</h3>
           <p className="text-sm text-center text-blueGray-500">You have sent 0.01 BTC to <br /><strong>0x473hfhyskjeyhden75hdgws73</strong></p>
           <button
-            className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-500 transition-colors duration-200 mt-4"
+            className="bg-green-500 w-full text-dark-mode-1 px-4 py-2 rounded-lg hover:bg-green-500 transition-colors duration-200 mt-4"
             onClick={() => {
               onClose();
               setIsSendModalOpen(true);
