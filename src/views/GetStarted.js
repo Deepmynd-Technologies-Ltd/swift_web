@@ -1,86 +1,90 @@
 /* eslint-disable */
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import ImportWallet12 from "../views/auth/ImportWallet12";
-import ImportWallet24 from "../views/auth/ImportWallet24";
+import ImportWalletModal from "../views/auth/ImportWalletModal";
 
 export default function GetStarted() {
-  const [showImportSelectionModal, setShowImportSelectionModal] = useState(false);
-  const [showImport12Modal, setShowImport12Modal] = useState(false);
-  const [showImport24Modal, setShowImport24Modal] = useState(false);
-
+  const [showImportSelectionModal, setShowSelector] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [wordCount, setWordCount] = useState(12);
   const [seedWords, setSeedWords] = useState(Array(12).fill(""));
 
-  const handleChange = (value, index) => {
-    const updated = [...seedWords];
-    updated[index] = value;
-    setSeedWords(updated);
+  // when user picks 12 or 24, reset state
+  const openImport = (count) => {
+    setWordCount(count);
+    setSeedWords(Array(count).fill(""));
+    setShowSelector(false);
+    setShowImportModal(true);
   };
 
-  const handleKeyDown = (e, index) => {
-    if (e.key === "Enter" && index < seedWords.length - 1) {
+  const handleChange = (value, idx) => {
+    const arr = [...seedWords];
+    arr[idx] = value;
+    setSeedWords(arr);
+  };
+
+  const handleKeyDown = (e, idx) => {
+    if (e.key === "Enter" && idx < wordCount - 1) {
       e.preventDefault();
-      const nextInput = document.getElementById(`seed-${index + 1}`);
-      if (nextInput) nextInput.focus();
+      const next = document.getElementById(`seed-${idx + 1}`);
+      next?.focus();
     }
   };
 
   const handleContinue = (e) => {
     e.preventDefault();
-    console.log("Seed words submitted:", seedWords);
-    // Proceed to import wallet logic
+    console.log(`Submitted ${wordCount} words:`, seedWords);
+    // ...your import logic here...
+    setShowImportModal(false);
   };
 
   return (
     <>
-      <section className="header relative bg-black pt-16 items-center flex h-screen max-h-860-px" style={{ marginBottom: "-30px"}}>
-        <div className="container mx-auto items-center flex flex-wrap justify-center">
-          <div className="w-full md:w-8/12 lg:w-6/12 xl:w-6/12 px-4">
-            <div className="pt-32 sm:pt-0 text-center">
+      <section
+        className="header relative bg-black pt-16 flex h-screen items-center"
+        style={{ marginBottom: "-30px" }}
+      >
+        {/* … create wallet / import buttons … */}
+        <div className="container mx-auto flex justify-center">
+          <div className="text-center px-4">
+            <Link to="/" className="text-3xl font-bold text-white mb-4 inline-block">
+              Swift<span className="text-green">Aza</span>
+            </Link>
+            <p className="text-lg text-gray-300 mb-12">
+              Create a wallet or add an existing wallet
+            </p>
+            <div className="mt-32" />
+            <div className="flex flex-col md:flex-row gap-2 justify-center ">
               <Link
-                className="md:block text-center text-white md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-3xl font-bold p-2 px-0"
-                to="/"
-                style={{ margin: "15px", color: "#FFFFFF"}}
+                to="/auth/createpin"
+                className="bg-green-500 text-white font-bold px-6 py-4 rounded-lg shadow hover:shadow-lg transition"
+                style={{ minWidth: 250, maxWidth: 300 }}
               >
-                Swift<span style={{ color: "#27C499" }}>Aza</span>
+                Create Wallet
               </Link>
-
-              <p className="mt-4 text-lg leading-relaxed text-dark-mode-1">
-                Create a wallet or add an existing wallet
-              </p>
-
-              <div className="mt-48" />
-              <div className="mt-16 justify-between flex">
-                <a
-                  href="/auth/createpin"
-                  className="text-white w-full font-bold px-6 py-4 mr-9 rounded-lg outline-none focus:outline-none bg-green-500 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
-                >
-                  Create Wallet
-                </a>
-                <button
-                  onClick={() => setShowImportSelectionModal(true)}
-                  className="text-green w-full font-bold px-6 py-4 ml-9 rounded-lg outline-none focus:outline-none bg-primary-color-3 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
-                >
-                  Import Wallet
-                </button>
-              </div>
+              <button
+                onClick={() => setShowSelector(true)}
+                className="bg-primary-color-4 text-green font-bold px-6 py-4 rounded-lg shadow hover:shadow-lg transition"
+                style={{ minWidth: 250, maxWidth: 300 }}
+              >
+                Import Wallet
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Modal: Choose Import Option */}
         {showImportSelectionModal && (
-          <div className="fixed top-0 inset-0 z-50 flex items-center justify-center bg-primary-color-4 h-screen w-full">
-            <div className="bg-primary-color-3 rounded-lg p-6 w-[400px] h-150-px max-w-md mb-16">
+          <div className="fixed top-0 inset-0 z-50 flex items-center justify-center bg-blueGray-600 h-screen w-full">
+            <div className="bg-primary-color rounded-lg p-6 w-[400px] h-150-px max-w-md mb-16 mx-auto justify-center" style={{ margin: "10px" }}>
               <div className="flex justify-end gap-3">
                 <button
-                  onClick={() => setShowImportSelectionModal(false)}
-                  className="px-4 py-2 text-lg font-medium text-black font-bold focus:outline-none"
+                  onClick={() => setShowSelector(false)}
+                  className="px-4 py-2 text-lg font-medium text-white font-bold focus:outline-none"
                 >
                   X
                 </button>
               </div>
-              <h3 className="text-2xl text-center font-bold text-gray-900 mb-4">
+              <h3 className="text-2xl text-center font-bold text-white mb-4">
                 Import Wallet
               </h3>
               <p className="text-sm text-center text-gray-500 mb-6">
@@ -90,10 +94,11 @@ export default function GetStarted() {
               <div className="flex flex-row gap-3 justify-between mx-auto mx-4 mb-8">
                 <button
                   onClick={() => {
-                    setShowImportSelectionModal(false);
-                    setShowImport12Modal(true);
+                    setShowSelector(false);
+                    openImport(12);
                   }}
-                  className="text-green text-center font-bold px-6 py-3 mt-4 rounded-md outline-none focus:outline-none bg-black text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  className="text-white text-center font-bold px-6 py-3 mt-4 rounded-md outline-none focus:outline-none bg-black text-sm sm:text-base shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  style={{ border: "1px solid #27C499" }}
                 >
                   Import Wallet (12)<br />
                   <span className="text-xs font-normal">
@@ -103,10 +108,11 @@ export default function GetStarted() {
 
                 <button
                   onClick={() => {
-                    setShowImportSelectionModal(false);
-                    setShowImport24Modal(true);
+                    setShowSelector(false);
+                    openImport(24);
                   }}
-                  className="text-dark-mode-1 text-center font-bold px-6 py-3 mt-4 rounded-md outline-none focus:outline-none bg-green-500 text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  className="text-white text-center font-bold px-6 py-3 mt-4 rounded-md outline-none focus:outline-none bg-black text-sm sm:text-base shadow hover:shadow-lg ease-linear transition-all duration-150"
+                  style={{ border: "1px solid #27C499" }}
                 >
                   Import Wallet (24)<br />
                   <span className="text-xs font-normal">
@@ -117,26 +123,14 @@ export default function GetStarted() {
             </div>
           </div>
         )}
-
-        {/* Actual 12-word Input Modal */}
-        {showImport12Modal && (
-          <ImportWallet12
+        {showImportModal && (
+          <ImportWalletModal
+            wordCount={wordCount}
             seedWords={seedWords}
             handleChange={handleChange}
             handleKeyDown={handleKeyDown}
             handleContinue={handleContinue}
-            onClose={() => setShowImport12Modal(false)}
-          />
-        )}
-
-        {/* Actual 24-word Input Modal */}
-        {showImport24Modal && (
-          <ImportWallet24
-            seedWords={seedWords}
-            handleChange={handleChange}
-            handleKeyDown={handleKeyDown}
-            handleContinue={handleContinue}
-            onClose={() => setShowImport24Modal(false)}
+            onClose={() => setShowImportModal(false)}
           />
         )}
       </section>
