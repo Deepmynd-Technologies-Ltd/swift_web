@@ -66,9 +66,9 @@ export default function CardWalletOverview({ onSelectWallet }) {
         ) : null}
         <div className="flex flex-col space-y-4">
           <div className="w-full flex flex-row justify-between items-center bg-gray-100 rounded-t-lg py-3 px-4">
-            <div className="text-sm font-semibold text-blueGray-700 flex-1">Token</div>
-            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-center">Market Price</div>
-            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-right">USD Equivalent</div>
+            <div className="text-sm font-semibold text-blueGray-700 flex-1 hidden md:block">Token</div>
+            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-center hidden md:block">Market Price</div>
+            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-right hidden md:block">USD Equivalent</div>
           </div>
 
           {Object.keys(tokenNames).map((token) => {

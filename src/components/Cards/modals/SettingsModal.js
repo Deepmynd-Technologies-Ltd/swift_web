@@ -23,9 +23,8 @@ const SettingsModal = ({ isOpen, onClose }) => {
         className="relative bg-black p-4 z-10 shadow-lg flex flex-col no-scrollbar"
         style={{
           maxWidth: "446px",
-          maxHeight: "1169px",
           width: "100%",
-          height: "90vh",
+          height: "100vh",
           borderRadius: "24px",
           overflowY: "auto"
         }}
@@ -37,7 +36,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
 
         {/* Header */}
         <div className="flex justify-between items-center w-full px-6 py-4">
-          <h2 className="text-3xl text-aeonik font-bold text-white">Settings</h2>
+          <h2 className="text-3xl text-aeonik font-bold text-white text-center sm:text-left">Settings</h2>
           <button
             className="absolute top-2 text-blueGray-500 hover:text-gray-700"
             onClick={onClose}
@@ -145,7 +144,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
           </div>
 
           {/* Company Section */}
-          <div className="text-gray-500 mb-4">Comapany</div>
+          <div className="text-gray-500 mb-4">Company</div>
 
           {/* FAQ */}
           <div className="flex justify-between items-center mb-4 py-2">

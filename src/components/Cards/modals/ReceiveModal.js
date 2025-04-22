@@ -16,7 +16,7 @@ const ReceiveModal = ({ isOpen, onClose, walletAddress, selectedWallet }) => {
     <div className="bg-blueGray-600 h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
       <div className="inset-0 z-50 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
         <div
-          className="relative p-4 z-10 shadow-lg"
+          className="relative p-4 z-10 shadow-lg no-scrollbar"
           style={{
             maxWidth: "350px",
             width: "90%",

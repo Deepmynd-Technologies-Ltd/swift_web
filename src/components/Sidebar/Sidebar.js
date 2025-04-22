@@ -93,7 +93,7 @@ const MobileSidebar = ({ items, activeItem, setActiveItem, onSettingsClick }) =>
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-200 flex justify-between items-center md:hidden"
+      className="fixed bottom-0 left-0 right-0 bg-black flex justify-between items-center md:hidden"
       style={{
         zIndex: 999,
         boxShadow: "0 -4px 6px -1px rgba(0, 0, 0, 0.1)",
@@ -209,7 +209,7 @@ export default function Sidebar() {
         onSettingsClick={handleSettingsClick}
       />
       <MobileSidebar
-        items={[...mainNavigationItems, secondaryNavigationItems[1]]}
+        items={mainNavigationItems}
         activeItem={activeItem}
         setActiveItem={setActiveItem}
         onSettingsClick={handleSettingsClick}

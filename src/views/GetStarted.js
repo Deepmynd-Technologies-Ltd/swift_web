@@ -53,7 +53,7 @@ export default function GetStarted() {
             <p className="text-lg text-gray-300 mb-12">
               Create a wallet or add an existing wallet
             </p>
-            <div className="mt-32" />
+            <div className="mt-48" />
             <div className="flex flex-col md:flex-row gap-2 justify-center ">
               <Link
                 to="/auth/createpin"
