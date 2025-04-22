@@ -127,7 +127,7 @@ const HeroSection = () => {
                 <span className="benefit-text">Customizable notifications</span>
               </li>
             </ul>
-            <a href="#" className="section-action" style={{ position: "relative", right: "40%"}}>
+            <a href="#" className="section-action">
               Learn more →
             </a>
           </div>
@@ -199,7 +199,7 @@ const HeroSection = () => {
                 <span className="benefit-text">Diversify for risk mitigation</span>
               </li>
             </ul>
-            <a href="#" className="section-action" style={{ position: "relative", right: "40%"}}>
+            <a href="#" className="section-action">
               Learn more →
             </a>
           </div>

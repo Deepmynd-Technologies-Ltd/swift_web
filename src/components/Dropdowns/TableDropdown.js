@@ -18,7 +18,7 @@ const NotificationDropdown = () => {
   return (
     <>
       <a
-        className="text-white py-1 px-3"
+        className="text-blueGray-500 py-1 px-3"
         href="#pablo"
         ref={btnDropdownRef}
         onClick={(e) => {

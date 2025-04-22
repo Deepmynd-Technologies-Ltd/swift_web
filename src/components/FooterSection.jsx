@@ -50,7 +50,7 @@ const Footer = () => {
                 placeholder="Email address" 
                 className="footer-input"
               />
-              <span className="footer-input-icon font-bold teext-3xl">→</span>
+              <span className="footer-input-icon font-bold">→</span>
             </div>
             <p className="footer-subscribe-text">
               Hello, we are SwiftAza. Our goal is to allow users deal in crypto transaction with any fiat currency from anywhere in the world.

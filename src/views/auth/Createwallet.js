@@ -108,13 +108,13 @@ export default function CreateWallet() {
                     </div>
                     <div className="text-center gap-4">
                         {loading ? (
-                            <p className="text-gray-600 mt-4 text-white semibold">Generating wallet address...</p>
+                            <p className="text-gray-600 mt-4 text-blueGray-500 semibold">Generating wallet address...</p>
                             ) : (
-                            <p className="text-gray-600 mt-4 text-white semibold">
+                            <p className="text-gray-600 mt-4 text-blueGray-500 semibold">
                                 Generate Wallet Address
                             </p>
                         )}
-                        <a className="mt-4 text-white font-semibold p-3 rounded-my" onClick={handleNext}>
+                        <a className="mt-4 text-blueGray-500 font-semibold p-3 rounded-my" onClick={handleNext}>
                             Try Again
                         </a>
                     </div>

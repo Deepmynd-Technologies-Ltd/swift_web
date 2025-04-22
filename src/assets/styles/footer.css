@@ -8,11 +8,6 @@
     overflow: hidden;
   }
   
-  .footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
   .footer-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -76,17 +71,34 @@
     color: #9ca3af;
   }
 
+  .footer-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .footer-input {
+    width: 100%;
+    padding-right: 60px; /* Make space for the icon */
+  }
+  
   .footer-input-icon {
     position: absolute;
-    right: 9.5%;
-    top: 37.5%;
+    right: 0;
+    top: 40%;
     transform: translateY(-50%);
-    color: #9ca3af;
+    color: white;
     background-color: #4f46e5;
-    padding: 13px 24px;
-    font-size: 16px;
-    font-weight: 1000;
+    padding: 10px 16px;
+    font-size: 20px;
+    font-weight: 700;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .footer-button {

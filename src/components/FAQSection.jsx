@@ -131,7 +131,7 @@ const FAQSection = () => {
                         </div>
                     ))}
 
-                    <div className="support-container">
+                    <div className="support-container hidden md:block">
                         <p className="question-title">Still have a question?</p>
                         <p className="support-text">Reach out to our support team.</p>
                         <button className="message-button">
@@ -164,6 +164,15 @@ const FAQSection = () => {
                             )}
                         </div>
                     ))}
+                </div>
+
+                <div className="support-container md:hidden">
+                    <p className="question-title">Still have a question?</p>
+                    <p className="support-text">Reach out to our support team.</p>
+                    <button className="message-button">
+                        <MessageSquare size={18} />
+                        <span>Message Us</span>
+                    </button>
                 </div>
             </div>
         </div>

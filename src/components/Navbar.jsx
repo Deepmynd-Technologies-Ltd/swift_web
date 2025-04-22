@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown } from "lucide-react";
-import { useLocation, Link } from "react-router-dom"; // Add this import
+import { ChevronDown, Menu, X } from "lucide-react";
+import { useLocation, Link } from "react-router-dom";
 import "../assets/styles/navbar.css";
 
 const Navbar = () => {
-  const location = useLocation(); // Get current location
+  const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("products");
   const [indicatorLeft, setIndicatorLeft] = useState("0px");
   const [indicatorWidth, setIndicatorWidth] = useState("0px");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const tabRefs = useRef({
     products: null,
@@ -24,7 +25,6 @@ const Navbar = () => {
     else if (path.includes("/contact-us")) setActiveTab("contact");
   }, [location]);
 
-  // Rest of your existing useEffect hooks
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -41,7 +41,16 @@ const Navbar = () => {
       setIndicatorLeft(`${offsetLeft}px`);
       setIndicatorWidth(`${offsetWidth}px`);
     }
-  }, [activeTab, location]); // Add location to dependencies
+  }, [activeTab, location]);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  // Close mobile menu when a link is clicked
+  const handleMobileNavClick = () => {
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header className={`navbar-header ${isScrolled ? "scrolled" : ""}`}>
@@ -80,15 +89,57 @@ const Navbar = () => {
             >
               Contact Us
             </Link>
-
           </div>
         </nav>
 
+        {/* Mobile Menu Button */}
+        <button className="mobile-menu-button" onClick={toggleMobileMenu}>
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* Auth Buttons - Visible on Desktop */}
         <div className="button-group">
           <a href="/auth/login" className="login-button">Login</a>
           <a href="/get-started" className="get-started-button">Get Started</a>
         </div>
       </div>
+
+      {/* Mobile Navigation Overlay */}
+      {mobileMenuOpen && (
+        <div className="mobile-nav-overlay">
+          <div className="mobile-nav-content">
+            <Link
+              to="/products"
+              className={`mobile-nav-link ${activeTab === "products" ? "active" : ""}`}
+              onClick={handleMobileNavClick}
+            >
+              Products <ChevronDown className="chevron-icon-mobile" />
+            </Link>
+
+            <Link
+              to="/about-us"
+              className={`mobile-nav-link ${activeTab === "about" ? "active" : ""}`}
+              onClick={handleMobileNavClick}
+            >
+              About Us
+            </Link>
+
+            <Link
+              to="/contact-us"
+              className={`mobile-nav-link ${activeTab === "contact" ? "active" : ""}`}
+              onClick={handleMobileNavClick}
+            >
+              Contact Us
+            </Link>
+
+            {/* Auth Buttons - Mobile Version */}
+            <div className="mobile-button-group">
+              <a href="/auth/login" className="mobile-login-button">Login</a>
+              <a href="/get-started" className="mobile-get-started-button">Get Started</a>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

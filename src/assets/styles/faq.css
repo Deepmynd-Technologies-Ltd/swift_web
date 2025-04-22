@@ -14,9 +14,11 @@
 }
 
 .faq-header h1 {
-  font-size: 2rem;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
   font-weight: 700;
-  margin: 0.5rem 0;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+  color: white;
+  line-height: 1.2;
 }
 
 .section-tag {
@@ -64,11 +66,12 @@
 
 /* Support Container */
 .support-container {
-  margin-top: 2rem;
+  margin-bottom: 2rem;
   padding: 1.5rem;
   background-color: rgba(72, 133, 116, 0.26);
   border: 1px solid #374151;
   border-radius: 0.75rem;
+  max-width: 288px;
 }
 
 .question-title {
@@ -107,6 +110,8 @@
 .faq-questions {
   flex: 1;
   min-width: 0;
+  max-width: 686px;
+  align-self: flex-end;
 }
 
 .question-container {
