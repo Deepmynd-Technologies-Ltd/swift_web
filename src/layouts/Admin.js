@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Switch, Route, Redirect, useLocation } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+
 // components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
+
 // views
 import Dashboard from "views/admin/Dashboard.js";
 import History from "views/admin/History.js";
@@ -11,14 +13,15 @@ import Browser from "views/admin/Browser.js";
 
 export default function Admin() {
   const location = useLocation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [activeView, setActiveView] = useState("dashboard");
   const [previousView, setPreviousView] = useState(null);
   const [transitioningToView, setTransitioningToView] = useState(null);
   const [transitionDirection, setTransitionDirection] = useState(null); // "next" or "prev"
   const [isTransitioning, setIsTransitioning] = useState(false);
   const isMobileRef = useRef(false);
-  
+
   // Swipe handling
   const touchStartXRef = useRef(null);
   const containerRef = useRef(null);
@@ -35,7 +38,7 @@ export default function Admin() {
     
     // Initial check
     checkIfMobile();
-    
+
     // Add event listener for window resize
     window.addEventListener('resize', checkIfMobile);
     
@@ -121,7 +124,7 @@ export default function Admin() {
     setIsModalOpen(false);
   };
 
-  // Helper function to determine classes and visibility for views
+   // Helper function to determine classes and visibility for views
   const getViewClasses = (viewName) => {
     // On desktop, just show/hide without animation
     if (!isMobileRef.current) {
@@ -154,8 +157,7 @@ export default function Admin() {
 
   return (
     <>
-      {/* Add CSS for transitions */}
-      <style>
+    <style>
         {`
           .view-container {
             position: relative;
@@ -172,12 +174,6 @@ export default function Admin() {
             height: 100%;
             transition: transform 700ms ease;
             overflow-y: auto; /* Allow content to scroll vertically */
-          }
-
-          /* Active view */
-          .view-content.active {
-            transform: translateX(0);
-            z-index: 2;
           }
 
           /* Hidden view (for desktop and non-visible mobile views) */
@@ -248,7 +244,6 @@ export default function Admin() {
           }
         `}
       </style>
-
       <Sidebar onNavigate={changeView} />
       <div className="relative md:ml-64 bg-primary-color flex flex-col" style={{ marginBottom: "-30px", height: "100vh" }}>
         {/* Background overlay */}
