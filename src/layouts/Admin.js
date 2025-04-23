@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { Switch, Route, Redirect, useLocation } from "react-router-dom";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 // components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
@@ -12,9 +13,11 @@ export default function Admin() {
   const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeView, setActiveView] = useState("dashboard");
-  const [slideDirection, setSlideDirection] = useState("right");
+  const [previousView, setPreviousView] = useState(null);
+  const [transitioningToView, setTransitioningToView] = useState(null);
+  const [transitionDirection, setTransitionDirection] = useState(null); // "next" or "prev"
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const prevViewRef = useRef(activeView);
+  const isMobileRef = useRef(false);
   
   // Swipe handling
   const touchStartXRef = useRef(null);
@@ -23,6 +26,24 @@ export default function Admin() {
 
   // Define view order for determining slide direction
   const viewOrder = ["dashboard", "history", "browser"];
+
+  // Check if current device is mobile
+  useEffect(() => {
+    const checkIfMobile = () => {
+      isMobileRef.current = window.innerWidth <= 768;
+    };
+    
+    // Initial check
+    checkIfMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
 
   // Extract view from path
   useEffect(() => {
@@ -39,15 +60,15 @@ export default function Admin() {
   const changeView = (newView) => {
     if (newView === activeView || isTransitioning) return;
     
-    // Determine slide direction based on view order
-    const prevIndex = viewOrder.indexOf(prevViewRef.current);
-    const nextIndex = viewOrder.indexOf(newView);
+    // Determine if this is next or prev navigation
+    const currentIndex = viewOrder.indexOf(activeView);
+    const newIndex = viewOrder.indexOf(newView);
+    const direction = newIndex > currentIndex ? "next" : "prev";
     
-    setSlideDirection(nextIndex > prevIndex ? "left" : "right");
     setIsTransitioning(true);
-    
-    // Store the current view before changing
-    prevViewRef.current = activeView;
+    setPreviousView(activeView);
+    setTransitioningToView(newView);
+    setTransitionDirection(direction);
     
     // Change the view after a small delay to allow CSS transition to start
     setTimeout(() => {
@@ -56,18 +77,22 @@ export default function Admin() {
       // Reset transitioning state after animation completes
       setTimeout(() => {
         setIsTransitioning(false);
+        setTransitioningToView(null);
+        setTransitionDirection(null);
       }, 700); // Match your transition duration
     }, 50);
   };
 
   // Handle touch start
   const handleTouchStart = (e) => {
-    touchStartXRef.current = e.touches[0].clientX;
+    if (isMobileRef.current) {
+      touchStartXRef.current = e.touches[0].clientX;
+    }
   };
 
   // Handle touch end
   const handleTouchEnd = (e) => {
-    if (touchStartXRef.current === null) return;
+    if (!isMobileRef.current || touchStartXRef.current === null) return;
     
     const touchEndX = e.changedTouches[0].clientX;
     const distance = touchEndX - touchStartXRef.current;
@@ -94,6 +119,37 @@ export default function Admin() {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  // Helper function to determine classes and visibility for views
+  const getViewClasses = (viewName) => {
+    // On desktop, just show/hide without animation
+    if (!isMobileRef.current) {
+      return `view-content ${activeView === viewName ? "active" : "hidden"}`;
+    }
+    
+    // Determine if this view should be visible during transition
+    if (isTransitioning) {
+      // If this is the view we're transitioning from
+      if (previousView === viewName) {
+        return transitionDirection === "next" 
+          ? "view-content exit-left"    // When going to next, exit to left
+          : "view-content exit-right";  // When going to prev, exit to right
+      }
+      
+      // If this is the view we're transitioning to
+      if (transitioningToView === viewName) {
+        return transitionDirection === "next" 
+          ? "view-content enter-right"  // When going to next, enter from right
+          : "view-content enter-left";  // When going to prev, enter from left
+      }
+      
+      // If it's neither the previous nor the next view, hide it
+      return "view-content hidden";
+    }
+    
+    // Not transitioning, just show the active view
+    return `view-content ${activeView === viewName ? "active" : "hidden"}`;
   };
 
   return (
@@ -124,24 +180,42 @@ export default function Admin() {
             z-index: 2;
           }
 
-          /* Upcoming view (waiting to enter) */
-          .view-content.next-left {
-            transform: translateX(100%);
-            z-index: 1;
-          }
-          .view-content.next-right {
-            transform: translateX(-100%);
-            z-index: 1;
+          /* Hidden view (for desktop and non-visible mobile views) */
+          .view-content.hidden {
+            display: none;
           }
 
-          /* Exiting view */
-          .view-content.prev-left {
-            transform: translateX(-100%);
-            z-index: 1;
-          }
-          .view-content.prev-right {
-            transform: translateX(100%);
-            z-index: 1;
+          /* For mobile only */
+          @media (max-width: 768px) {
+            /* Exit animations */
+            .view-content.exit-left {
+              transform: translateX(-100%);
+              z-index: 1;
+            }
+            
+            .view-content.exit-right {
+              transform: translateX(100%);
+              z-index: 1;
+            }
+            
+            /* Enter animations */
+            .view-content.enter-left {
+              transform: translateX(-100%);
+              z-index: 1;
+            }
+            
+            .view-content.enter-right {
+              transform: translateX(100%);
+              z-index: 1;
+            }
+            
+            /* When transitioning, these will animate to/from their positions */
+            .view-content.active.exit-left,
+            .view-content.active.exit-right,
+            .view-content.active.enter-left,
+            .view-content.active.enter-right {
+              transform: translateX(0);
+            }
           }
 
           /* For mobile adaptations */
@@ -188,7 +262,6 @@ export default function Admin() {
           </>
         )}
         
-        
         {/* Container for all views with touch events */}
         <div 
           className="view-container"
@@ -197,42 +270,18 @@ export default function Admin() {
           onTouchEnd={handleTouchEnd}
         >
           {/* Dashboard View */}
-          <div 
-            className={`view-content ${
-              activeView === "dashboard" 
-                ? "active" 
-                : prevViewRef.current === "dashboard" 
-                  ? `prev-${slideDirection}` 
-                  : `next-${slideDirection}`
-            }`}
-          >
+          <div className={getViewClasses("dashboard")}>
             <AdminNavbar />
             <Dashboard />
           </div>
           
           {/* History View */}
-          <div 
-            className={`view-content ${
-              activeView === "history" 
-                ? "active" 
-                : prevViewRef.current === "history" 
-                  ? `prev-${slideDirection}` 
-                  : `next-${slideDirection}`
-            }`}
-          >
+          <div className={getViewClasses("history")}>
             <History />
           </div>
           
           {/* Browser View */}
-          <div 
-            className={`view-content ${
-              activeView === "browser" 
-                ? "active" 
-                : prevViewRef.current === "browser" 
-                  ? `prev-${slideDirection}` 
-                  : `next-${slideDirection}`
-            }`}
-          >
+          <div className={getViewClasses("browser")}>
             <Browser />
           </div>
         </div>
