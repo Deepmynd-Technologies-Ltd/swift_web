@@ -1,4 +1,3 @@
-// SecureWallet.js
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { PinContext } from "../../context/PinContext";
@@ -7,7 +6,7 @@ export default function SecureWallet() {
     const [walletDetails, setWalletDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const history = useHistory();
-    const { setWalletDetails: setContextWalletDetails } = useContext(PinContext);
+    const { pin } = useContext(PinContext); // Get the PIN from context
 
     const generateWalletPhrase = async () => {
         setLoading(true);
@@ -28,7 +27,6 @@ export default function SecureWallet() {
 
             const details = { seedWords };
             setWalletDetails(details);
-            setContextWalletDetails(details);
         } catch (error) {
             console.error("Phrase Generation Error:", error);
             throw error;
@@ -39,13 +37,15 @@ export default function SecureWallet() {
 
     const handleNext = async () => {
         if (walletDetails && walletDetails.seedWords) {
-            // Start wallet generation but don't wait for it to complete
             const phrase = walletDetails.seedWords.join(" ");
             
-            // Pass the phrase as state when navigating
+            // Pass both phrase and pin as state when navigating
             history.push({
                 pathname: "/auth/createwallet",
-                state: { phrase }
+                state: { 
+                    phrase,
+                    pin // Pass the PIN from context
+                }
             });
         }
     };

@@ -1,43 +1,34 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { PinContext } from "../../context/PinContext";
 
 export default function ConfirmPin() {
     const [confirmPin, setConfirmPin] = useState(["", "", "", ""]);
     const [error, setError] = useState(null);
     const history = useHistory();
+    const { verifyStoredPin } = useContext(PinContext);
 
-
-    const handleConfirm = () => {
-        const confirmPinCode = confirmPin.join("");  
-        const pin = localStorage.getItem("walletPin");  
-
-        if (!pin) {
-            setError("PIN is missing.");
-            return;
-        }
-
+    const handleConfirm = async () => {
+        const confirmPinCode = confirmPin.join("");
+        
         if (confirmPinCode.length !== 4) {
             setError("PIN must be exactly 4 digits.");
             return;
         }
 
-        if (confirmPinCode !== pin) {
-            setError("PIN does not match.");
-            return;
+        try {
+            const isValid = await verifyStoredPin(confirmPinCode);
+            if (!isValid) {
+                setError("PIN does not match.");
+                return;
+            }
+            history.push("/auth/securewallet");
+        } catch (error) {
+            setError("Error verifying PIN");
+            console.error("PIN verification error:", error);
         }
-
-        localStorage.setItem("walletPin2", confirmPinCode);
-        console.log("Saved PIN:", confirmPinCode);
-
-        history.push("/auth/securewallet");
     };
 
-    useEffect(() => {
-        const savedPin = localStorage.getItem("walletPin2");
-        if (savedPin) {
-            setConfirmPin(savedPin.split(""));
-        }
-    }, []);
 
     const handleChange = (value, index) => {
         if (value.length > 1) return;  

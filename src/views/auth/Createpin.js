@@ -1,29 +1,34 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { PinContext } from "../../context/PinContext";
+import { storeEncryptedPin } from "../auth/utils/storage";
 
 export default function CreatePin() {
     const [pin, setPin] = useState(["", "", "", ""]);
     const [error, setError] = useState(null);
     const history = useHistory();
-    const { setPin: setContextPin } = useContext(PinContext);
+    const { storePin } = useContext(PinContext);
 
-    useEffect(() => {
-        const savedPin = localStorage.getItem("walletPin");
-        console.log("Saved PIN:", savedPin);
-        if (savedPin) {
-            setPin(savedPin.split(""));
-        }
-    }, []);
-
-    const handleNext = () => {
+    const handleNext = async () => {
         const pinCode = pin.join("");
-        // Save pin to local storage
-        localStorage.setItem("walletPin", pinCode);
-        setContextPin(pinCode);
-        history.push("/auth/confirmpin");
-        console.log("PIN:", pinCode);
+        if (pinCode.length !== 4) {
+            setError("PIN must be 4 digits");
+            return;
+        }
+
+        try {
+            const success = await storePin(pinCode);
+            if (success) {
+                history.push("/auth/confirmpin");
+            } else {
+                setError("Failed to save PIN");
+            }
+        } catch (error) {
+            setError("Failed to save PIN");
+            console.error("Error saving PIN:", error);
+        }
     };
+
 
     const handleChange = (value, index) => {
         if (value.length > 1) return; // Prevent more than one character

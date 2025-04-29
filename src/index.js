@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Provider } from "react-redux";
+import { PinProvider } from "./context/PinContext";
 import store from './Store';
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -23,28 +24,30 @@ const walletDetails = JSON.parse(localStorage.getItem("walletDetails"));
 
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
-      <Switch>
-        {/* Routes with layouts */}
-        <Route path="/admin" component={Admin}/>
-        <Route path="/auth" component={Auth} />
+    <PinProvider>
+      <BrowserRouter>
+        <Switch>
+          {/* Routes with layouts */}
+          <Route path="/admin" component={Admin}/>
+          <Route path="/auth" component={Auth} />
 
-        <Route path="/" exact>
-          {walletDetails && walletDetails.walletAddresses ? (
-            <Redirect to="/auth/login" />
-          ) : (
-            <Redirect to="/products" />
-          )}
-        </Route>
-        <Route path="/get-started" exact component={GetStarted} />
-        <Route path="/auth/login" exact component={Login} />
-        <Route path="/products" exact component={Index} />
-        <Route path="/about-us" exact component={Index} />
-        <Route path="/contact-us" exact component={Index} />
-        <Redirect to="/products" />
-        <Redirect to="/" />
-      </Switch>
-    </BrowserRouter>,
+          <Route path="/" exact>
+            {walletDetails && walletDetails.walletAddresses ? (
+              <Redirect to="/auth/login" />
+            ) : (
+              <Redirect to="/products" />
+            )}
+          </Route>
+          <Route path="/get-started" exact component={GetStarted} />
+          <Route path="/auth/login" exact component={Login} />
+          <Route path="/products" exact component={Index} />
+          <Route path="/about-us" exact component={Index} />
+          <Route path="/contact-us" exact component={Index} />
+          <Redirect to="/products" />
+          <Redirect to="/" />
+        </Switch>
+      </BrowserRouter>,
+    </PinProvider>,
   </Provider>,
   document.getElementById("root")
 );
