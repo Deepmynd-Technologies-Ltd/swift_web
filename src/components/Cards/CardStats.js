@@ -403,10 +403,14 @@ export default function CardStats({ isHidden, selectedWallet }) {
         selectedWallet={selectedWallet}
       />
 
-      <SwapModal
-        isOpen={isSwapModalOpen}
-        onClose={() => setIsSwapModalOpen(false)}
-      />
+    <SwapModal
+      isOpen={isSwapModalOpen}
+      onClose={() => setIsSwapModalOpen(false)}
+      selectedWallet={selectedWallet}
+      walletBalance={walletBalance}
+      walletAddress={walletAddress}
+      tokenNames={tokenNames}
+    />
 
       <P2PModal
         isOpen={isP2PModalOpen}
