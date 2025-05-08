@@ -109,7 +109,9 @@ const SwapModal = ({
         setQuoteData(data.data);
         setToAmount(data.data.expected_output || "0");
       } else {
-        setError(data.message || "Failed to get swap quote");
+        const errorMessage = data.message || "Failed to get swap quote";
+        setError(errorMessage);
+        console.error(errorMessage);
         setToAmount("");
       }
     } catch (err) {
