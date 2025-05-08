@@ -1,12 +1,20 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { PinContext } from "../../context/PinContext";
+import { storeEncryptedWallet } from "../../views/auth/utils/storage";
 
 export default function ConfirmPin() {
     const [confirmPin, setConfirmPin] = useState(["", "", "", ""]);
     const [error, setError] = useState(null);
+    const [isImportFlow, setIsImportFlow] = useState(false);
     const history = useHistory();
     const { verifyStoredPin } = useContext(PinContext);
+
+    // Check for imported wallet on component mount
+    React.useEffect(() => {
+        const importedWallet = sessionStorage.getItem('importedWallet');
+        setIsImportFlow(!!importedWallet);
+    }, []);
 
     const handleConfirm = async () => {
         const confirmPinCode = confirmPin.join("");
@@ -22,13 +30,25 @@ export default function ConfirmPin() {
                 setError("PIN does not match.");
                 return;
             }
-            history.push("/auth/securewallet");
+
+            // Handle wallet import flow
+            if (isImportFlow) {
+                const importedWallet = sessionStorage.getItem('importedWallet');
+                if (importedWallet) {
+                    const walletData = JSON.parse(importedWallet);
+                    await storeEncryptedWallet(walletData, confirmPinCode);
+                    sessionStorage.removeItem('importedWallet');
+                }
+                history.push("/admin/dashboard");
+            } else {
+                // Original wallet creation flow
+                history.push("/auth/securewallet");
+            }
         } catch (error) {
             setError("Error verifying PIN");
             console.error("PIN verification error:", error);
         }
     };
-
 
     const handleChange = (value, index) => {
         if (value.length > 1) return;  
@@ -88,7 +108,7 @@ export default function ConfirmPin() {
                                 className="w-full mt-6 bg-green-500 text-white font-semibold p-3 rounded-my"
                                 onClick={handleConfirm}
                             >
-                                Continue
+                                {isImportFlow ? "Complete Wallet Import" : "Continue"}
                             </button>
                         </div>
                     </form>

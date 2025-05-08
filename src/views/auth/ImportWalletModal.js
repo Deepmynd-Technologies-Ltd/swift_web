@@ -1,26 +1,26 @@
 import { XIcon } from '@heroicons/react/outline';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { storeEncryptedWallet } from '../../views/auth/utils/storage';
 
 export default function ImportWalletModal({
   wordCount = 12,
   seedWords = [],
   handleChange,
   handleKeyDown,
-  handleContinue,
   onClose
 }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const history = useHistory();
   const inputRefs = useRef(Array(wordCount).fill().map(() => React.createRef()));
-  
-  // Keep track of pending updates with a ref to avoid dependency issues
   const pendingUpdatesRef = useRef([]);
   
-  // Process one update at a time from the queue
   useEffect(() => {
     if (pendingUpdatesRef.current.length > 0) {
       const nextUpdate = pendingUpdatesRef.current.shift();
       handleChange(nextUpdate.value, nextUpdate.index);
       
-      // If this was the last update, focus the next field
       if (pendingUpdatesRef.current.length === 0 && nextUpdate.focusNext && 
           nextUpdate.index + 1 < wordCount) {
         setTimeout(() => {
@@ -28,43 +28,72 @@ export default function ImportWalletModal({
         }, 50);
       }
     }
-  }, [seedWords, wordCount]); // This will run whenever seedWords changes
+  }, [seedWords, wordCount]);
 
-  // Handle paste event in any input field
   const handlePaste = (e, currentIndex) => {
     e.preventDefault();
-    
-    // Get pasted text
     const pastedText = e.clipboardData.getData('text');
-    
-    // Clean and split the pasted text into words
     const words = pastedText.trim().split(/\s+/);
     
-    // If there's only one word pasted, use default behavior
     if (words.length === 1) {
       handleChange(words[0], currentIndex);
       return;
     }
     
-    // Clear the pending updates queue
     pendingUpdatesRef.current = [];
-    
-    // Prepare updates for each word
     words.forEach((word, idx) => {
       const targetIndex = currentIndex + idx;
       if (targetIndex < wordCount) {
         pendingUpdatesRef.current.push({
           value: word,
           index: targetIndex,
-          focusNext: idx === words.length - 1 // Only focus after last word
+          focusNext: idx === words.length - 1
         });
       }
     });
     
-    // Process the first update to start the chain reaction
     if (pendingUpdatesRef.current.length > 0) {
       const firstUpdate = pendingUpdatesRef.current.shift();
       handleChange(firstUpdate.value, firstUpdate.index);
+    }
+  };
+
+  const handleContinue = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const phrase = seedWords.join(' ');
+      if (phrase.split(' ').length !== wordCount) {
+        throw new Error(`Please enter a ${wordCount}-word seed phrase`);
+      }
+
+      const response = await fetch("https://swift-api-g7a3.onrender.com/api/wallet/generate_wallet/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phrase }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to import wallet");
+      }
+
+      const walletData = await response.json();
+      
+      if (!walletData || !walletData.data) {
+        throw new Error("Invalid wallet data received");
+      }
+
+      sessionStorage.setItem('importedWallet', JSON.stringify(walletData.data));
+      
+      history.push('/auth/createpin');
+    } catch (err) {
+      console.error("Error importing wallet:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,7 +127,6 @@ export default function ImportWalletModal({
           position: 'relative'
         }}
       >
-        {/* Close button */}
         <button
           onClick={onClose}
           style={{
@@ -114,15 +142,25 @@ export default function ImportWalletModal({
           <XIcon style={{ width: 20, height: 20, color: 'white' }} />
         </button>
         
-        {/* Heading */}
         <h2 style={{ fontSize: 20, fontWeight: 600, color: 'white' }}>
-          Import Wallet ({wordCount})
+          Import Wallet ({wordCount}-word phrase)
         </h2>
         <p style={{ marginTop: 4, fontSize: 14, color: '#6B7280' }}>
           Enter your {wordCount}-word seed phrase below to import your wallet
         </p>
         
-        {/* Seed word form */}
+        {error && (
+          <div style={{ 
+            color: '#ff6b6b',
+            margin: '16px 0',
+            padding: '8px 12px',
+            backgroundColor: 'rgba(255, 107, 107, 0.1)',
+            borderRadius: 4
+          }}>
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleContinue} style={{ marginTop: 24 }}>
           <div
             style={{
@@ -165,26 +203,48 @@ export default function ImportWalletModal({
             ))}
           </div>
           
-          {/* Submit Button */}
           <button
             type="submit"
+            disabled={loading}
             style={{
               marginTop: 32,
               width: '100%',
               height: 48,
-              backgroundColor: '#27C499',
+              backgroundColor: loading ? '#cccccc' : '#27C499',
               color: '#FFF',
               border: 'none',
               borderRadius: 8,
               fontSize: 16,
               fontWeight: 500,
-              cursor: 'pointer'
+              cursor: loading ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
           >
-            Continue to Homepage
+            {loading ? (
+              <>
+                <span style={{ marginRight: 8 }}>Importing...</span>
+                <div className="spinner" style={{
+                  width: 16,
+                  height: 16,
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  borderRadius: '50%',
+                  borderTopColor: '#fff',
+                  animation: 'spin 1s linear infinite'
+                }}></div>
+              </>
+            ) : 'Continue to PIN Setup'}
           </button>
         </form>
       </div>
+
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }
