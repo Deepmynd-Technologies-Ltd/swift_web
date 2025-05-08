@@ -90,13 +90,13 @@ export default function Login() {
                 return;
             }
 
-            // Check session validity (1 hour)
-            const oneHour = 60 * 60 * 1000;
+
+            const oneDay = 24 * 60 * 60 * 1000;
             const isSessionValid = storedPinData.timestamp && 
-                                 (Date.now() - storedPinData.timestamp) < oneHour;
+                                 (Date.now() - storedPinData.timestamp) < oneDay;
 
             if (!isSessionValid) {
-                setError("Session expired. Please login again.");
+                setError("Session expired. Please Import Wallet again");
                 return;
             }
 

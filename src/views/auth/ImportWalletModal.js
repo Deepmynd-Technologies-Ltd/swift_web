@@ -1,5 +1,5 @@
 import { XIcon } from '@heroicons/react/outline';
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 export default function ImportWalletModal({
   wordCount = 12,
@@ -9,6 +9,65 @@ export default function ImportWalletModal({
   handleContinue,
   onClose
 }) {
+  const inputRefs = useRef(Array(wordCount).fill().map(() => React.createRef()));
+  
+  // Keep track of pending updates with a ref to avoid dependency issues
+  const pendingUpdatesRef = useRef([]);
+  
+  // Process one update at a time from the queue
+  useEffect(() => {
+    if (pendingUpdatesRef.current.length > 0) {
+      const nextUpdate = pendingUpdatesRef.current.shift();
+      handleChange(nextUpdate.value, nextUpdate.index);
+      
+      // If this was the last update, focus the next field
+      if (pendingUpdatesRef.current.length === 0 && nextUpdate.focusNext && 
+          nextUpdate.index + 1 < wordCount) {
+        setTimeout(() => {
+          inputRefs.current[nextUpdate.index + 1].current?.focus();
+        }, 50);
+      }
+    }
+  }, [seedWords, wordCount]); // This will run whenever seedWords changes
+
+  // Handle paste event in any input field
+  const handlePaste = (e, currentIndex) => {
+    e.preventDefault();
+    
+    // Get pasted text
+    const pastedText = e.clipboardData.getData('text');
+    
+    // Clean and split the pasted text into words
+    const words = pastedText.trim().split(/\s+/);
+    
+    // If there's only one word pasted, use default behavior
+    if (words.length === 1) {
+      handleChange(words[0], currentIndex);
+      return;
+    }
+    
+    // Clear the pending updates queue
+    pendingUpdatesRef.current = [];
+    
+    // Prepare updates for each word
+    words.forEach((word, idx) => {
+      const targetIndex = currentIndex + idx;
+      if (targetIndex < wordCount) {
+        pendingUpdatesRef.current.push({
+          value: word,
+          index: targetIndex,
+          focusNext: idx === words.length - 1 // Only focus after last word
+        });
+      }
+    });
+    
+    // Process the first update to start the chain reaction
+    if (pendingUpdatesRef.current.length > 0) {
+      const firstUpdate = pendingUpdatesRef.current.shift();
+      handleChange(firstUpdate.value, firstUpdate.index);
+    }
+  };
+
   return (
     <div className='bg-blueGray-600'
       style={{
@@ -17,7 +76,6 @@ export default function ImportWalletModal({
         left: 0,
         width: '100vw',
         height: '100vh',
-        // backgroundColor: 'rgba(0,0,0,0.25)',
         display: 'flex',
         justifyContent: 'flex-end',
         alignItems: 'center',
@@ -26,7 +84,7 @@ export default function ImportWalletModal({
         zIndex: 1000
       }}
     >
-      <div  className="no-scrollbar"
+      <div className="no-scrollbar"
         style={{
           backgroundColor: '#000906',
           borderRadius: 16,
@@ -55,7 +113,7 @@ export default function ImportWalletModal({
         >
           <XIcon style={{ width: 20, height: 20, color: 'white' }} />
         </button>
-
+        
         {/* Heading */}
         <h2 style={{ fontSize: 20, fontWeight: 600, color: 'white' }}>
           Import Wallet ({wordCount})
@@ -63,7 +121,7 @@ export default function ImportWalletModal({
         <p style={{ marginTop: 4, fontSize: 14, color: '#6B7280' }}>
           Enter your {wordCount}-word seed phrase below to import your wallet
         </p>
-
+        
         {/* Seed word form */}
         <form onSubmit={handleContinue} style={{ marginTop: 24 }}>
           <div
@@ -88,6 +146,8 @@ export default function ImportWalletModal({
                   value={seedWords[idx] || ''}
                   onChange={e => handleChange(e.target.value, idx)}
                   onKeyDown={e => handleKeyDown(e, idx)}
+                  onPaste={e => handlePaste(e, idx)}
+                  ref={inputRefs.current[idx]}
                   autoComplete="off"
                   autoFocus={idx === 0}
                   style={{
@@ -104,7 +164,7 @@ export default function ImportWalletModal({
               </div>
             ))}
           </div>
-
+          
           {/* Submit Button */}
           <button
             type="submit"
