@@ -39,7 +39,7 @@ export default function Login() {
             if (typeof oldPin === 'string') {
                 // Decrypt old format
                 const decryptedPin = decryptData(oldPin, enteredPin);
-                
+
                 if (decryptedPin === enteredPin) {
                     // Convert to new format
                     await localforage.setItem('walletPin', {
@@ -72,7 +72,7 @@ export default function Login() {
 
         try {
             const storedPinData = await localforage.getItem('walletPin');
-            
+
             // If no PIN found in new format, try migrating old format
             if (!storedPinData) {
                 const migrationSuccess = await migrateOldPin(pinCode);
@@ -92,8 +92,8 @@ export default function Login() {
 
 
             const oneDay = 24 * 60 * 60 * 1000;
-            const isSessionValid = storedPinData.timestamp && 
-                                 (Date.now() - storedPinData.timestamp) < oneDay;
+            const isSessionValid = storedPinData.timestamp &&
+                (Date.now() - storedPinData.timestamp) < oneDay;
 
             if (!isSessionValid) {
                 setError("Session expired. Please Import Wallet again");
@@ -102,7 +102,7 @@ export default function Login() {
 
             // Verify PIN
             const decryptedPin = decryptData(storedPinData.pin, pinCode);
-            
+
             if (decryptedPin !== pinCode) {
                 setError("Incorrect PIN. Please try again.");
                 return;
@@ -147,12 +147,18 @@ export default function Login() {
         <div className="container mx-auto px-4 h-screen flex items-center justify-center" style={{ maxHeight: "100vh", overflow: "hidden" }}>
             <div className="relative flex flex-col w-full lg:w-6/12 px-4">
                 <div className="bg-black rounded-my shadow-lg p-8">
-                    <a className="relative left-90 text-white text-3xl font-bold" onClick={() => window.history.back()}>←</a>
+                    <a className="relative left-90 text-white text-3xl font-bold" onClick={() => {
+                        if (window.history.length > 1) {
+                            window.history.back();
+                        } else {
+                            window.location.href = "/";
+                        }
+                    }}>←</a>
                     <h2 className="text-2xl font-bold mb-4 text-green">Enter Passcode</h2>
                     <p className="text-sm text-blueGray-500 mb-6 font-semibold">Passcode is required for security means</p>
-                    
+
                     {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-                    
+
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         handleLogin();
@@ -176,8 +182,8 @@ export default function Login() {
                                     />
                                 ))}
                             </div>
-                            <button 
-                                type="submit" 
+                            <button
+                                type="submit"
                                 className="w-full mt-6 bg-green-500 text-white text-dark-mode-1 font-semibold p-3 rounded-my disabled:opacity-50"
                                 disabled={loading}
                             >

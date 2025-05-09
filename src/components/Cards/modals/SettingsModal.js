@@ -230,27 +230,12 @@ const SettingsModal = ({ isOpen, onClose }) => {
   };
 
   const handleLogout = () => {
+    // Handle logout logic here
     console.log("Logging out...");
-    
-    // If passcode is enabled, verify before logout
-    if (settings.secureWithPasscode) {
-      const passcode = prompt("Please enter your passcode to sign out:");
-      const savedPasscode = localStorage.getItem('userPasscode');
-      
-      if (passcode !== savedPasscode) {
-        alert("Incorrect passcode");
-        return;
-      }
-    }
-    
-    // If we get here, passcode was correct or not required
-    // Clear settings (or keep them, depending on your app's needs)
-    // localStorage.removeItem('appSettings');
-    
-    // Perform logout
+    // Perform clearing user session
+    window.location.href = "/";
     onClose();
-    // In a real app: window.location.href = "/";
-  };
+  }
 
   // Company links configuration
   const companyLinks = [
@@ -297,73 +282,73 @@ const SettingsModal = ({ isOpen, onClose }) => {
         <div className="flex flex-col px-4 pb-4">
           {/* General Section */}
           <SettingHeader title="General" />
-          
-          <DropdownSetting 
-            label="Currency" 
-            value={settings.currency} 
+
+          <DropdownSetting
+            label="Currency"
+            value={settings.currency}
             options={options.currency}
-            onChange={(value) => handleDropdownChange('currency', value)} 
+            onChange={(value) => handleDropdownChange('currency', value)}
           />
-          
-          <ToggleSetting 
-            label="Push notifications" 
-            value={settings.pushNotifications} 
-            onChange={() => handleToggle('pushNotifications')} 
+
+          <ToggleSetting
+            label="Push notifications"
+            value={settings.pushNotifications}
+            onChange={() => handleToggle('pushNotifications')}
           />
-          
-          <DropdownSetting 
-            label="Search Engine" 
-            value={settings.searchEngine} 
+
+          <DropdownSetting
+            label="Search Engine"
+            value={settings.searchEngine}
             options={options.searchEngine}
-            onChange={(value) => handleDropdownChange('searchEngine', value)} 
+            onChange={(value) => handleDropdownChange('searchEngine', value)}
           />
-          
-          <DropdownSetting 
-            label="Language" 
-            value={settings.language} 
+
+          <DropdownSetting
+            label="Language"
+            value={settings.language}
             options={options.language}
-            onChange={(value) => handleDropdownChange('language', value)} 
+            onChange={(value) => handleDropdownChange('language', value)}
           />
-          
-          <InfoSetting 
-            label="Payment Timeout" 
-            value={settings.paymentTimeout} 
+
+          <InfoSetting
+            label="Payment Timeout"
+            value={settings.paymentTimeout}
           />
 
           {/* Security Section */}
           <SettingHeader title="Security" />
-          
-          <LinkSetting 
-            label="Backup" 
-            onClick={() => handleNavigation('/backup')} 
+
+          <LinkSetting
+            label="Backup"
+            onClick={() => handleNavigation('/backup')}
           />
-          
+
           <div className="text-gray-500 mb-2 text-sm">
             Your secret 12-word recovery phrase is the ONLY way to recover your funds if you lose access to your wallet.
           </div>
-          
-          <ToggleSetting 
-            label="Secure with Passcode" 
-            value={settings.secureWithPasscode} 
-            onChange={() => handleToggle('secureWithPasscode')} 
+
+          <ToggleSetting
+            label="Secure with Passcode"
+            value={settings.secureWithPasscode}
+            onChange={() => handleToggle('secureWithPasscode')}
             description="Keep your assets safe by enabling passcode protection."
           />
-          
-          <ToggleSetting 
-            label="Secure with Face ID" 
-            value={settings.secureWithFaceID} 
-            onChange={() => handleToggle('secureWithFaceID')} 
+
+          <ToggleSetting
+            label="Secure with Face ID"
+            value={settings.secureWithFaceID}
+            onChange={() => handleToggle('secureWithFaceID')}
             description="Add a passcode to activate Face ID protection."
           />
 
           {/* Company Section */}
           <SettingHeader title="Company" />
-          
+
           {companyLinks.map((link, index) => (
-            <LinkSetting 
+            <LinkSetting
               key={index}
-              label={link.label} 
-              onClick={() => handleNavigation(link.path)} 
+              label={link.label}
+              onClick={() => handleNavigation(link.path)}
             />
           ))}
 
