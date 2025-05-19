@@ -1,5 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { X, ChevronDown, Loader } from "lucide-react";
+import localforage from "localforage";
+import { decryptData } from "views/auth/utils/storage";
 
 const SwapModal = ({ 
   isOpen, 
@@ -13,12 +16,19 @@ const SwapModal = ({
   const [toToken, setToToken] = useState("ETH");
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
+  const [fromAddress, setFromAddress] = useState(walletAddress || "");
+  const [toAddress, setToAddress] = useState("");
   const [showFromDropdown, setShowFromDropdown] = useState(false);
   const [showToDropdown, setShowToDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [quoteData, setQuoteData] = useState(null);
   const [error, setError] = useState(null);
-  const [slippage, setSlippage] = useState(0.5); // Default slippage
+  const [slippage, setSlippage] = useState(0.5);
+  const [walletData, setWalletData] = useState(null);
+  const [walletPrivateKey, setWalletPrivateKey] = useState(null);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pin, setPin] = useState(["", "", "", ""]);
+  const [pinError, setPinError] = useState(null);
 
   // Token data with dynamic balances
   const tokenData = {
@@ -30,12 +40,74 @@ const SwapModal = ({
     USDT: { name: "USDT BEP20", balance: fromToken === "USDT" ? walletBalance : "0.0" },
   };
 
+  // Load wallet data on component mount
+  useEffect(() => {
+    const loadWalletData = async () => {
+      try {
+        let data = await localforage.getItem("encryptedWallet");
+        if (!data) {
+          data = await localforage.getItem("walletDetails");
+        }
+        
+        if (!data) {
+          console.error("No wallet data found in localforage");
+          return;
+        }
+        
+        setWalletData(data);
+      } catch (err) {
+        console.error("Error loading wallet data:", err);
+      }
+    };
+    
+    loadWalletData();
+  }, []);
+
   // Update fromToken when selectedWallet changes
   useEffect(() => {
     if (selectedWallet?.abbr) {
       setFromToken(selectedWallet.abbr);
     }
   }, [selectedWallet]);
+
+  // Set the from and to addresses based on selected tokens
+  useEffect(() => {
+    if (!walletData || !fromToken || !toToken) return;
+
+    let walletItems = [];
+    
+    if (walletData.walletAddresses && Array.isArray(walletData.walletAddresses)) {
+      if (walletData.walletAddresses[0] && Array.isArray(walletData.walletAddresses[0].data)) {
+        walletItems = walletData.walletAddresses[0].data;
+      } else {
+        walletItems = walletData.walletAddresses;
+      }
+    } else if (Array.isArray(walletData)) {
+      walletItems = walletData;
+    } else {
+      console.error("Invalid wallet data format");
+      return;
+    }
+
+    // Find the wallet that matches the fromToken symbol
+    const fromWallet = walletItems.find(wallet => 
+      wallet.symbols?.toUpperCase() === fromToken.toUpperCase()
+    );
+
+    if (fromWallet) {
+      setFromAddress(fromWallet.address);
+      // Set the private key from the matching wallet
+      setWalletPrivateKey(fromWallet.private_key);
+    } else {
+      setFromAddress(walletAddress || "");
+    }
+
+    // Set to address based on toToken
+    const toWallet = walletItems.find(wallet => 
+      wallet.symbols?.toUpperCase() === toToken.toUpperCase()
+    );
+    setToAddress(toWallet?.address || "");
+  }, [fromToken, toToken, walletData, walletAddress]);
 
   const handleTokenSelect = (token, isFromToken) => {
     if (isFromToken) {
@@ -84,6 +156,24 @@ const SwapModal = ({
     setError(null);
     
     try {
+      // Prepare base request data
+      const baseRequestData = {
+        from_symbol: fromToken,
+        to_symbol: toToken,
+        amount: fromAmount,
+        slippage: slippage,
+      };
+      
+      // Add addresses if available
+      if (fromAddress) baseRequestData.from_address = fromAddress;
+      if (toAddress) baseRequestData.to_address = toAddress || fromAddress;
+      
+      // Enhanced API structure from second implementation
+      if (walletData) {
+        baseRequestData.from_token = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+        baseRequestData.to_token = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+      }
+
       const response = await fetch(
         `https://swift-api-g7a3.onrender.com/api/wallet/swap/quote/`,
         {
@@ -91,23 +181,26 @@ const SwapModal = ({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            from_symbol: fromToken,
-            to_symbol: toToken,
-            amount: parseFloat(fromAmount),
-            from_address: walletAddress,
-            to_address: walletAddress,
-            slippage: slippage,
-            provider: "paybis"
-          }),
+          body: JSON.stringify(baseRequestData),
         }
       );
 
       const data = await response.json();
       
-      if (data.success) {
+      if (data.data) {
         setQuoteData(data.data);
-        setToAmount(data.data.expected_output || "0");
+        
+        // Handle different response formats between the two API structures
+        if (data.data.expected_output) {
+          setToAmount(data.data.expected_output || "0");
+        } else if (data.data.estimate && data.data.estimate.toAmount) {
+          // Get the toToken decimals from the response (default to 18 if not available)
+          const toTokenDecimals = data.data.action?.toToken?.decimals || 18;
+          
+          // Convert from raw amount to human-readable format using the correct decimals
+          const toAmountHuman = (parseFloat(data.data.estimate.toAmount) / 10**toTokenDecimals).toFixed(8);
+          setToAmount(toAmountHuman);
+        }
       } else {
         const errorMessage = data.message || "Failed to get swap quote";
         setError(errorMessage);
@@ -122,9 +215,61 @@ const SwapModal = ({
     }
   };
 
-  const executeSwap = async () => {
+  // PIN input handlers
+  const handlePinChange = (value, index) => {
+    const numericValue = value.replace(/\D/g, '');
+    if (numericValue.length > 1) return;
+
+    const newPin = [...pin];
+    newPin[index] = numericValue;
+    setPin(newPin);
+
+    if (numericValue && index < 3) {
+      document.getElementById(`pin-input-${index + 1}`).focus();
+    }
+  };
+
+  const handlePinKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !pin[index] && index > 0) {
+      document.getElementById(`pin-input-${index - 1}`).focus();
+    }
+  };
+
+  const verifyPinAndExecuteSwap = async () => {
+    const pinCode = pin.join("");
+    if (pinCode.length !== 4 || !/^\d+$/.test(pinCode)) {
+      setPinError("PIN must be exactly 4 digits");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setPinError(null);
+
+      // Decrypt the private key with the provided PIN
+      const decryptedPrivateKey = await decryptData(walletPrivateKey, pinCode);
+      
+      if (!decryptedPrivateKey) {
+        setPinError("Invalid PIN or decryption failed");
+        return;
+      }
+
+      // Close the PIN modal
+      setShowPinModal(false);
+      
+      // Now execute the swap with the decrypted private key
+      await performSwap(decryptedPrivateKey);
+    } catch (err) {
+      console.error("PIN verification error:", err);
+      setPinError("Failed to decrypt private key. Invalid PIN?");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const performSwap = async (decryptedPrivateKey) => {
     if (!quoteData || !fromAmount || !toAmount) {
-      setError("Please enter a valid amount");
+      setError("Missing required data for swap");
       return;
     }
 
@@ -132,25 +277,42 @@ const SwapModal = ({
     setError(null);
 
     try {
-      const response = await fetch(
-        `https://swift-api-g7a3.onrender.com/api/wallet/swap/execute/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            quote_id: quoteData.quote_id,
-            from_symbol: fromToken,
-            to_symbol: toToken,
-            amount: parseFloat(fromAmount),
-            from_address: walletAddress,
-            to_address: walletAddress,
-            slippage: slippage,
-            provider: "paybis"
-          }),
-        }
-      );
+      // Prepare request data based on available information
+      const requestData = {
+        from_symbol: fromToken,
+        to_symbol: toToken,
+        amount: fromAmount,
+        slippage: slippage,
+      };
+      
+      // Add appropriate addresses
+      if (fromAddress) requestData.from_address = fromAddress;
+      if (toAddress) requestData.to_address = toAddress || fromAddress;
+      
+      // Add private key if available (secure wallet approach)
+      if (decryptedPrivateKey) {
+        requestData.private_key = decryptedPrivateKey;
+        requestData.gas_multiplier = 1.1;
+      }
+      
+      // If we have quote ID from the first implementation
+      if (quoteData.quote_id) {
+        requestData.quote_id = quoteData.quote_id;
+        requestData.provider = "paybis";
+      }
+
+      // Choose appropriate endpoint based on what data we have
+      const endpoint = decryptedPrivateKey 
+        ? "http://127.0.0.1:8000/api/wallet/swap/" 
+        : "https://swift-api-g7a3.onrender.com/api/wallet/swap/";
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
 
       const data = await response.json();
       
@@ -166,6 +328,21 @@ const SwapModal = ({
       console.error("Swap execution error:", err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const executeSwap = async () => {
+    if (!quoteData || !fromAmount || !toAmount) {
+      setError("Please enter a valid amount");
+      return;
+    }
+
+    // If we have wallet private key, show PIN modal instead of executing swap immediately
+    if (walletPrivateKey) {
+      setShowPinModal(true);
+    } else {
+      // Original implementation for non-secure wallets
+      await performSwap();
     }
   };
 
@@ -320,18 +497,24 @@ const SwapModal = ({
         {/* Swap Details */}
         {quoteData && (
           <div className="w-full text-left mb-4 text-sm text-blueGray-300">
-            <div className="flex justify-between mb-1">
-              <span>Exchange Rate:</span>
-              <span>1 {fromToken} = {quoteData.exchange_rate} {toToken}</span>
-            </div>
-            <div className="flex justify-between mb-1">
-              <span>Minimum Received:</span>
-              <span>{quoteData.minimum_output} {toToken}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Price Impact:</span>
-              <span>{quoteData.price_impact}%</span>
-            </div>
+            {quoteData.exchange_rate && (
+              <div className="flex justify-between mb-1">
+                <span>Exchange Rate:</span>
+                <span>1 {fromToken} = {quoteData.exchange_rate} {toToken}</span>
+              </div>
+            )}
+            {quoteData.minimum_output && (
+              <div className="flex justify-between mb-1">
+                <span>Minimum Received:</span>
+                <span>{quoteData.minimum_output} {toToken}</span>
+              </div>
+            )}
+            {quoteData.price_impact && (
+              <div className="flex justify-between">
+                <span>Price Impact:</span>
+                <span>{quoteData.price_impact}%</span>
+              </div>
+            )}
           </div>
         )}
 
@@ -370,6 +553,53 @@ const SwapModal = ({
             "Swap"
           )}
         </button>
+
+        {/* PIN Modal */}
+        {showPinModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-20">
+            <div className="bg-primary-color p-6 rounded-lg max-w-sm w-full">
+              <h3 className="text-lg font-bold mb-4">Enter PIN to Confirm Swap</h3>
+              
+              {pinError && <p className="text-red-500 text-sm mb-4">{pinError}</p>}
+              
+              <div className="flex space-x-4 justify-center mb-6">
+                {pin.map((value, index) => (
+                  <input
+                    key={index}
+                    id={`pin-input-${index}`}
+                    type="password"
+                    pattern="[0-9]*"
+                    inputMode="numeric"
+                    value={value}
+                    maxLength="1"
+                    onChange={(e) => handlePinChange(e.target.value, index)}
+                    onKeyDown={(e) => handlePinKeyDown(e, index)}
+                    className="w-12 h-12 border border-gray-300 bg-black text-white text-center text-lg rounded-lg focus:ring focus:outline-none"
+                    disabled={isLoading}
+                    autoComplete="off"
+                  />
+                ))}
+              </div>
+              
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => setShowPinModal(false)}
+                  className="flex-1 bg-gray-500 text-white py-2 rounded-lg"
+                  disabled={isLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={verifyPinAndExecuteSwap}
+                  className="flex-1 bg-green-500 text-white py-2 rounded-lg"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Verifying..." : "Confirm"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

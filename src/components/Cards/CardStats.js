@@ -151,7 +151,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
         });
         
         if (activeWallet) {
-          console.log("Active wallet found:", activeWallet);
           setWalletAddress(activeWallet.address);
           setWalletPrivateKey(activeWallet.private_key);
           
@@ -159,11 +158,9 @@ export default function CardStats({ isHidden, selectedWallet }) {
           const symbol = activeWallet.symbols || selectedWallet?.abbr?.toLowerCase();
           await fetchWalletBalance(activeWallet.address, symbol);
         } else {
-          console.error("Could not find wallet for token:", tokenName);
           setErrorMessage(`Could not find wallet for ${tokenName}`);
         }
       } catch (error) {
-        console.error("Error fetching wallet details:", error);
         setErrorMessage("Error loading wallet data");
       } finally {
         setLoadingWallet(false);
@@ -359,63 +356,77 @@ export default function CardStats({ isHidden, selectedWallet }) {
       </div>
 
       {/* Modals */}
-      <SendModal
-        isOpen={isSendModalOpen}
-        onClose={closeSendModal}
-        recipientAddress={recipientAddress}
-        setRecipientAddress={setRecipientAddress}
-        amount={amount}
-        setAmount={setAmount}
-        walletBalance={walletBalance}
-        selectedWalletState={selectedWalletState}
-        selectedWallet={selectedWallet}
-        isDropdownOpen={isDropdownOpen}
-        setIsDropdownOpen={setIsDropdownOpen}
-        tokenNames={tokenNames}
-        setSelectedWalletState={setSelectedWalletState}
-        setIsScanModalOpen={setIsScanModalOpen}
-        handleSendToken={handleSendToken}
-      />
+      {isSendModalOpen && (
+        <SendModal
+          isOpen={isSendModalOpen}
+          onClose={closeSendModal}
+          recipientAddress={recipientAddress}
+          setRecipientAddress={setRecipientAddress}
+          amount={amount}
+          setAmount={setAmount}
+          walletBalance={walletBalance}
+          selectedWalletState={selectedWalletState}
+          selectedWallet={selectedWallet}
+          isDropdownOpen={isDropdownOpen}
+          setIsDropdownOpen={setIsDropdownOpen}
+          tokenNames={tokenNames}
+          setSelectedWalletState={setSelectedWalletState}
+          setIsScanModalOpen={setIsScanModalOpen}
+          handleSendToken={handleSendToken}
+        />
+      )}
 
-      <ConfirmationModal
-        isOpen={isConfirmationOpen}
-        onClose={closeConfirmationModal}
-        setIsSendModalOpen={setIsSendModalOpen}
-      />
+      {isConfirmationOpen && (
+        <ConfirmationModal
+          isOpen={isConfirmationOpen}
+          onClose={closeConfirmationModal}
+          setIsSendModalOpen={setIsSendModalOpen}
+        />
+      )}
 
-      <ReceiveModal
-        isOpen={isReceiveModalOpen}
-        onClose={closeReceiveModal}
-        walletAddress={walletAddress}
-        selectedWallet={selectedWallet}
-      />
+      {isReceiveModalOpen && (
+        <ReceiveModal
+          isOpen={isReceiveModalOpen}
+          onClose={closeReceiveModal}
+          walletAddress={walletAddress}
+          selectedWallet={selectedWallet}
+        />
+      )}
 
-      <ScanModal
-        isOpen={isScanModalOpen}
-        onClose={() => setIsScanModalOpen(false)}
-        setRecipientAddress={setRecipientAddress}
-        setIsSendModalOpen={setIsSendModalOpen}
-      />
+      {isScanModalOpen && (
+        <ScanModal
+          isOpen={isScanModalOpen}
+          onClose={() => setIsScanModalOpen(false)}
+          setRecipientAddress={setRecipientAddress}
+          setIsSendModalOpen={setIsSendModalOpen}
+        />
+      )}
 
-      <BuySellModal
-        isOpen={isBuySellModalOpen}
-        onClose={() => setIsBuySellModalOpen(false)}
-        selectedWallet={selectedWallet}
-      />
+      {isBuySellModalOpen && (
+        <BuySellModal
+          isOpen={isBuySellModalOpen}
+          onClose={() => setIsBuySellModalOpen(false)}
+          selectedWallet={selectedWallet}
+        />
+      )}
 
-    <SwapModal
-      isOpen={isSwapModalOpen}
-      onClose={() => setIsSwapModalOpen(false)}
-      selectedWallet={selectedWallet}
-      walletBalance={walletBalance}
-      walletAddress={walletAddress}
-      tokenNames={tokenNames}
-    />
+      {isSwapModalOpen && (
+        <SwapModal
+          isOpen={isSwapModalOpen}
+          onClose={closeSwapModal}
+          selectedWallet={selectedWallet}
+          walletBalance={walletBalance}
+          walletAddress={walletAddress}
+          tokenNames={tokenNames}
+        />
+      )}
 
-      <P2PModal
-        isOpen={isP2PModalOpen}
-        onClose={() => setIsP2PModalOpen(false)}
-      />
+      {isP2PModalOpen && (
+        <P2PModal
+          isOpen={isP2PModalOpen}
+          onClose={closeP2PModal}
+        />
+      )}
     </div>
   );
 }

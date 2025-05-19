@@ -91,9 +91,9 @@ export default function Login() {
             }
 
 
-            const oneDay = 24 * 60 * 60 * 1000;
+            const week = 7 * 24 * 60 * 60 * 1000;
             const isSessionValid = storedPinData.timestamp &&
-                (Date.now() - storedPinData.timestamp) < oneDay;
+                (Date.now() - storedPinData.timestamp) < week;
 
             if (!isSessionValid) {
                 setError("Session expired. Please Import Wallet again");

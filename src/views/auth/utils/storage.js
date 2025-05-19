@@ -36,7 +36,7 @@ const encryptData = (data, key) => {
  * @param {string} key - Decryption key (usually PIN)
  * @returns {string} - Decrypted data as string
  */
-const decryptData = (encryptedData, key) => {
+export const decryptData = (encryptedData, key) => {
   try {
     const decrypted = CryptoJS.AES.decrypt(encryptedData, key).toString(CryptoJS.enc.Utf8);
     return decrypted;
