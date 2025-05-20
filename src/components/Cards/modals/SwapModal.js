@@ -64,12 +64,22 @@ const SwapModal = ({
     loadWalletData();
   }, []);
 
+
   // Update fromToken when selectedWallet changes
   useEffect(() => {
     if (selectedWallet?.abbr) {
       setFromToken(selectedWallet.abbr);
     }
   }, [selectedWallet]);
+
+  // Dismiss error after 30 seconds
+  useEffect(() => {
+    const dismissError = setTimeout(() => {
+      setError(null);
+    }, 5000);
+
+    return () => clearTimeout(dismissError);
+  }, [error]);
 
   // Set the from and to addresses based on selected tokens
   useEffect(() => {
@@ -137,19 +147,23 @@ const SwapModal = ({
     setFromAmount(tokenData[fromToken].balance);
   };
 
-    // Fetch swap quote when fromAmount changes
-    // useEffect(() => {
-    //   if (fromAmount && parseFloat(fromAmount) > 0 && fromToken !== toToken) {
-    //     const debounceTimer = setTimeout(() => {
-    //       fetchSwapQuote();
-    //     }, 1000);
-
-    //     return () => clearTimeout(debounceTimer);
-    //   } else {
-    //     setToAmount("");
-    //     setQuoteData(null);
-    //   }
-    // }, [fromAmount, fromToken, toToken]);
+  const handleFromAmountBlur = async () => {
+    if (fromAmount && parseFloat(fromAmount) > 0 && fromToken !== toToken) {
+      try {
+        setIsFetchingQuote(true);
+        await fetchSwapQuote();
+        setIsReadyToSwap(true);
+      } catch (error) {
+        setError("Failed to get swap quote");
+      } finally {
+        setIsFetchingQuote(false);
+      }
+    } else {
+      setToAmount("");
+      setQuoteData(null);
+    }
+  };
+  
 
   const handleButtonClick = async () => {
     if (fromAmount && !quoteData) {
@@ -168,8 +182,16 @@ const SwapModal = ({
   };
 
   const fetchSwapQuote = async () => {
+    if (!fromAmount) {
+      setError("Please enter a valid amount");
+      return;
+    }
+    if (!['BNB', 'ETH'].includes(fromToken) || !['BNB', 'ETH'].includes(toToken)) {
+      setError("Only BNB and ETH are supported currently for swapping. Other will be added soon.");
+      return;
+    }
+
     setIsLoading(true);
-    setError(null);
     
     try {
       const baseRequestData = {
@@ -308,7 +330,7 @@ const SwapModal = ({
       setError("Please enter a valid amount");
       return;
     }
-  
+
     if (walletPrivateKey) {
       setShowPinModal(true);
     } else {
@@ -382,15 +404,16 @@ const SwapModal = ({
           </div>
           
           {/* Input field with Max button */}
-          <div className="flex relative">
-            <input
-              type="text"
-              placeholder="Enter an amount here"
-              value={fromAmount}
-              onChange={(e) => setFromAmount(e.target.value)}
-              className="block w-full bg-black px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              disabled={isLoading}
-            />
+          <div className="flex relative text-white">
+          <input
+            type="text"
+            placeholder="Enter an amount here"
+            value={fromAmount}
+            onChange={(e) => setFromAmount(e.target.value)}
+            onBlur={handleFromAmountBlur}  // Add this line
+            className="block w-full bg-black px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            disabled={isLoading}
+          />
             <button
               className="absolute transform text-xs bg-primary-color text-green px-3 py-1 rounded"
               style={{ right: "10px", marginTop: "10px" }}
@@ -460,7 +483,7 @@ const SwapModal = ({
             placeholder={isLoading ? "Calculating..." : "Amount to receive"}
             value={toAmount}
             readOnly
-            className="w-full bg-black rounded-lg py-3 px-4 focus:outline-none"
+            className="w-full bg-black rounded-lg py-3 px-4 text-white focus:outline-none"
           />
         </div>
 
@@ -493,7 +516,7 @@ const SwapModal = ({
           {isFetchingQuote ? (
             <>
               <Loader className="animate-spin mr-2" size={18} />
-              Calculating Amount to receive...
+              Calculating Amount...
             </>
           ) : isLoading ? (
             <>
@@ -501,13 +524,13 @@ const SwapModal = ({
               Processing Swap...
             </>
           ) : !fromAmount ? (
-            "Input amount to swap "
+            "Enter amount to swap"
           ) : fromAmount && !quoteData ? (
-            "Get Amount to be Recieve"
+            "Click here or press Tab to calculate"
           ) : isReadyToSwap ? (
             "Confirm Swap"
           ) : (
-            "Null"
+            "Swap"
           )}
         </button>
       </div>
