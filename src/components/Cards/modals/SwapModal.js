@@ -483,7 +483,7 @@ const SwapModal = ({
             placeholder={isLoading ? "Calculating..." : "Amount to receive"}
             value={toAmount}
             readOnly
-            className="w-full bg-black rounded-lg py-3 px-4 text-white focus:outline-none"
+            className="w-full bg-blueGray-700 text-white rounded-lg py-3 px-4 text-white focus:outline-none"
           />
         </div>
 

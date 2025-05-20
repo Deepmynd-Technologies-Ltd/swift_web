@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
+import localforage from "localforage";
 
 // Supported currencies
 const FIAT_CURRENCIES = ['NGN', 'EUR', 'USD', 'GBP'];
@@ -31,8 +32,7 @@ const InputRequestModal = ({
   provider, 
   onContinue, 
   selectedWallet,
-  direction,
-  walletAddresses // Pass wallet addresses for different cryptos
+  direction
 }) => {
   const [amount, setAmount] = useState("");
   const [email, setEmail] = useState("");
@@ -42,30 +42,59 @@ const InputRequestModal = ({
   const [fromCurrency, setFromCurrency] = useState("NGN");
   const [toCurrency, setToCurrency] = useState(selectedWallet?.abbr || "BTC");
   const [supportedFiats, setSupportedFiats] = useState(FIAT_CURRENCIES);
+  const [walletData, setWalletData] = useState(null);
 
+  // Load wallet data from localforage
   useEffect(() => {
-    // Reset form when modal opens
+    const loadWalletData = async () => {
+      try {
+        let data = await localforage.getItem("encryptedWallet");
+        if (!data) {
+          data = await localforage.getItem("walletDetails");
+        }
+        
+        if (!data) {
+          console.error("No wallet data found in localforage");
+          return;
+        }
+        
+        setWalletData(data);
+      } catch (err) {
+        console.error("Error loading wallet data:", err);
+      }
+    };
+    
+    if (isOpen) {
+      loadWalletData();
+    }
+  }, [isOpen]);
+
+  // Initialize form when modal opens
+  useEffect(() => {
     if (isOpen) {
       setAmount("");
       setEmail("");
       setError("");
       
       // Set default currencies based on direction
+      const defaultCrypto = selectedWallet?.abbr || "BTC";
       if (direction === 'Buy') {
         setFromCurrency("NGN");
-        setToCurrency(selectedWallet?.abbr || "BTC");
+        setToCurrency(defaultCrypto);
       } else {
-        setFromCurrency(selectedWallet?.abbr || "BTC");
-        // For sell, default to first supported fiat
+        setFromCurrency(defaultCrypto);
         setToCurrency(SELL_SUPPORTED_FIAT[0] || "USD");
       }
-
-      // Set wallet address automatically for sell transactions
-      if (direction === 'Sell' && selectedWallet?.abbr && walletAddresses) {
-        setWalletAddress(walletAddresses[selectedWallet.abbr] || "");
-      }
     }
-  }, [isOpen, direction, selectedWallet, walletAddresses]);
+  }, [isOpen, direction, selectedWallet]);
+
+  // Update wallet address when currencies or wallet data changes
+  useEffect(() => {
+    if (!isOpen || !walletData) return;
+
+    const cryptoCurrency = direction === 'Buy' ? toCurrency : fromCurrency;
+    updateWalletAddress(cryptoCurrency);
+  }, [toCurrency, fromCurrency, direction, isOpen, walletData]);
 
   // Update supported fiats based on action type
   useEffect(() => {
@@ -76,8 +105,38 @@ const InputRequestModal = ({
     }
   }, [direction]);
 
+  // Helper function to update wallet address based on crypto currency
+  const updateWalletAddress = (cryptoCurrency) => {
+    if (!walletData || !cryptoCurrency) {
+      setWalletAddress("");
+      return;
+    }
+
+    let walletItems = [];
+    
+    // Handle different wallet data structures
+    if (walletData.walletAddresses && Array.isArray(walletData.walletAddresses)) {
+      if (walletData.walletAddresses[0] && Array.isArray(walletData.walletAddresses[0].data)) {
+        walletItems = walletData.walletAddresses[0].data;
+      } else {
+        walletItems = walletData.walletAddresses;
+      }
+    } else if (Array.isArray(walletData)) {
+      walletItems = walletData;
+    } else {
+      console.error("Invalid wallet data format");
+      return;
+    }
+
+    // Find the wallet that matches the crypto currency symbol
+    const targetWallet = walletItems.find(wallet => 
+      wallet.symbols?.toUpperCase() === cryptoCurrency.toUpperCase()
+    );
+
+    setWalletAddress(targetWallet?.address || "");
+  };
+
   const validateInputs = () => {
-    // Check required fields
     if (!amount) {
       setError("Please enter an amount");
       return false;
@@ -294,11 +353,15 @@ const InputRequestModal = ({
                 <input
                   type="text"
                   value={walletAddress}
-                  onChange={(e) => setWalletAddress(e.target.value)}
-                  className="w-full bg-black text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder={`Enter ${toCurrency} wallet address`}
-                  required={direction === 'Buy'}
+                  readOnly
+                  className="w-full bg-blueGray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder={`${direction === 'Buy' ? toCurrency : fromCurrency} wallet address`}
                 />
+                <p className="text-xs text-gray-400 mt-1">
+                  {direction === 'Buy' 
+                    ? "This address will automatically update when you change the crypto currency" 
+                    : "This is your wallet address for the selected cryptocurrency"}
+                </p>
               </div>
             )}
 
@@ -326,9 +389,10 @@ InputRequestModal.propTypes = {
   actionType: PropTypes.string.isRequired,
   provider: PropTypes.object,
   onContinue: PropTypes.func.isRequired,
-  selectedWallet: PropTypes.object,
+  selectedWallet: PropTypes.shape({
+    abbr: PropTypes.string.isRequired,
+  }),
   direction: PropTypes.string.isRequired,
-  walletAddresses: PropTypes.object,
 };
 
 export default InputRequestModal;
