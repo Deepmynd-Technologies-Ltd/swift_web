@@ -1,8 +1,9 @@
-
 import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 import { X, ChevronDown, Loader } from "lucide-react";
 import localforage from "localforage";
 import { decryptData } from "views/auth/utils/storage";
+import PinModal from "./PinModal";
 
 const SwapModal = ({ 
   isOpen, 
@@ -27,8 +28,8 @@ const SwapModal = ({
   const [walletData, setWalletData] = useState(null);
   const [walletPrivateKey, setWalletPrivateKey] = useState(null);
   const [showPinModal, setShowPinModal] = useState(false);
-  const [pin, setPin] = useState(["", "", "", ""]);
-  const [pinError, setPinError] = useState(null);
+  const [isFetchingQuote, setIsFetchingQuote] = useState(false);
+  const [isReadyToSwap, setIsReadyToSwap] = useState(false);
 
   // Token data with dynamic balances
   const tokenData = {
@@ -96,7 +97,6 @@ const SwapModal = ({
 
     if (fromWallet) {
       setFromAddress(fromWallet.address);
-      // Set the private key from the matching wallet
       setWalletPrivateKey(fromWallet.private_key);
     } else {
       setFromAddress(walletAddress || "");
@@ -137,26 +137,41 @@ const SwapModal = ({
     setFromAmount(tokenData[fromToken].balance);
   };
 
-  // Fetch swap quote when fromAmount changes
-  useEffect(() => {
-    if (fromAmount && parseFloat(fromAmount) > 0 && fromToken !== toToken) {
-      const debounceTimer = setTimeout(() => {
-        fetchSwapQuote();
-      }, 500);
+    // Fetch swap quote when fromAmount changes
+    // useEffect(() => {
+    //   if (fromAmount && parseFloat(fromAmount) > 0 && fromToken !== toToken) {
+    //     const debounceTimer = setTimeout(() => {
+    //       fetchSwapQuote();
+    //     }, 1000);
 
-      return () => clearTimeout(debounceTimer);
+    //     return () => clearTimeout(debounceTimer);
+    //   } else {
+    //     setToAmount("");
+    //     setQuoteData(null);
+    //   }
+    // }, [fromAmount, fromToken, toToken]);
+
+  const handleButtonClick = async () => {
+    if (fromAmount && !quoteData) {
+      try {
+        await fetchSwapQuote();
+        setIsReadyToSwap(true); // Only enable swap after successful quote
+      } catch (error) {
+        setError("Failed to get swap quote");
+      } finally {
+      }
     } else {
-      setToAmount("");
-      setQuoteData(null);
+      // Second click - execute swap
+      await executeSwap();
+      setIsReadyToSwap(false);
     }
-  }, [fromAmount, fromToken, toToken]);
+  };
 
   const fetchSwapQuote = async () => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // Prepare base request data
       const baseRequestData = {
         from_symbol: fromToken,
         to_symbol: toToken,
@@ -164,11 +179,9 @@ const SwapModal = ({
         slippage: slippage,
       };
       
-      // Add addresses if available
       if (fromAddress) baseRequestData.from_address = fromAddress;
       if (toAddress) baseRequestData.to_address = toAddress || fromAddress;
       
-      // Enhanced API structure from second implementation
       if (walletData) {
         baseRequestData.from_token = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
         baseRequestData.to_token = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
@@ -190,14 +203,10 @@ const SwapModal = ({
       if (data.data) {
         setQuoteData(data.data);
         
-        // Handle different response formats between the two API structures
         if (data.data.expected_output) {
           setToAmount(data.data.expected_output || "0");
         } else if (data.data.estimate && data.data.estimate.toAmount) {
-          // Get the toToken decimals from the response (default to 18 if not available)
           const toTokenDecimals = data.data.action?.toToken?.decimals || 18;
-          
-          // Convert from raw amount to human-readable format using the correct decimals
           const toAmountHuman = (parseFloat(data.data.estimate.toAmount) / 10**toTokenDecimals).toFixed(8);
           setToAmount(toAmountHuman);
         }
@@ -215,59 +224,7 @@ const SwapModal = ({
     }
   };
 
-  // PIN input handlers
-  const handlePinChange = (value, index) => {
-    const numericValue = value.replace(/\D/g, '');
-    if (numericValue.length > 1) return;
-
-    const newPin = [...pin];
-    newPin[index] = numericValue;
-    setPin(newPin);
-
-    if (numericValue && index < 3) {
-      document.getElementById(`pin-input-${index + 1}`).focus();
-    }
-  };
-
-  const handlePinKeyDown = (e, index) => {
-    if (e.key === "Backspace" && !pin[index] && index > 0) {
-      document.getElementById(`pin-input-${index - 1}`).focus();
-    }
-  };
-
-  const verifyPinAndExecuteSwap = async () => {
-    const pinCode = pin.join("");
-    if (pinCode.length !== 4 || !/^\d+$/.test(pinCode)) {
-      setPinError("PIN must be exactly 4 digits");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setPinError(null);
-
-      // Decrypt the private key with the provided PIN
-      const decryptedPrivateKey = await decryptData(walletPrivateKey, pinCode);
-      
-      if (!decryptedPrivateKey) {
-        setPinError("Invalid PIN or decryption failed");
-        return;
-      }
-
-      // Close the PIN modal
-      setShowPinModal(false);
-      
-      // Now execute the swap with the decrypted private key
-      await performSwap(decryptedPrivateKey);
-    } catch (err) {
-      console.error("PIN verification error:", err);
-      setPinError("Failed to decrypt private key. Invalid PIN?");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const performSwap = async (decryptedPrivateKey) => {
+  const performSwap = async (decryptedPrivateKey = null) => {
     if (!quoteData || !fromAmount || !toAmount) {
       setError("Missing required data for swap");
       return;
@@ -277,7 +234,6 @@ const SwapModal = ({
     setError(null);
 
     try {
-      // Prepare request data based on available information
       const requestData = {
         from_symbol: fromToken,
         to_symbol: toToken,
@@ -285,23 +241,19 @@ const SwapModal = ({
         slippage: slippage,
       };
       
-      // Add appropriate addresses
       if (fromAddress) requestData.from_address = fromAddress;
       if (toAddress) requestData.to_address = toAddress || fromAddress;
       
-      // Add private key if available (secure wallet approach)
       if (decryptedPrivateKey) {
         requestData.private_key = decryptedPrivateKey;
         requestData.gas_multiplier = 1.1;
       }
       
-      // If we have quote ID from the first implementation
       if (quoteData.quote_id) {
         requestData.quote_id = quoteData.quote_id;
-        requestData.provider = "paybis";
+        requestData.provider = "lifi";
       }
 
-      // Choose appropriate endpoint based on what data we have
       const endpoint = decryptedPrivateKey 
         ? "http://127.0.0.1:8000/api/wallet/swap/" 
         : "https://swift-api-g7a3.onrender.com/api/wallet/swap/";
@@ -319,7 +271,6 @@ const SwapModal = ({
       if (data.success) {
         alert("Swap executed successfully!");
         onClose();
-        // You might want to refresh balances here
       } else {
         setError(data.message || "Swap execution failed");
       }
@@ -331,17 +282,36 @@ const SwapModal = ({
     }
   };
 
-  const executeSwap = async () => {
+  const handlePinConfirmed = async (pinCode) => {
+    try {
+      setIsLoading(true);
+      const decryptedPrivateKey = await decryptData(walletPrivateKey, pinCode);
+      
+      if (!decryptedPrivateKey) {
+        setError("Invalid PIN or decryption failed");
+        return;
+      }
+
+      setShowPinModal(false);
+      await performSwap(decryptedPrivateKey);
+    } catch (err) {
+      console.error("PIN verification error:", err);
+      setError("Failed to decrypt private key. Invalid PIN?");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+ 
+  // Update your executeSwap function
+  const executeSwap = async () => {    
     if (!quoteData || !fromAmount || !toAmount) {
       setError("Please enter a valid amount");
       return;
     }
-
-    // If we have wallet private key, show PIN modal instead of executing swap immediately
+  
     if (walletPrivateKey) {
       setShowPinModal(true);
     } else {
-      // Original implementation for non-secure wallets
       await performSwap();
     }
   };
@@ -437,7 +407,7 @@ const SwapModal = ({
           <button 
             className="absolute bg-green-500 text-white text-2xl font-bold rounded-full w-10 h-10 flex items-center justify-center" 
             style={{ top: "-20px" }}
-            onClick={handleSwitchTokens}
+            onClick={fetchSwapQuote}
             disabled={isLoading}
           >
             ⥯
@@ -494,30 +464,6 @@ const SwapModal = ({
           />
         </div>
 
-        {/* Swap Details */}
-        {quoteData && (
-          <div className="w-full text-left mb-4 text-sm text-blueGray-300">
-            {quoteData.exchange_rate && (
-              <div className="flex justify-between mb-1">
-                <span>Exchange Rate:</span>
-                <span>1 {fromToken} = {quoteData.exchange_rate} {toToken}</span>
-              </div>
-            )}
-            {quoteData.minimum_output && (
-              <div className="flex justify-between mb-1">
-                <span>Minimum Received:</span>
-                <span>{quoteData.minimum_output} {toToken}</span>
-              </div>
-            )}
-            {quoteData.price_impact && (
-              <div className="flex justify-between">
-                <span>Price Impact:</span>
-                <span>{quoteData.price_impact}%</span>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Exchange Fee */}
         <div className="w-full text-left mb-4">
           <span className="inline-flex items-center text-sm text-blueGray-500">
@@ -541,66 +487,41 @@ const SwapModal = ({
         {/* Swap Button */}
         <button
           className="bg-green-500 text-white w-full text-dark-mode-1 px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200 flex items-center justify-center"
-          onClick={executeSwap}
-          disabled={isLoading || !quoteData || !fromAmount || !toAmount}
+          onClick={handleButtonClick}
+          disabled={isLoading || isFetchingQuote || !fromAmount || !toAmount || (isReadyToSwap && !quoteData)}
         >
-          {isLoading ? (
+          {isFetchingQuote ? (
             <>
               <Loader className="animate-spin mr-2" size={18} />
-              Processing...
+              Calculating Amount to receive...
             </>
+          ) : isLoading ? (
+            <>
+              <Loader className="animate-spin mr-2" size={18} />
+              Processing Swap...
+            </>
+          ) : !fromAmount ? (
+            "Input amount to swap "
+          ) : fromAmount && !quoteData ? (
+            "Get Amount to be Recieve"
+          ) : isReadyToSwap ? (
+            "Confirm Swap"
           ) : (
-            "Swap"
+            "Null"
           )}
         </button>
-
-        {/* PIN Modal */}
-        {showPinModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-20">
-            <div className="bg-primary-color p-6 rounded-lg max-w-sm w-full">
-              <h3 className="text-lg font-bold mb-4">Enter PIN to Confirm Swap</h3>
-              
-              {pinError && <p className="text-red-500 text-sm mb-4">{pinError}</p>}
-              
-              <div className="flex space-x-4 justify-center mb-6">
-                {pin.map((value, index) => (
-                  <input
-                    key={index}
-                    id={`pin-input-${index}`}
-                    type="password"
-                    pattern="[0-9]*"
-                    inputMode="numeric"
-                    value={value}
-                    maxLength="1"
-                    onChange={(e) => handlePinChange(e.target.value, index)}
-                    onKeyDown={(e) => handlePinKeyDown(e, index)}
-                    className="w-12 h-12 border border-gray-300 bg-black text-white text-center text-lg rounded-lg focus:ring focus:outline-none"
-                    disabled={isLoading}
-                    autoComplete="off"
-                  />
-                ))}
-              </div>
-              
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => setShowPinModal(false)}
-                  className="flex-1 bg-gray-500 text-white py-2 rounded-lg"
-                  disabled={isLoading}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={verifyPinAndExecuteSwap}
-                  className="flex-1 bg-green-500 text-white py-2 rounded-lg"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Verifying..." : "Confirm"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Pin Modal */}
+      <PinModal
+        isOpen={showPinModal}
+        onClose={() => {
+          console.log("Closing PIN modal");
+          setShowPinModal(false);
+        }}
+        onConfirm={handlePinConfirmed}
+        isLoading={isLoading}
+      />
     </div>
   );
 };
