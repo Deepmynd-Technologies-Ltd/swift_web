@@ -1,37 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { X } from "lucide-react";
-import ContinueModal from "./ContinueModal"; // Make sure this path is correct
+import ContinueModal from "./ContinueModal";
+import InputRequestModal from "./InputRequestModal";
 
 const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
   const [activeTab, setActiveTab] = useState('Buy');
   const [sliderStyle, setSliderStyle] = useState({});
   const [showContinueModal, setShowContinueModal] = useState(false);
+  const [showInputModal, setShowInputModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(null);
+  const [widgetUrl, setWidgetUrl] = useState("");
   const buyButtonRef = useRef(null);
   const sellButtonRef = useRef(null);
-
-  // Provider URLs (replace with actual URLs)
-  const providerUrls = {
-    'Buy': {
-      'Paybis': 'https://paybis.com/',
-      'Transak': 'https://global.transak.com/',
-      'Kotani pay': 'https://kotanipay.com'
-    },
-    'Sell': {
-      'Paybis': 'https://paybis.com/sell-bitcoin/',
-      'Transak': 'https://global.transak.com/',
-      'Kotani pay': 'https://kotanipay.com'
-    }
-  };
 
   // Update slider position when activeTab changes
   useEffect(() => {
     if (!isOpen) return;
-    
+
     const updateSliderPosition = () => {
       const activeButton = activeTab === 'Buy' ? buyButtonRef.current : sellButtonRef.current;
-      
+
       if (activeButton) {
         setSliderStyle({
           width: `${activeButton.offsetWidth}px`,
@@ -47,7 +36,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
 
     // Small delay to ensure DOM is updated
     setTimeout(updateSliderPosition, 10);
-    
+
     // Also update on window resize
     window.addEventListener('resize', updateSliderPosition);
     return () => window.removeEventListener('resize', updateSliderPosition);
@@ -65,7 +54,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
       icon: '🪙'
     },
     {
-      name: 'Kotani pay',
+      name: 'Moon pay',
       description: 'An instant swap engine',
       icon: '💸'
     },
@@ -81,7 +70,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
       icon: '🪙'
     },
     {
-      name: 'Kotani pay',
+      name: 'Moon pay',
       description: 'Buy, sell and margin trade cryptocurrencies',
       icon: '💸'
     },
@@ -89,12 +78,23 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
 
   const handleProviderClick = (provider) => {
     setSelectedProvider(provider);
+    setShowInputModal(true);
+  };
+
+  const handleInputSubmit = (url) => {
+    setWidgetUrl(url);
+    setShowInputModal(false);
     setShowContinueModal(true);
   };
-  
+
   const handleContinue = () => {
     setShowContinueModal(false);
-    window.open(providerUrls[activeTab][selectedProvider.name], '_blank');
+    if (widgetUrl) {
+      window.open(widgetUrl, '_blank');
+    } else if (selectedProvider?.name === 'Paybis' && activeTab === 'Sell') {
+      // Fallback for Paybis Sell if widget URL fails
+      window.open('https://paybis.com/sell-bitcoin/', '_blank');
+    }
   };
 
   if (!isOpen) return null;
@@ -121,10 +121,10 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
                     className="absolute bg-black rounded-md shadow-sm z-0" 
                     style={sliderStyle}
                   ></div>
-                  
+
                   <div className="p-2 h-4">
                     {/* Buttons */}
-                    <a
+                    <button
                       ref={buyButtonRef}
                       className={`px-6 py-1 rounded-md text-sm relative z-10 ${
                         activeTab === 'Buy' ? 'text-white font-medium' : 'text-gray-500'
@@ -132,8 +132,9 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
                       onClick={() => setActiveTab('Buy')}
                     >
                       Buy
-                    </a>
-                    <a
+                    </button>
+
+                    <button
                       ref={sellButtonRef}
                       className={`px-6 py-1 rounded-md text-sm relative z-10 ${
                         activeTab === 'Sell' ? 'text-white font-medium' : 'text-gray-500'
@@ -141,10 +142,10 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
                       onClick={() => setActiveTab('Sell')}
                     >
                       Sell
-                    </a>
+                    </button>
                   </div>
                 </div>
-                
+
                 {/* Close button */}
                 <button
                   className="absolute top-2 text-white hover:text-gray-700"
@@ -180,11 +181,22 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
         </div>
       </div>
 
+      <InputRequestModal
+        isOpen={showInputModal}
+        onClose={() => setShowInputModal(false)}
+        actionType={activeTab}
+        provider={selectedProvider}
+        onContinue={handleInputSubmit}
+        selectedWallet={selectedWallet}
+        direction={activeTab}
+      />
+
       <ContinueModal
         isOpen={showContinueModal}
         onClose={() => setShowContinueModal(false)}
         actionType={activeTab}
         provider={selectedProvider}
+        selectedWallet={selectedWallet}
         onContinue={handleContinue}
       />
     </>
