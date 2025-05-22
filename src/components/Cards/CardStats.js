@@ -145,10 +145,14 @@ export default function CardStats({ isHidden, selectedWallet }) {
           const walletSymbol = wallet.symbols?.toUpperCase();
           const selectedSymbol = selectedWallet?.abbr?.toUpperCase();
           const walletNameMatch = wallet.name === tokenName;
-          const symbolMatch = walletSymbol === selectedSymbol;
-          
-          return walletNameMatch || symbolMatch;
+          if (selectedSymbol === 'DOGE') {
+            return walletSymbol === 'WDOGE';
+          } else {
+            const symbolMatch = walletSymbol === selectedSymbol;
+            return walletNameMatch || symbolMatch;
+          }
         });
+        
         
         if (activeWallet) {
           setWalletAddress(activeWallet.address);

@@ -36,7 +36,7 @@ const SwapModal = ({
     BTC: { name: "Bitcoin", balance: fromToken === "BTC" ? walletBalance : "0.0" },
     ETH: { name: "Ethereum", balance: fromToken === "ETH" ? walletBalance : "0.0" },
     BNB: { name: "BNB BEP20", balance: fromToken === "BNB" ? walletBalance : "0.0" },
-    DOGE: { name: "Doge coin", balance: fromToken === "DOGE" ? walletBalance : "0.0" },
+    DOGE: { name: "Dogecoin", balance: fromToken === "DOGE" ? walletBalance : "0.0" },
     SOL: { name: "Solana", balance: fromToken === "SOL" ? walletBalance : "0.0" },
     USDT: { name: "USDT BEP20", balance: fromToken === "USDT" ? walletBalance : "0.0" },
   };
@@ -101,8 +101,8 @@ const SwapModal = ({
     }
 
     // Find the wallet that matches the fromToken symbol
-    const fromWallet = walletItems.find(wallet => 
-      wallet.symbols?.toUpperCase() === fromToken.toUpperCase()
+    const fromWallet = walletItems.find(wallet =>
+      fromToken.toUpperCase() === "DOGE" ? wallet.symbols?.toUpperCase() === "WDOGE" : wallet.symbols?.toUpperCase() === fromToken.toUpperCase()
     );
 
     if (fromWallet) {
@@ -114,7 +114,7 @@ const SwapModal = ({
 
     // Set to address based on toToken
     const toWallet = walletItems.find(wallet => 
-      wallet.symbols?.toUpperCase() === toToken.toUpperCase()
+      toToken.toUpperCase() === "DOGE" ? wallet.symbols?.toUpperCase() === "WDOGE" : wallet.symbols?.toUpperCase() === toToken.toUpperCase()
     );
     setToAddress(toWallet?.address || "");
   }, [fromToken, toToken, walletData, walletAddress]);
@@ -186,17 +186,13 @@ const SwapModal = ({
       setError("Please enter a valid amount");
       return;
     }
-    if (!['BNB', 'ETH'].includes(fromToken) || !['BNB', 'ETH'].includes(toToken)) {
-      setError("Only BNB and ETH are supported currently for swapping. Other will be added soon.");
-      return;
-    }
 
     setIsLoading(true);
     
     try {
       const baseRequestData = {
-        from_symbol: fromToken,
-        to_symbol: toToken,
+        from_symbol: fromToken === "DOGE" ? "DODGE" : fromToken,
+        to_symbol: toToken === "DOGE" ? "DODGE" : toToken,
         amount: fromAmount,
         slippage: slippage,
       };
@@ -204,10 +200,6 @@ const SwapModal = ({
       if (fromAddress) baseRequestData.from_address = fromAddress;
       if (toAddress) baseRequestData.to_address = toAddress || fromAddress;
       
-      if (walletData) {
-        baseRequestData.from_token = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-        baseRequestData.to_token = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-      }
 
       const response = await fetch(
         `https://swift-api-g7a3.onrender.com/api/wallet/swap/quote/`,
@@ -219,6 +211,7 @@ const SwapModal = ({
           body: JSON.stringify(baseRequestData),
         }
       );
+      console.log("Response from swap quote:", baseRequestData);
 
       const data = await response.json();
       
@@ -257,8 +250,8 @@ const SwapModal = ({
 
     try {
       const requestData = {
-        from_symbol: fromToken,
-        to_symbol: toToken,
+        from_symbol: fromToken === "DOGE" ? "DODGE" : fromToken,
+        to_symbol: toToken === "DOGE" ? "DODGE" : toToken,
         amount: fromAmount,
         slippage: slippage,
       };
