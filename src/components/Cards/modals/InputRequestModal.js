@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
+import localforage from "localforage";
 
 // Supported currencies
 const FIAT_CURRENCIES = ['NGN', 'EUR', 'USD', 'GBP'];
@@ -8,7 +9,7 @@ const CRYPTO_CURRENCIES = ['BNB', 'BTC', 'ETH', 'USDT', 'DOGE', 'SOL'];
 // Provider limits (example values - adjust based on actual provider limits)
 const PROVIDER_LIMITS = {
   Paybis: {
-    buy: { min: 5000, max: 500000 }, // NGN
+    buy: { min: 5000, max: 500000 }, // NGNs
     sell: { min: 0.001, max: 10 } // BTC
   },
   Transak: {
@@ -43,26 +44,21 @@ const InputRequestModal = ({
   const [supportedFiats, setSupportedFiats] = useState(FIAT_CURRENCIES);
   const [walletData, setWalletData] = useState(null);
 
-  // Load wallet data from localStorage/sessionStorage simulation
+  // Load wallet data from localforage
   useEffect(() => {
     const loadWalletData = async () => {
       try {
-        // Since we can't use localStorage in artifacts, simulate wallet data
-        // In your actual implementation, replace this with your localforage logic
-        const simulatedWalletData = {
-          walletAddresses: [{
-            data: [
-              { symbols: 'BTC', address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa' },
-              { symbols: 'ETH', address: '0x742d35Cc6631C0532925a3b8D4000532b9eDc0B' },
-              { symbols: 'BNB', address: 'bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2' },
-              { symbols: 'USDT', address: '0x742d35Cc6631C0532925a3b8D4000532b9eDc0B' },
-              { symbols: 'DOGE', address: 'D7Y55q7aHKxYjTGqEBY3x7J7ySNdBQJJP3' },
-              { symbols: 'SOL', address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM' }
-            ]
-          }]
-        };
+        let data = await localforage.getItem("encryptedWallet");
+        if (!data) {
+          data = await localforage.getItem("walletDetails");
+        }
         
-        setWalletData(simulatedWalletData);
+        if (!data) {
+          console.error("No wallet data found in localforage");
+          return;
+        }
+        
+        setWalletData(data);
       } catch (err) {
         console.error("Error loading wallet data:", err);
       }
@@ -179,6 +175,8 @@ const InputRequestModal = ({
     return true;
   };
 
+  // In your InputRequestModal component, update the handleSubmit function:
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -243,12 +241,21 @@ const InputRequestModal = ({
         throw new Error(data.message || "Failed to process transaction");
       }
 
-      // For Paybis, pass both widget_url and request_id
+      // Handle different response types
       if (provider.name === 'Paybis') {
-        onContinue({
-          widget_url: data.data.widget_url,
-          request_id: data.data.request_id || data.data.id
-        });
+        if (direction === 'Sell' && !data.data.widget_url) {
+          // For sell transactions without widget_url, pass the transaction data
+          onContinue({
+            sellTransactionData: data.data, // Pass the entire response data
+            request_id: data.data.requestId || data.data.id
+          });
+        } else {
+          // For buy transactions with widget_url
+          onContinue({
+            widget_url: data.data.widget_url,
+            request_id: data.data.request_id || data.data.id || data.data.requestId
+          });
+        }
       } else {
         // For other providers, just pass the widget URL
         onContinue({

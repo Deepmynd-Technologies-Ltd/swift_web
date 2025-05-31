@@ -8,10 +8,11 @@ import PaybisWidgetModal from "./PaybisWidgetModal";
 const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
   const [activeTab, setActiveTab] = useState('Buy');
   const [sliderStyle, setSliderStyle] = useState({});
-  const [showContinueModal, setShowContinueModal] = useState(false);
+  const [showContinueModal, setShowContinueModal] = useState({ show: false, message: null });
   const [showInputModal, setShowInputModal] = useState(false);
   const [showWidgetModal, setShowWidgetModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(null);
+  const [sellTransactionData, setSellTransactionData] = useState(null);
   const [widgetUrl, setWidgetUrl] = useState("");
   const [requestId, setRequestId] = useState("");
   const buyButtonRef = useRef(null);
@@ -56,11 +57,11 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
       description: 'Affordable Payout services',
       icon: '🪙'
     },
-    {
-      name: 'Moon pay',
-      description: 'An instant swap engine',
-      icon: '💸'
-    },
+    // {
+    //   name: 'Moon pay',
+    //   description: 'An instant swap engine',
+    //   icon: '💸'
+    // },
   ] : [
     {
       name: 'Paybis',
@@ -72,11 +73,11 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
       description: 'Global cryptocurrency exchange',
       icon: '🪙'
     },
-    {
-      name: 'Moon pay',
-      description: 'Buy, sell and margin trade cryptocurrencies',
-      icon: '💸'
-    },
+    // {
+    //   name: 'Moon pay',
+    //   description: 'Buy, sell and margin trade cryptocurrencies',
+    //   icon: '💸'
+    // },
   ];
 
   const handleProviderClick = (provider) => {
@@ -91,12 +92,46 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
     if (data.request_id) {
       setRequestId(data.request_id);
     }
-    setShowInputModal(false);
-    setShowContinueModal(true);
+    if (data.sellTransactionData) {
+      // Store sell transaction data for Paybis sell transactions
+      setSellTransactionData(data.sellTransactionData);
+    }
+    if (data.message) {
+      setRequestId(data.request_id);
+      // Store the message to show in ContinueModal
+      setShowContinueModal({ show: true, message: data.message });
+    } else {
+      setShowInputModal(false);
+      setShowContinueModal({ show: true, message: null });
+    }
   };
+  
+  // Update the handleWidgetClose function:
+  const handleWidgetClose = () => {
+    setShowWidgetModal(false);
+    // Reset all states when widget is closed
+    setWidgetUrl("");
+    setRequestId("");
+    setSelectedProvider(null);
+    setSellTransactionData(null); // Reset sell transaction data
+  };
+  
+  // Update the handleMainModalClose function:
+  const handleMainModalClose = () => {
+    // Reset all states when main modal is closed
+    setShowContinueModal(false);
+    setShowInputModal(false);
+    setShowWidgetModal(false);
+    setWidgetUrl("");
+    setRequestId("");
+    setSelectedProvider(null);
+    setSellTransactionData(null); // Reset sell transaction data
+    onClose();
+  };
+  
 
   const handleContinue = () => {
-    setShowContinueModal(false);
+    setShowContinueModal({ show: false, message: null });
     
     if (selectedProvider?.name === 'Paybis') {
       // For Paybis, show the widget modal instead of opening external link
@@ -107,25 +142,6 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
         window.open(widgetUrl, '_blank');
       }
     }
-  };
-
-  const handleWidgetClose = () => {
-    setShowWidgetModal(false);
-    // Reset all states when widget is closed
-    setWidgetUrl("");
-    setRequestId("");
-    setSelectedProvider(null);
-  };
-
-  const handleMainModalClose = () => {
-    // Reset all states when main modal is closed
-    setShowContinueModal(false);
-    setShowInputModal(false);
-    setShowWidgetModal(false);
-    setWidgetUrl("");
-    setRequestId("");
-    setSelectedProvider(null);
-    onClose();
   };
 
   if (!isOpen) return null;
@@ -223,12 +239,13 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
       />
 
       <ContinueModal
-        isOpen={showContinueModal}
-        onClose={() => setShowContinueModal(false)}
+        isOpen={showContinueModal.show}
+        onClose={() => setShowContinueModal({ show: false, message: null })}
         actionType={activeTab}
         provider={selectedProvider}
         selectedWallet={selectedWallet}
         onContinue={handleContinue}
+        message={showContinueModal.message}
       />
 
       <PaybisWidgetModal
@@ -238,6 +255,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
         requestId={requestId}
         actionType={activeTab}
         provider={selectedProvider}
+        sellTransactionData={sellTransactionData}
       />
     </>
   );
