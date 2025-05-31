@@ -37,13 +37,16 @@ const ContinueModal = ({ isOpen, onClose, actionType, provider, onContinue, sele
           
           {/* Warning */}
           <p className="text-white text-lg text-center px-2 mb-8">
-            You are opening an external app not operated by SwiftAza
+            {provider?.name === 'Paybis' 
+              ? 'You will be redirected to the Paybis widget to complete your transaction'
+              : 'You are opening an external app not operated by SwiftAza'
+            }
           </p>
           <button
             className="bg-green-500 w-full text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors duration-200 mt-4"
             onClick={onContinue}
           >
-            Continue to {provider?.name}
+            {provider?.name === 'Paybis' ? 'Open Widget' : `Continue to ${provider?.name}`}
           </button>
         </div>
       </div>
@@ -57,6 +60,7 @@ ContinueModal.propTypes = {
   actionType: PropTypes.string.isRequired,
   provider: PropTypes.object,
   onContinue: PropTypes.func.isRequired,
+  selectedWallet: PropTypes.object,
 };
 
 export default ContinueModal;

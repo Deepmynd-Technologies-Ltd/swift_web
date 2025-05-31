@@ -260,10 +260,10 @@ export default function CardStats({ isHidden, selectedWallet }) {
           body: JSON.stringify(transactionData),
         }
       );
+      console.error("Error response:", response);
+      console.log("err message:", response.statusText);
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+
 
       const result = await response.json();
 

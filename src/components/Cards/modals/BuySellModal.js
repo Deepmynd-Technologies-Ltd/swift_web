@@ -3,14 +3,17 @@ import PropTypes from 'prop-types';
 import { X } from "lucide-react";
 import ContinueModal from "./ContinueModal";
 import InputRequestModal from "./InputRequestModal";
+import PaybisWidgetModal from "./PaybisWidgetModal";
 
 const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
   const [activeTab, setActiveTab] = useState('Buy');
   const [sliderStyle, setSliderStyle] = useState({});
   const [showContinueModal, setShowContinueModal] = useState(false);
   const [showInputModal, setShowInputModal] = useState(false);
+  const [showWidgetModal, setShowWidgetModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [widgetUrl, setWidgetUrl] = useState("");
+  const [requestId, setRequestId] = useState("");
   const buyButtonRef = useRef(null);
   const sellButtonRef = useRef(null);
 
@@ -81,20 +84,48 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
     setShowInputModal(true);
   };
 
-  const handleInputSubmit = (url) => {
-    setWidgetUrl(url);
+  const handleInputSubmit = (data) => {
+    if (data.widget_url) {
+      setWidgetUrl(data.widget_url);
+    }
+    if (data.request_id) {
+      setRequestId(data.request_id);
+    }
     setShowInputModal(false);
     setShowContinueModal(true);
   };
 
   const handleContinue = () => {
     setShowContinueModal(false);
-    if (widgetUrl) {
-      window.open(widgetUrl, '_blank');
-    } else if (selectedProvider?.name === 'Paybis' && activeTab === 'Sell') {
-      // Fallback for Paybis Sell if widget URL fails
-      window.open('https://paybis.com/sell-bitcoin/', '_blank');
+    
+    if (selectedProvider?.name === 'Paybis') {
+      // For Paybis, show the widget modal instead of opening external link
+      setShowWidgetModal(true);
+    } else {
+      // For other providers, open external link
+      if (widgetUrl) {
+        window.open(widgetUrl, '_blank');
+      }
     }
+  };
+
+  const handleWidgetClose = () => {
+    setShowWidgetModal(false);
+    // Reset all states when widget is closed
+    setWidgetUrl("");
+    setRequestId("");
+    setSelectedProvider(null);
+  };
+
+  const handleMainModalClose = () => {
+    // Reset all states when main modal is closed
+    setShowContinueModal(false);
+    setShowInputModal(false);
+    setShowWidgetModal(false);
+    setWidgetUrl("");
+    setRequestId("");
+    setSelectedProvider(null);
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -149,7 +180,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
                 {/* Close button */}
                 <button
                   className="absolute top-2 text-white hover:text-gray-700"
-                  onClick={onClose}
+                  onClick={handleMainModalClose}
                   style={{ right: "30px" }}
                 >
                   <i className="fa fa-times"></i>
@@ -198,6 +229,15 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
         provider={selectedProvider}
         selectedWallet={selectedWallet}
         onContinue={handleContinue}
+      />
+
+      <PaybisWidgetModal
+        isOpen={showWidgetModal}
+        onClose={handleWidgetClose}
+        widgetUrl={widgetUrl}
+        requestId={requestId}
+        actionType={activeTab}
+        provider={selectedProvider}
       />
     </>
   );

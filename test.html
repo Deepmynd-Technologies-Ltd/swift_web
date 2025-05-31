@@ -1,0 +1,37 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paybis Widget Test</title>
+</head>
+<body>
+  <div id="paybis-widget-container" style="width: 100%; height: 600px;"></div>
+
+  <script>
+    // Step 1: Load the widget
+    const script = document.createElement("script");
+    script.src = "https://widget.sandbox.paybis.com/partner-exchange-widget.js";
+    script.defer = true;
+    script.onload = () => {
+      console.log("Paybis widget script loaded.");
+      
+      const checkInterval = setInterval(() => {
+        console.log("Checking if widget is loaded...");
+        if (window.PartnerExchangeWidget && window.PartnerExchangeWidget.isLoaded) {
+          console.log("Widget is loaded. Opening...");
+          clearInterval(checkInterval);
+
+          // Step 2: Call the openInEmbed method
+          window.PartnerExchangeWidget.openInEmbed(
+            {
+              requestId: 'ee19881b-6ece-4c29-948e-6f2bc8d32c66'
+            },
+            document.getElementById('paybis-widget-container')
+          );
+        }
+      }, 100);
+    };
+    document.head.appendChild(script);
+  </script>
+</body>
+</html>
