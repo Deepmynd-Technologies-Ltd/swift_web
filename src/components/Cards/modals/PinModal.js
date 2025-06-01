@@ -68,7 +68,7 @@ const PinModal = ({
           </button>
         </div>
 
-        <h3 className="text-lg mt-16 font-bold text-center" style={{width: "300px"}}>Enter Your 4 digit PIN to Confirm Swap</h3>
+        <h3 className="text-lg mt-16 font-bold text-center" style={{width: "300px"}}>Enter Your 4 digit PIN to Confirm</h3>
         
         {pinError && <p className="text-red-500 text-sm mb-4">{pinError}</p>}
         

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import localforage from "localforage";
+import PinModal from "./PinModal";
+import { decryptData } from "views/auth/utils/storage";
 
 // Supported currencies
 const FIAT_CURRENCIES = ['NGN', 'EUR', 'USD', 'GBP'];
@@ -43,6 +45,9 @@ const InputRequestModal = ({
   const [toCurrency, setToCurrency] = useState(selectedWallet?.abbr || "BTC");
   const [supportedFiats, setSupportedFiats] = useState(FIAT_CURRENCIES);
   const [walletData, setWalletData] = useState(null);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [transactionData, setTransactionData] = useState(null);
+  const [walletPrivateKey, setWalletPrivateKey] = useState(null);
 
   // Load wallet data from localforage
   useEffect(() => {
@@ -75,6 +80,8 @@ const InputRequestModal = ({
       setAmount("");
       setEmail("");
       setError("");
+      setShowPinModal(false);
+      setTransactionData(null);
       
       // Set default currencies based on direction
       const defaultCrypto = selectedWallet?.abbr || "BTC";
@@ -105,10 +112,11 @@ const InputRequestModal = ({
     }
   }, [direction]);
 
-  // Helper function to update wallet address based on crypto currency
+  // Helper function to update wallet address and private key based on crypto currency
   const updateWalletAddress = (cryptoCurrency) => {
     if (!walletData || !cryptoCurrency) {
       setWalletAddress("");
+      setWalletPrivateKey(null);
       return;
     }
 
@@ -134,6 +142,7 @@ const InputRequestModal = ({
     );
 
     setWalletAddress(targetWallet?.address || "");
+    setWalletPrivateKey(targetWallet?.private_key || null);
   };
 
   const validateInputs = () => {
@@ -175,16 +184,32 @@ const InputRequestModal = ({
     return true;
   };
 
-  // In your InputRequestModal component, update the handleSubmit function:
+  const handlePinConfirmed = async (pinCode) => {
+    try {
+      setIsLoading(true);
+      
+      // For sell transactions, decrypt the private key
+      let decryptedPrivateKey = null;
+      if (direction === 'Sell' && walletPrivateKey) {
+        decryptedPrivateKey = await decryptData(walletPrivateKey, pinCode);
+        if (!decryptedPrivateKey) {
+          setError("Invalid PIN or decryption failed");
+          return;
+        }
+      }
+  
+      setShowPinModal(false);
+      // Continue with the transaction
+      await completeTransaction(decryptedPrivateKey);
+    } catch (err) {
+      console.error("PIN verification error:", err);
+      setError("Failed to verify PIN. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    if (!validateInputs()) return;
-
-    setIsLoading(true);
-
+  const completeTransaction = async (decryptedPrivateKey = null) => {
     try {
       // Prepare the request data
       let requestData = {
@@ -195,7 +220,7 @@ const InputRequestModal = ({
         locale: "en"
       };
 
-      // Add provider-specific fields3
+      // Add provider-specific fields
       if (provider.name === 'Paybis') {
         requestData = {
           ...requestData,
@@ -208,6 +233,11 @@ const InputRequestModal = ({
           wallet_address: walletAddress,
           user_data: {}
         };
+      }
+
+      // Add private key if available (for sell transactions)
+      if (decryptedPrivateKey && direction === 'Sell') {
+        requestData.private_key = decryptedPrivateKey;
       }
 
       // Determine the API endpoint based on provider
@@ -246,7 +276,7 @@ const InputRequestModal = ({
         if (direction === 'Sell' && !data.data.widget_url) {
           // For sell transactions without widget_url, pass the transaction data
           onContinue({
-            sellTransactionData: data.data, // Pass the entire response data
+            sellTransactionData: data.data,
             request_id: data.data.requestId || data.data.id
           });
         } else {
@@ -270,137 +300,177 @@ const InputRequestModal = ({
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+  
+    if (!validateInputs()) return;
+  
+    setIsLoading(true);
+  
+    try {
+      // For all transactions, set transaction data and show PIN modal
+      setTransactionData({
+        from_currency: fromCurrency,
+        to_currency: toCurrency,
+        amount: parseFloat(amount),
+        provider: provider.name,
+        direction: direction
+      });
+      setShowPinModal(true);
+    } catch (err) {
+      setError(err.message || "An error occurred");
+      console.error("Transaction error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="transparent h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0}}>
-      <div className=" z-50 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
-        <div
-          className="relative bg-black rounded-xl shadow-lg w-96 overflow-hidden"
-          style={{ width: "90%", maxWidth: "400px", maxHeight: "90vh", background: "#070707", borderRadius: "24px", padding: "20px" }}
-        >
-          {/* Handle bar */}
-          <div className="flex items-center justify-center w-full mb-4">
-            <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
-          </div>
-          
-          <h2 className="text-lg font-bold mt-4 text-left text-white">{actionType} {provider?.name}</h2>
-          
-          {/* Close button */}
-          <button
-            className="absolute top-4 text-white hover:text-gray-700"
-            onClick={onClose}
-            style={{ right: "30px", top: "40px" }}
+    <>
+      <div className="transparent h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0}}>
+        <div className=" z-50 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
+          <div
+            className="relative bg-black rounded-xl shadow-lg w-96 overflow-hidden"
+            style={{ width: "90%", maxWidth: "400px", maxHeight: "90vh", background: "#070707", borderRadius: "24px", padding: "20px" }}
           >
-            <i className="fa fa-times"></i>
-          </button>
-
-          <div className="w-24 h-24 bg-primary-color-4 rounded-lg flex items-center justify-center mx-auto text-4xl" style={{maxWidth: "50px", minHeight: "50px"}}>
-            {provider?.icon || '💳'}
-          </div>
-          
-          <h3 className="text-2xl mt-4 font-bold text-center text-white">{provider?.name}</h3>
-
-          <form onSubmit={handleSubmit} className="px-4 mt-4">
-            {/* Currency selection */}
-            <div className="flex mb-4 gap-2">
-              <div className="flex-1">
-                <label className="block text-white text-sm font-medium mb-1">
-                  {direction === 'Buy' ? 'From' : 'From (Crypto)'}
-                </label>
-                <select
-                  value={direction === 'Buy' ? fromCurrency : fromCurrency}
-                  onChange={(e) => setFromCurrency(e.target.value)}
-                  className="w-full bg-black text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                >
-                  {(direction === 'Buy' ? supportedFiats : CRYPTO_CURRENCIES).map(currency => (
-                    <option key={currency} value={currency}>{currency}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="flex-1">
-                <label className="block text-white text-sm font-medium mb-1">
-                  {direction === 'Buy' ? 'To (Crypto)' : 'To (Fiat)'}
-                </label>
-                <select
-                  value={direction === 'Buy' ? toCurrency : toCurrency}
-                  onChange={(e) => setToCurrency(e.target.value)}
-                  className="w-full bg-black text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                >
-                  {(direction === 'Buy' ? CRYPTO_CURRENCIES : SELL_SUPPORTED_FIAT).map(currency => (
-                    <option key={currency} value={currency}>{currency}</option>
-                  ))}
-                </select>
-              </div>
+            {/* Handle bar */}
+            <div className="flex items-center justify-center w-full mb-4">
+              <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
             </div>
+            
+            <h2 className="text-lg font-bold mt-4 text-left text-white">{actionType} {provider?.name}</h2>
+            
+            {/* Close button */}
+            <button
+              className="absolute top-4 text-white hover:text-gray-700"
+              onClick={onClose}
+              style={{ right: "30px", top: "40px" }}
+            >
+              <i className="fa fa-times"></i>
+            </button>
 
-            {/* Amount input */}
-            <div className="mb-4">
-              <label className="block text-white text-sm font-medium mb-1">
-                Amount ({direction === 'Buy' ? fromCurrency : fromCurrency})
-              </label>
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full bg-black text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder={`Enter amount in ${direction === 'Buy' ? fromCurrency : fromCurrency}`}
-                required
-              />
+            <div className="w-24 h-24 bg-primary-color-4 rounded-lg flex items-center justify-center mx-auto text-4xl" style={{maxWidth: "50px", minHeight: "50px"}}>
+              {provider?.icon || '💳'}
             </div>
+            
+            <h3 className="text-2xl mt-4 font-bold text-center text-white">{provider?.name}</h3>
 
-            {provider.name === 'Paybis' && (
+            <form onSubmit={handleSubmit} className="px-4 mt-4">
+              {/* Currency selection */}
+              <div className="flex mb-4 gap-2">
+                <div className="flex-1">
+                  <label className="block text-white text-sm font-medium mb-1">
+                    {direction === 'Buy' ? 'From' : 'From (Crypto)'}
+                  </label>
+                  <select
+                    value={direction === 'Buy' ? fromCurrency : fromCurrency}
+                    onChange={(e) => setFromCurrency(e.target.value)}
+                    className="w-full bg-black text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  >
+                    {(direction === 'Buy' ? supportedFiats : CRYPTO_CURRENCIES).map(currency => (
+                      <option key={currency} value={currency}>{currency}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="flex-1">
+                  <label className="block text-white text-sm font-medium mb-1">
+                    {direction === 'Buy' ? 'To (Crypto)' : 'To (Fiat)'}
+                  </label>
+                  <select
+                    value={direction === 'Buy' ? toCurrency : toCurrency}
+                    onChange={(e) => setToCurrency(e.target.value)}
+                    className="w-full bg-black text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  >
+                    {(direction === 'Buy' ? CRYPTO_CURRENCIES : SELL_SUPPORTED_FIAT).map(currency => (
+                      <option key={currency} value={currency}>{currency}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Amount input */}
               <div className="mb-4">
                 <label className="block text-white text-sm font-medium mb-1">
-                  Email
+                  Amount ({direction === 'Buy' ? fromCurrency : fromCurrency})
                 </label>
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
                   className="w-full bg-black text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="Enter your email"
+                  placeholder={`Enter amount in ${direction === 'Buy' ? fromCurrency : fromCurrency}`}
                   required
                 />
               </div>
-            )}
 
-            {(provider.name === 'Transak' || provider.name === 'Moon pay') && (
-              <div className="mb-4">
-                <label className="block text-white text-sm font-medium mb-1">
-                  {direction === 'Buy' ? 'Recipient Wallet Address' : 'Your Wallet Address'}
-                </label>
-                <input
-                  type="text"
-                  value={walletAddress}
-                  readOnly
-                  className="w-full bg-blueGray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder={`${direction === 'Buy' ? toCurrency : fromCurrency} wallet address`}
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  {direction === 'Buy' 
-                    ? "This address will automatically update when you change the crypto currency" 
-                    : "This is your wallet address for the selected cryptocurrency"}
-                </p>
-              </div>
-            )}
+              {provider.name === 'Paybis' && (
+                <div className="mb-4">
+                  <label className="block text-white text-sm font-medium mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-black text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+              )}
 
-            {error && (
-              <p className="text-red-500 text-sm mb-4">{error}</p>
-            )}
+              {(provider.name === 'Transak' || provider.name === 'Moon pay') && (
+                <div className="mb-4">
+                  <label className="block text-white text-sm font-medium mb-1">
+                    {direction === 'Buy' ? 'Recipient Wallet Address' : 'Your Wallet Address'}
+                  </label>
+                  <input
+                    type="text"
+                    value={walletAddress}
+                    readOnly
+                    className="w-full bg-blueGray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder={`${direction === 'Buy' ? toCurrency : fromCurrency} wallet address`}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">
+                    {direction === 'Buy' 
+                      ? "This address will automatically update when you change the crypto currency" 
+                      : "This is your wallet address for the selected cryptocurrency"}
+                  </p>
+                </div>
+              )}
 
-            <button
-              type="submit"
-              className="bg-green-500 w-full text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors duration-200 mt-4"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Processing...' : 'Continue'}
-            </button>
-          </form>
+              {error && (
+                <p className="text-red-500 text-sm mb-4">{error}</p>
+              )}
+
+              <button
+                type="submit"
+                className="bg-green-500 w-full text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors duration-200 mt-4"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Processing...' : 'Continue'}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Pin Modal */}
+      <PinModal
+        isOpen={showPinModal}
+        onClose={() => {
+          setShowPinModal(false);
+          setIsLoading(false);
+        }}
+        onConfirm={handlePinConfirmed}
+        isLoading={isLoading}
+        transactionDetails={transactionData}
+      />
+    </>
   );
 };
 

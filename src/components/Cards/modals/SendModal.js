@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
+import PinModal from "./PinModal";
 
 export default function SendModal({
   isOpen,
@@ -18,25 +19,69 @@ export default function SendModal({
   setIsScanModalOpen,
   handleSendToken,
 }) {
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSendWithPin = async (pinCode) => {
+    try {
+      setIsLoading(true);
+      await handleSendToken();
+      setShowPinModal(false);
+    } catch (err) {
+      setError("Invalid PIN or transaction failed");
+      console.error("Send error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const validateInputs = () => {
+    if (!recipientAddress) {
+      setError("Please enter recipient address");
+      return false;
+    }
+
+    if (!amount) {
+      setError("Please enter an amount");
+      return false;
+    }
+
+    const amountNum = parseFloat(amount);
+    if (isNaN(amountNum)) {
+      setError("Please enter a valid amount");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSendClick = () => {
+    setError("");
+    if (!validateInputs()) return;
+    setShowPinModal(true);
+  };
+
   if (!isOpen) return null;
+
   return (
-    <div className="bg-blueGray-600 h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
-      <div className="inset-0 z-40 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
-        <div
-          className={`relative flex flex-col gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 h-[400px]`}
-          style={{
-            width: "90%",
-            maxWidth: "400px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "left",
-            padding: " 15px 35px",
-            background: "#070707",
-            // F7FAFE
-            borderRadius: "24px",
-            maxHeight: "90vh",
-          }}
-        >
+    <>
+      <div className="bg-blueGray-600 h-screen w-full z-10" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.95 }}>
+        <div className="inset-0 z-40 flex justify-center items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
+          <div
+            className={`relative flex flex-col gap-2 w-full max-w-md z-50 rounded-lg shadow-lg transition-all duration-300 h-[400px]`}
+            style={{
+              width: "90%",
+              maxWidth: "400px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "left",
+              padding: " 15px 35px",
+              background: "#070707",
+              borderRadius: "24px",
+              maxHeight: "90vh",
+            }}
+          >
           <div className="flex items-center justify-center">
             <div className="bg-primary-color-4 rounded" style={{ height: "4px", width: "100px" }}></div>
           </div>
@@ -181,20 +226,44 @@ export default function SendModal({
             </div>
           </div>
 
-          {/* Send Button */}
-          <div className="flex gap-2 mt-4">
-            <button
-              className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
-              onClick={handleSendToken}
-            >
-              Send
-            </button>
+          {/* Error message display */}
+          {error && (
+              <p className="text-red-500 text-sm mt-2">{error}</p>
+            )}
+
+            {/* Send Button - updated to use handleSendClick */}
+            <div className="flex gap-2 mt-4">
+              <button
+                className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
+                onClick={handleSendClick}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Processing...' : 'Send'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Pin Modal */}
+      <PinModal
+        isOpen={showPinModal}
+        onClose={() => {
+          setShowPinModal(false);
+          setIsLoading(false);
+        }}
+        onConfirm={handleSendWithPin}
+        isLoading={isLoading}
+        transactionDetails={{
+          amount: amount,
+          currency: selectedWalletState?.abbr || selectedWallet?.abbr || "Token",
+          recipient: recipientAddress.substring(0, 6) + "..." + recipientAddress.substring(recipientAddress.length - 4)
+        }}
+      />
+    </>
   );
 };
+
 
 SendModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
