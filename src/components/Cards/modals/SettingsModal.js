@@ -257,9 +257,9 @@ const SettingsModal = ({ isOpen, onClose }) => {
           maxWidth: "320px",
           maxHeight: "90vh",
           width: "100%",
-          height: "100vh",
           borderRadius: "16px",
-          overflowY: "auto"
+          overflowY: "auto",
+          height: "80vh",
         }}
       >
         {/* Handle bar */}
