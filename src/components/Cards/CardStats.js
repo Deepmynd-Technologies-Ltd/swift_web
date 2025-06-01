@@ -222,67 +222,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
     setIsP2PModalOpen(false);
   };
 
-  const handleSendToken = () => {
-    if (!recipientAddress || !amount) {
-      alert("Please enter recipient address and amount.");
-      return;
-    }
-    
-    if (!walletPrivateKey) {
-      alert("Private key not available. Please try again.");
-      return;
-    }
-    
-    sendTransactionToBackend();
-  };
-
-  const sendTransactionToBackend = async () => {
-    try {
-      const cryptoSymbol = selectedWalletState 
-        ? selectedWalletState.abbr.toLowerCase() 
-        : selectedWallet.abbr.toLowerCase();
-      
-      const transactionData = {
-        private_key: walletPrivateKey,
-        from_address: walletAddress,
-        to_address: recipientAddress,
-        amount: parseFloat(amount),
-        crypto_symbol: cryptoSymbol,
-      };
-
-      const response = await fetch(
-        `https://swift-api-g7a3.onrender.com/api/wallet/send_transaction/?symbol=${cryptoSymbol}`, 
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(transactionData),
-        }
-      );
-      console.error("Error response:", response);
-      console.log("err message:", response.statusText);
-
-
-
-      const result = await response.json();
-
-      if (result.success) {
-        alert(result.message);
-        setIsConfirmationOpen(true);
-        closeSendModal();
-        
-        // Refresh balance after successful transaction
-        await fetchWalletBalance(walletAddress, cryptoSymbol);
-      } else {
-        alert(`Failed to send transaction: ${result.message.split('\n')[0]}`);
-      }
-    } catch (error) {
-      console.error("Error sending transaction:", error);
-      alert(`An error occurred: ${error.message}`);
-    }
-  };
-
   if (errorMessage) {
     return (
       <div className="relative text-aeonik flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 min-h-[300px] items-center justify-center">
@@ -376,7 +315,10 @@ export default function CardStats({ isHidden, selectedWallet }) {
           tokenNames={tokenNames}
           setSelectedWalletState={setSelectedWalletState}
           setIsScanModalOpen={setIsScanModalOpen}
-          handleSendToken={handleSendToken}
+          walletAddress={walletAddress}
+          walletPrivateKey={walletPrivateKey}
+          fetchWalletBalance={fetchWalletBalance}
+          setIsConfirmationOpen={setIsConfirmationOpen}
         />
       )}
 
@@ -432,5 +374,5 @@ export default function CardStats({ isHidden, selectedWallet }) {
         />
       )}
     </div>
-  );
+  ); 
 }

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
+import { decryptData } from "views/auth/utils/storage";
 import PinModal from "./PinModal";
 
 export default function SendModal({
@@ -17,20 +18,73 @@ export default function SendModal({
   tokenNames,
   setSelectedWalletState,
   setIsScanModalOpen,
-  handleSendToken,
+  walletAddress,
+  walletPrivateKey,
+  fetchWalletBalance,
+  setIsConfirmationOpen,
 }) {
   const [showPinModal, setShowPinModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSendWithPin = async (pinCode) => {
+  const sendTransactionToBackend = async (decryptedPrivateKey) => {
+    try {
+      const cryptoSymbol = selectedWalletState 
+        ? selectedWalletState.abbr.toLowerCase() 
+        : selectedWallet.abbr.toLowerCase();
+      
+      const transactionData = {
+        private_key: decryptedPrivateKey,
+        from_address: walletAddress,
+        to_address: recipientAddress,
+        amount: parseFloat(amount),
+        crypto_symbol: cryptoSymbol,
+      };
+
+      const response = await fetch(
+        `https://swift-api-g7a3.onrender.com/api/wallet/send_transaction/?symbol=${cryptoSymbol}`, 
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(transactionData),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(result.message);
+        setIsConfirmationOpen(true);
+        onClose();
+        
+        // Refresh balance after successful transaction
+        await fetchWalletBalance(walletAddress, cryptoSymbol);
+      } else {
+        alert(`Failed to send transaction: ${result.message.split('\n')[0]}`);
+      }
+    } catch (error) {
+      console.error("Error sending transaction:", error);
+      alert(`An error occurred: ${error.message}`);
+    }
+  };
+
+  const handlePinConfirmed = async (pinCode) => {
     try {
       setIsLoading(true);
-      await handleSendToken();
+      const decryptedPrivateKey = await decryptData(walletPrivateKey, pinCode);
+      
+      if (!decryptedPrivateKey) {
+        setError("Invalid PIN or decryption failed");
+        return;
+      }
+
       setShowPinModal(false);
+      await sendTransactionToBackend(decryptedPrivateKey);
     } catch (err) {
-      setError("Invalid PIN or transaction failed");
-      console.error("Send error:", err);
+      console.error("PIN verification error:", err);
+      setError("Failed to decrypt private key. Invalid PIN?");
     } finally {
       setIsLoading(false);
     }
@@ -50,6 +104,11 @@ export default function SendModal({
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum)) {
       setError("Please enter a valid amount");
+      return false;
+    }
+
+    if (!walletPrivateKey) {
+      setError("Private key not available. Please try again.");
       return false;
     }
 
@@ -105,7 +164,7 @@ export default function SendModal({
             <div className="relative">
               <input
                 type="text"
-                placeholder="Enter recipient’s address"
+                placeholder="Enter recipient's address"
                 value={recipientAddress}
                 onChange={(e) => setRecipientAddress(e.target.value)}
                 className="bg-primary-color block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -149,7 +208,6 @@ export default function SendModal({
                   className="text-left justify-between w-full px-2 py-1 rounded-lg text-green sm:text-base cursor-pointer transition-colors duration-200"
                   style={{
                     backgroundColor: selectedWalletState ? "rgba(30, 41, 59, var(--tw-bg-opacity))" : "#000906",
-                    // #e0f7fa : white
                     height: "40px",
                     marginBottom: "1px",
                     border: "none",
@@ -231,7 +289,7 @@ export default function SendModal({
               <p className="text-red-500 text-sm mt-2">{error}</p>
             )}
 
-            {/* Send Button - updated to use handleSendClick */}
+            {/* Send Button */}
             <div className="flex gap-2 mt-4">
               <button
                 className="bg-green-500 w-full text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
@@ -252,7 +310,7 @@ export default function SendModal({
           setShowPinModal(false);
           setIsLoading(false);
         }}
-        onConfirm={handleSendWithPin}
+        onConfirm={handlePinConfirmed}
         isLoading={isLoading}
         transactionDetails={{
           amount: amount,
@@ -263,7 +321,6 @@ export default function SendModal({
     </>
   );
 };
-
 
 SendModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -280,5 +337,8 @@ SendModal.propTypes = {
   tokenNames: PropTypes.object.isRequired,
   setSelectedWalletState: PropTypes.func.isRequired,
   setIsScanModalOpen: PropTypes.func.isRequired,
-  handleSendToken: PropTypes.func.isRequired,
+  walletAddress: PropTypes.string.isRequired,
+  walletPrivateKey: PropTypes.string.isRequired,
+  fetchWalletBalance: PropTypes.func.isRequired,
+  setIsConfirmationOpen: PropTypes.func.isRequired,
 };
