@@ -30,6 +30,17 @@
     min-width: 300px;
     margin-top: 20px;
   }
+
+  @media (max-width: 768px) {
+    .contact-section {
+      width: 100%;
+      min-width: 200px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+  }
+
+  
   
   .section-heading {
     color: #27C499;

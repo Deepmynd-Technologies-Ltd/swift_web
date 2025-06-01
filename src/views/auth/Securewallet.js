@@ -65,14 +65,14 @@ export default function SecureWallet() {
 
     return (
         <div className="container mx-auto h-screen flex items-center justify-center" style={{ maxHeight: "100vh", overflow: "hidden" }}>
-            <div className="bg-black rounded-my shadow-lg p-8" style={{ width: "420px", overflowX: "hidden" }}>
+            <div className="bg-black rounded-my shadow-lg p-8" style={{ width: "100%", maxWidth: "420px", overflowX: "hidden" }}>
                 <a className="relative left-90 text-white text-3xl font-bold font-weight-900" onClick={() => window.history.back()}>
                     ←
                 </a>
                 <h2 className="text-2xl font-semibold mb-4 text-green text-aeonik">Wallet</h2>
                 <p className="text-sm text-blueGray-500 mb-6 font-semibold">
-                    We have created your web3 Wallet, below is your wallet seed words.
-                    Keep it safe and make sure you're the only one that have access to it.
+                    We have created your web3 Wallet, below are your wallet seed words.
+                    Keep them safe and make sure you're the only one that has access to them.
                 </p>
 
                 <h3 className="text-sm font-semibold mt-4 mb-2 text-green-500">Seed Words</h3>
@@ -84,7 +84,7 @@ export default function SecureWallet() {
                     </div>
                 ) : (
                     <div className="border border-gray-200 rounded-lg p-4 relative">
-                        <div className="grid grid-cols-4 gap-4 auto-rows-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)" }}>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-auto" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(60px, 1fr))" }}>
                             {seedWords.map((word, index) => (
                                 <div
                                     key={index}

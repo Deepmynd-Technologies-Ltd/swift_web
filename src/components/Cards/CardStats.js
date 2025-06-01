@@ -146,7 +146,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
           const selectedSymbol = selectedWallet?.abbr?.toUpperCase();
           const walletNameMatch = wallet.name === tokenName;
           if (selectedSymbol === 'DOGE') {
-            return walletSymbol === 'WDOGE';
+            return walletSymbol === 'DOGE';
           } else {
             const symbolMatch = walletSymbol === selectedSymbol;
             return walletNameMatch || symbolMatch;
