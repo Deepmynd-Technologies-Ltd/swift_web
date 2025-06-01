@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import ContinueModal from "./ContinueModal";
 import InputRequestModal from "./InputRequestModal";
 import PaybisWidgetModal from "./PaybisWidgetModal";
+import TransakWidgetModal from "./TransakWidgetModal";
 
 const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
   const [activeTab, setActiveTab] = useState('Buy');
@@ -11,6 +12,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
   const [showContinueModal, setShowContinueModal] = useState({ show: false, message: null });
   const [showInputModal, setShowInputModal] = useState(false);
   const [showWidgetModal, setShowWidgetModal] = useState(false);
+  const [showTransakWidgetModal, setShowTransakWidgetModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [sellTransactionData, setSellTransactionData] = useState(null);
   const [widgetUrl, setWidgetUrl] = useState("");
@@ -106,14 +108,22 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
     }
   };
   
-  // Update the handleWidgetClose function:
-  const handleWidgetClose = () => {
+  // Update the handleWidgetClose functions:
+  const handlePaybisWidgetClose = () => {
     setShowWidgetModal(false);
     // Reset all states when widget is closed
     setWidgetUrl("");
     setRequestId("");
     setSelectedProvider(null);
     setSellTransactionData(null); // Reset sell transaction data
+  };
+
+  const handleTransakWidgetClose = () => {
+    setShowTransakWidgetModal(false);
+    // Reset all states when widget is closed
+    setWidgetUrl("");
+    setRequestId("");
+    setSelectedProvider(null);
   };
   
   // Update the handleMainModalClose function:
@@ -122,6 +132,7 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
     setShowContinueModal(false);
     setShowInputModal(false);
     setShowWidgetModal(false);
+    setShowTransakWidgetModal(false);
     setWidgetUrl("");
     setRequestId("");
     setSelectedProvider(null);
@@ -134,10 +145,13 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
     setShowContinueModal({ show: false, message: null });
     
     if (selectedProvider?.name === 'Paybis') {
-      // For Paybis, show the widget modal instead of opening external link
+      // For Paybis, show the Paybis widget modal
       setShowWidgetModal(true);
+    } else if (selectedProvider?.name === 'Transak') {
+      // For Transak, show the Transak widget modal
+      setShowTransakWidgetModal(true);
     } else {
-      // For other providers, open external link
+      // For other providers (like Moon pay), open external link
       if (widgetUrl) {
         window.open(widgetUrl, '_blank');
       }
@@ -250,12 +264,21 @@ const BuySellModal = ({ isOpen, onClose, selectedWallet }) => {
 
       <PaybisWidgetModal
         isOpen={showWidgetModal}
-        onClose={handleWidgetClose}
+        onClose={handlePaybisWidgetClose}
         widgetUrl={widgetUrl}
         requestId={requestId}
         actionType={activeTab}
         provider={selectedProvider}
         sellTransactionData={sellTransactionData}
+      />
+
+      <TransakWidgetModal
+        isOpen={showTransakWidgetModal}
+        onClose={handleTransakWidgetClose}
+        widgetUrl={widgetUrl}
+        requestId={requestId}
+        actionType={activeTab}
+        provider={selectedProvider}
       />
     </>
   );

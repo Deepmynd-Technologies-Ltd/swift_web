@@ -195,7 +195,7 @@ const InputRequestModal = ({
         locale: "en"
       };
 
-      // Add provider-specific fields
+      // Add provider-specific fields3
       if (provider.name === 'Paybis') {
         requestData = {
           ...requestData,
