@@ -12,10 +12,21 @@ export default function ImportWalletModal({
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const history = useHistory();
   const inputRefs = useRef(Array(wordCount).fill().map(() => React.createRef()));
   const pendingUpdatesRef = useRef([]);
   
+  useEffect(() => {
+    // Check if mobile on mount and on resize
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
   useEffect(() => {
     if (pendingUpdatesRef.current.length > 0) {
       const nextUpdate = pendingUpdatesRef.current.shift();
@@ -32,14 +43,21 @@ export default function ImportWalletModal({
 
   const handlePaste = (e, currentIndex) => {
     e.preventDefault();
-    const pastedText = e.clipboardData.getData('text');
-    const words = pastedText.trim().split(/\s+/);
+    const pastedText = e.clipboardData.getData('text').trim();
+    const words = pastedText.split(/\s+/).filter(word => word.length > 0);
     
     if (words.length === 1) {
+      // Single word paste
       handleChange(words[0], currentIndex);
+      if (currentIndex + 1 < wordCount) {
+        setTimeout(() => {
+          inputRefs.current[currentIndex + 1].current?.focus();
+        }, 0);
+      }
       return;
     }
     
+    // Multi-word paste
     pendingUpdatesRef.current = [];
     words.forEach((word, idx) => {
       const targetIndex = currentIndex + idx;
@@ -165,40 +183,46 @@ export default function ImportWalletModal({
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              columnGap: 24,
+              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+              columnGap: isMobile ? 12 : 24,
               rowGap: 16
             }}
           >
             {Array.from({ length: wordCount }).map((_, idx) => (
               <div key={idx} style={{ display: 'flex', flexDirection: 'column' }}>
-                <label
-                  htmlFor={`seed-${idx}`}
-                  style={{ fontSize: 12, color: '#6B7280', marginBottom: 4 }}
-                >
-                  {idx + 1}
-                </label>
-                <input
-                  id={`seed-${idx}`}
-                  type="text"
-                  value={seedWords[idx] || ''}
-                  onChange={e => handleChange(e.target.value, idx)}
-                  onKeyDown={e => handleKeyDown(e, idx)}
-                  onPaste={e => handlePaste(e, idx)}
-                  ref={inputRefs.current[idx]}
-                  autoComplete="off"
-                  autoFocus={idx === 0}
-                  style={{
-                    height: 40,
-                    width: '100%',
-                    padding: '0 12px',
-                    border: '1px solid #CBD5E0',
-                    borderRadius: 8,
-                    fontSize: 14,
-                    outline: 'none',
-                    backgroundColor: '#fff'
-                  }}
-                />
+                <div style={{ display: 'flex', alignItems: 'left', justifyContent: "center", marginBottom: 2 }}>
+                  <span style={{ 
+                    fontSize: 12, 
+                    color: '#6B7280', 
+                    minWidth: 24,
+                    textAlign: 'center',
+                  }}>
+                  </span>
+                  <input
+                    id={`seed-${idx}`}
+                    type="text"
+                    value={seedWords[idx] || ''}
+                    onChange={e => handleChange(e.target.value, idx)}
+                    onKeyDown={e => handleKeyDown(e, idx)}
+                    onPaste={e => handlePaste(e, idx)}
+                    ref={inputRefs.current[idx]}
+                    autoComplete="off"
+                    autoFocus={`Word ${idx + 1}`}
+                    placeholder={`Word ${idx + 1}`}
+                    style={{
+                      position: 'relative',
+                      left: 0,
+                      height: 40,
+                      width: '100%',
+                      padding: '0 12px',
+                      border: '1px solid #CBD5E0',
+                      borderRadius: 8,
+                      fontSize: 14,
+                      outline: 'none',
+                      backgroundColor: '#fff'
+                    }}
+                  />
+                </div>
               </div>
             ))}
           </div>
