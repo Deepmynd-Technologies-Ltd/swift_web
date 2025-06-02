@@ -306,6 +306,7 @@ const SwapModal = ({
         setError("Invalid PIN or decryption failed");
         return;
       }
+      console.log("Decrypted private key:", decryptedPrivateKey);
 
       setShowPinModal(false);
       await performSwap(decryptedPrivateKey);
