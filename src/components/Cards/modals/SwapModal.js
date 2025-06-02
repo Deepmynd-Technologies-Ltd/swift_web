@@ -269,8 +269,6 @@ const SwapModal = ({
         requestData.provider = "lifi";
       }
 
-      console.log("Request data for swap:", requestData);
-
       const endpoint = decryptedPrivateKey 
         ? "http://127.0.0.1:8000/api/wallet/swap/" 
         : "https://swift-api-g7a3.onrender.com/api/wallet/swap/";
@@ -308,7 +306,6 @@ const SwapModal = ({
         setError("Invalid PIN or decryption failed");
         return;
       }
-      console.log("Decrypted private key:", decryptedPrivateKey);
 
       setShowPinModal(false);
       await performSwap(decryptedPrivateKey);
