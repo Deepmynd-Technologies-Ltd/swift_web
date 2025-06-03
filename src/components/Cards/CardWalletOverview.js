@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllWalletData, setSelectedWallet, updateWallets } from "../../features/wallet/walletSlice";
 import Loading from "react-loading";
+import localforage from "localforage";
 
 const tokenNames = {
   BNB: "BNB BEP20",
@@ -25,7 +26,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
   const dispatch = useDispatch();
   const { wallets, loading, selectedWallet } = useSelector((state) => state.wallet);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [balances, setBalances] = useState({});
+  const [walletBalances, setWalletBalances] = useState({});
+  const [loadingBalances, setLoadingBalances] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAllWalletData());
@@ -53,74 +55,103 @@ export default function CardWalletOverview({ onSelectWallet }) {
     }
   }, [selectedWallet, onSelectWallet]);
 
-  // Fetch balances for all wallets
-  useEffect(() => {
-    const fetchBalances = async () => {
-      if (!wallets.length) return;
+  // Fetch wallet balances from API - same logic as CardStats
+  const fetchWalletBalances = useCallback(async () => {
+    setLoadingBalances(true);
+    try {
+      // Get wallet data from localforage
+      let walletData = await localforage.getItem("encryptedWallet");
       
-      const newBalances = {};
-      try {
-        await Promise.all(wallets.map(async (wallet) => {
-          try {
-            const response = await fetch(
-              `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${wallet.abbr.toLowerCase()}&address=${wallet.address}`
-            );
-            
-            if (response.ok) {
-              const data = await response.json();
-              if (data.success) {
-                newBalances[wallet.abbr] = {
-                  balance: data.data,
-                  usdValue: (parseFloat(data.data) * parseFloat(wallet.marketPrice || 1)).toFixed(2)
-                };
-              }
-            }
-          } catch (error) {
-            console.error(`Error fetching balance for ${wallet.abbr}:`, error);
-          }
-        }));
-        
-        setBalances(newBalances);
-      } catch (error) {
-        console.error("Error fetching balances:", error);
+      if (!walletData) {
+        walletData = await localforage.getItem("walletDetails");
       }
-    };
-    
-    fetchBalances();
-  }, [wallets]);
+      
+      if (!walletData) {
+        console.error("No wallet data found in localforage");
+        return;
+      }
+
+      // Extract wallet items - same logic as CardStats
+      let walletItems = [];
+      
+      if (walletData.walletAddresses && Array.isArray(walletData.walletAddresses)) {
+        if (walletData.walletAddresses[0] && Array.isArray(walletData.walletAddresses[0].data)) {
+          walletItems = walletData.walletAddresses[0].data;
+        } else {
+          walletItems = walletData.walletAddresses;
+        }
+      } else if (Array.isArray(walletData)) {
+        walletItems = walletData;
+      }
+
+      const balances = {};
+      
+      // Fetch balance for each wallet
+      await Promise.all(walletItems.map(async (walletItem) => {
+        try {
+          if (!walletItem?.symbols || !walletItem?.address) {
+            return;
+          }
+          
+          const response = await fetch(
+            `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${walletItem.symbols.toLowerCase()}&address=${walletItem.address}`
+          );
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch balance for ${walletItem.symbols}`);
+          }
+          
+          const data = await response.json();
+          if (data.success) {
+            balances[walletItem.symbols.toUpperCase()] = {
+              balance: parseFloat(data.data) || 0,
+              address: walletItem.address
+            };
+          }
+        } catch (err) {
+          console.error(`Error fetching balance for wallet:`, walletItem.symbols, err);
+          // Set default balance if fetch fails
+          balances[walletItem.symbols.toUpperCase()] = {
+            balance: 0,
+            address: walletItem.address
+          };
+        }
+      }));
+      
+      setWalletBalances(balances);
+    } catch (error) {
+      console.error("Error fetching wallet balances:", error);
+    } finally {
+      setLoadingBalances(false);
+    }
+  }, []);
+
+  // Fetch balances on component mount and refresh
+  useEffect(() => {
+    fetchWalletBalances();
+  }, [fetchWalletBalances]);
+
+  // Refresh balances when wallets are refreshed
+  useEffect(() => {
+    if (!isRefreshing && !loading) {
+      fetchWalletBalances();
+    }
+  }, [isRefreshing, loading, fetchWalletBalances]);
 
   const handleWalletClick = (wallet) => {
     dispatch(setSelectedWallet(wallet));
   };
 
-  const formatNumber = (value, isCurrency = false) => {
-    if (value === undefined || value === null) return isCurrency ? "$0.00" : "0";
-    
-    const num = Number(value);
-    if (isNaN(num)) return isCurrency ? "$0.00" : "0";
-    
-    if (isCurrency) {
-      // Format as currency
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(num);
-    }
-    
-    // For non-currency values
-    if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
-    if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
-    if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
-    if (num % 1 !== 0) return num.toFixed(2);
-    return num.toString();
+  const calculateUSDEquivalent = (balance, marketPrice) => {
+    const numBalance = parseFloat(balance) || 0;
+    const numPrice = parseFloat(marketPrice) || 0;
+    return numBalance * numPrice;
   };
 
   return (
     <div className="relative flex flex-col min-w-0 break-words w-full md:w-2/3 mb-6 rounded mx-auto bg-gradient-to-r from-blue-500 to-green-500">
       <div className="block w-full overflow-x-auto">
-        {loading || isRefreshing ? (
+        {loading || isRefreshing || loadingBalances ? (
           <div className="flex justify-center items-center py-4">
             <Loading type="spinningBubbles" color="#27C499" height={50} width={50} />
           </div>
@@ -129,12 +160,41 @@ export default function CardWalletOverview({ onSelectWallet }) {
           <div className="w-full flex flex-row justify-between items-center bg-gray-100 rounded-t-lg py-3 px-4">
             <div className="text-sm font-semibold text-blueGray-700 flex-1 hidden md:block">Token</div>
             <div className="text-sm font-semibold text-blueGray-700 flex-1 text-center hidden md:block">Market Price</div>
-            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-right hidden md:block">Balance (USD)</div>
+            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-right hidden md:block">USD Equivalent</div>
           </div>
 
           {Object.keys(tokenNames).map((token) => {
             const wallet = wallets.find(w => w.abbr === token) || {};
-            const balanceData = balances[token] || { balance: "0", usdValue: "0" };
+            const walletBalanceData = walletBalances[token] || { balance: 0 };
+            const actualBalance = walletBalanceData.balance;
+            const usdEquivalent = calculateUSDEquivalent(actualBalance, wallet.marketPrice);
+            
+            const formatNumber = (value) => {
+              // If value is undefined or null, return a default string
+              if (value === undefined || value === null) return "0";
+              
+              // Check if the value can be converted to a number
+              const num = Number(value);
+              
+              // If the value isn't a valid number, return the original value as is
+              if (isNaN(num)) return value.toString();
+              
+              // For billion values (≥1e9)
+              if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
+              
+              // For million values (≥1e6)
+              if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
+              
+              // For thousand values (≥1e3)
+              if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+              
+              // For numbers with decimal places
+              if (num % 1 !== 0) return num.toFixed(2);
+              
+              // For integers
+              return num.toString();
+            };
+
             const isSelected = selectedWallet?.abbr === token;
             const textColorClass = isSelected ? "text-black" : "";
             const textWhiteColouredClass = isSelected ? "text-black" : "text-white";
@@ -142,7 +202,8 @@ export default function CardWalletOverview({ onSelectWallet }) {
             return (
               <div
                 key={token}
-                className={`rounded-my overflow-hidden`}
+                className={`rounded-my overflow-hidden
+                }`}
               >
                 <a
                   href={`/wallet/${token}`}
@@ -176,9 +237,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
                             {tokenNames[token]}
                           </span>
                           <div className="flex items-center md:hidden w-full">
-                            <span className={`text-sm ${textColorClass}`}>
-                              {formatNumber(wallet.marketPrice, true) || "$0.00"}
-                            </span>
+                            <span className={`text-sm ${textColorClass}`}> ${formatNumber(wallet.marketPrice) || "0.00"}</span>
                             <span className={`text-sm ml-2 ${
                               isSelected ? "text-black" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
                             }`}>
@@ -190,9 +249,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
                     </div>
                     <div className={`w-full md:w-1/3 px-6 h-full flex items-center justify-center hidden md:flex ${textColorClass}`}>
                       <div>
-                        <span className={`text-sm ${textColorClass}`}>
-                          {formatNumber(wallet.marketPrice, true) || "$0.00"}
-                        </span>
+                        <span className={`text-sm ${textColorClass}`}>${formatNumber(wallet.marketPrice) || "0.00"}</span>
                         <span className={`text-sm ml-2 ${
                           isSelected ? "text-black" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
                         }`}>
@@ -203,10 +260,10 @@ export default function CardWalletOverview({ onSelectWallet }) {
                     <div className={`w-full md:w-1/3 px-6 py-3 text-sm text-right ${textColorClass}`}>
                       <div>
                         <span className={`text-lg font-semibold ${textWhiteColouredClass}`}>
-                          {formatNumber(balanceData.balance)}
+                          {formatNumber(actualBalance) || "0"}
                         </span>
                         <span className={`text-sm block ${textColorClass}`}>
-                          {formatNumber(balanceData.usdValue, true)}
+                          ${formatNumber(usdEquivalent.toFixed(2))+".0" || "0.00"}
                         </span>
                       </div>
                     </div>
