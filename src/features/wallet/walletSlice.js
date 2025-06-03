@@ -111,10 +111,10 @@ export const fetchAllWalletData = createAsyncThunk(
           title: config.title,
           symbol: config.symbol,
           address: walletAddress?.address || '',
-          marketPrice: config.marketData.usd,  // Store as number
-          marketPricePercentage: config.marketData.usd_24h_change,  // Store as number
+          marketPrice: config.marketData.usd,
+          marketPricePercentage: config.marketData.usd_24h_change,
           equivalenceValue: balance,
-          equivalenceValueAmount: (config.marketData.usd * balance),  // Store as number
+          equivalenceValueAmount: (config.marketData.usd * balance),
           typeImage: config.typeImage,
           rawMarketPrice: config.marketData.usd
         };
@@ -134,17 +134,19 @@ const walletSlice = createSlice({
     balance: 0,
     address: '',
     privateKey: '',
-    wallets: [], // Store all wallet details here
+    wallets: [],
     loading: false,
     error: null,
     selectedWallet: null,
-    isFetched: false, // Flag to track if data has been fetched
+    isFetched: false,
   },
   reducers: {
     setSelectedWallet: (state, action) => {
-      const wallet = state.wallets.find(w => w.symbol === action.payload.symbol);
+      const wallet = state.wallets.find(w => w.abbr === action.payload?.abbr);
       if (wallet) {
         state.selectedWallet = wallet;
+      } else {
+        state.selectedWallet = null;
       }
     },
     setAddress: (state, action) => {
@@ -157,14 +159,25 @@ const walletSlice = createSlice({
       state.error = action.payload;
     },
     updateWallets: (state, action) => {
-      state.wallets = action.payload; // Update wallet details
+      const currentSelectedAbbr = state.selectedWallet?.abbr;
+      state.wallets = action.payload;
+      
+      // Restore selected wallet if it exists in the new data
+      if (currentSelectedAbbr) {
+        const updatedWallet = action.payload.find(w => w.abbr === currentSelectedAbbr);
+        if (updatedWallet) {
+          state.selectedWallet = updatedWallet;
+        } else {
+          state.selectedWallet = null;
+        }
+      }
     },
     updateWalletBalance: (state, action) => {
       const { symbol, balance } = action.payload;
       const wallet = state.wallets.find(w => w.symbol === symbol);
       if (wallet) {
         wallet.equivalenceValue = balance;
-        wallet.equivalenceValueAmount = (wallet.rawMarketPrice * balance);  // Store as number
+        wallet.equivalenceValueAmount = (wallet.rawMarketPrice * balance);
         if (state.selectedWallet?.symbol === symbol) {
           state.selectedWallet = { ...wallet };
         }
@@ -189,12 +202,23 @@ const walletSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchAllWalletData.fulfilled, (state, action) => {
+        const currentSelectedAbbr = state.selectedWallet?.abbr;
         state.wallets = action.payload;
         state.loading = false;
-        state.isFetched = true; // Mark data as fetched
-        // Set default selected wallet on desktop
-        if (window.innerWidth > 768 && action.payload.length > 0) {
+        state.isFetched = true;
+        
+        // Only set default selected wallet if none is selected and we're on desktop
+        if (!currentSelectedAbbr && window.innerWidth > 768 && action.payload.length > 0) {
           state.selectedWallet = action.payload[0];
+        }
+        // Otherwise, keep the current selection if it exists in the new data
+        else if (currentSelectedAbbr) {
+          const updatedWallet = action.payload.find(w => w.abbr === currentSelectedAbbr);
+          if (updatedWallet) {
+            state.selectedWallet = updatedWallet;
+          } else {
+            state.selectedWallet = null;
+          }
         }
       })
       .addCase(fetchAllWalletData.rejected, (state, action) => {
@@ -204,5 +228,13 @@ const walletSlice = createSlice({
   },
 });
 
-export const { setAddress, setPrivateKey, setSelectedWallet, setError, updateWallets } = walletSlice.actions;
+export const { 
+  setAddress, 
+  setPrivateKey, 
+  setSelectedWallet, 
+  setError, 
+  updateWallets, 
+  updateWalletBalance 
+} = walletSlice.actions;
+
 export default walletSlice.reducer;

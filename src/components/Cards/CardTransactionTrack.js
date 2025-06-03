@@ -347,8 +347,12 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
         <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
           <div className="items-center">
             {!wallet ? (
-              <div className="text-center text-gray-500 mt-4">
-                <Loading type="spin" color="#27C499" height={30} width={30} />
+              <div className="text-center text-gray-500 mt-4 align-center justify-center">
+                <p>Getting Wallets...</p>
+                <br />
+                <div className="flex justify-center items-center">
+                  <Loading type="spin" color="#27C499" height={30} width={30} />
+                </div>
               </div>
             ) : (
               <>
