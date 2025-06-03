@@ -11,6 +11,7 @@ import localforage from "localforage";
 export default function CardStats({ isHidden, selectedWallet }) {
   const [hidden] = useState(isHidden);
   const [walletBalance, setWalletBalance] = useState("");
+  const [portfolioBalance, setPortfolioBalance] = useState(0); // New state for total portfolio balance
   const [walletAddress, setWalletAddress] = useState("");
   const [walletPrivateKey, setWalletPrivateKey] = useState("");
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
@@ -42,7 +43,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
 
   const tokenName = selectedWallet ? tokenNames[selectedWallet.abbr] : null;
 
-  // Fetch wallet balances function
+  // Fetch wallet balances function - updated to calculate total portfolio balance
   const fetchWalletBalances = useCallback(async (wallets) => {
     try {
       if (!wallets) {
@@ -52,6 +53,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
       
       const balances = {};
       const walletsArray = Array.isArray(wallets) ? wallets : [wallets];
+      let totalBalance = 0;
       
       await Promise.all(walletsArray.map(async (wallet) => {
         try {
@@ -71,6 +73,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
           const data = await response.json();
           if (data.success) {
             balances[wallet.address] = data.data;
+            totalBalance += parseFloat(data.data) || 0;
             
             // If this is the currently selected wallet, update the wallet balance
             if (wallet.address === walletAddress || (selectedWallet && wallet.symbols === selectedWallet.abbr)) {
@@ -81,6 +84,9 @@ export default function CardStats({ isHidden, selectedWallet }) {
           console.error(`Error fetching balance for wallet:`, wallet, err);
         }
       }));
+      
+      // Update the total portfolio balance
+      setPortfolioBalance(totalBalance.toFixed(2));
       
       return balances;
     } catch (error) {
@@ -100,7 +106,7 @@ export default function CardStats({ isHidden, selectedWallet }) {
     checkStorage();
   }, []);
 
-  // Fetch wallet details when tokenName changes
+  // Fetch wallet details when tokenName changes - updated to fetch all wallets
   useEffect(() => {
     async function fetchWalletDetails() {
       if (!tokenName) return;
@@ -153,7 +159,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
           }
         });
         
-        
         if (activeWallet) {
           setWalletAddress(activeWallet.address);
           setWalletPrivateKey(activeWallet.private_key);
@@ -164,6 +169,9 @@ export default function CardStats({ isHidden, selectedWallet }) {
         } else {
           setErrorMessage(`Could not find wallet for ${tokenName}`);
         }
+        
+        // Fetch balances for all wallets to calculate portfolio total
+        await fetchWalletBalances(walletItems);
       } catch (error) {
         setErrorMessage("Error loading wallet data");
       } finally {
@@ -243,14 +251,14 @@ export default function CardStats({ isHidden, selectedWallet }) {
       <div className="flex-auto p-4 w-full">
         <div className="flex flex-col lg:flex-row lg:justify-between gap-4 w-full">
           
-          {/* Wallet Balance Box */}
+          {/* Wallet Balance Box - Updated to show portfolio balance */}
           <div
             className="bg-black rounded-my shadow-lg p-4 w-full lg:w-auto flex flex-col items-center mx-auto"
             style={{ maxHeight: "120px", maxWidth: "220px", minWidth: "220px" }}
           >
             <div className="mt-2 text-center lg:text-left w-full">
               <p className="font-semibold text-2xl lg:text-3xl text-white">
-                {hidden ? "••••••••" : `$${walletBalance || 0}.00`}
+                {hidden ? "••••••••" : `$${portfolioBalance || 0}`}
               </p>
               <div className="flex justify-center lg:justify-start items-center mt-2 text-sm text-blueGray-400 whitespace-nowrap">
                 {walletAddress ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}` : "Wallet address"}
