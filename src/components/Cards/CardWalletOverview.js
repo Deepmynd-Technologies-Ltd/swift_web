@@ -25,6 +25,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
   const dispatch = useDispatch();
   const { wallets, loading, selectedWallet } = useSelector((state) => state.wallet);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [balances, setBalances] = useState({});
 
   useEffect(() => {
     dispatch(fetchAllWalletData());
@@ -52,8 +53,68 @@ export default function CardWalletOverview({ onSelectWallet }) {
     }
   }, [selectedWallet, onSelectWallet]);
 
+  // Fetch balances for all wallets
+  useEffect(() => {
+    const fetchBalances = async () => {
+      if (!wallets.length) return;
+      
+      const newBalances = {};
+      try {
+        await Promise.all(wallets.map(async (wallet) => {
+          try {
+            const response = await fetch(
+              `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${wallet.abbr.toLowerCase()}&address=${wallet.address}`
+            );
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success) {
+                newBalances[wallet.abbr] = {
+                  balance: data.data,
+                  usdValue: (parseFloat(data.data) * parseFloat(wallet.marketPrice || 1)).toFixed(2)
+                };
+              }
+            }
+          } catch (error) {
+            console.error(`Error fetching balance for ${wallet.abbr}:`, error);
+          }
+        }));
+        
+        setBalances(newBalances);
+      } catch (error) {
+        console.error("Error fetching balances:", error);
+      }
+    };
+    
+    fetchBalances();
+  }, [wallets]);
+
   const handleWalletClick = (wallet) => {
     dispatch(setSelectedWallet(wallet));
+  };
+
+  const formatNumber = (value, isCurrency = false) => {
+    if (value === undefined || value === null) return isCurrency ? "$0.00" : "0";
+    
+    const num = Number(value);
+    if (isNaN(num)) return isCurrency ? "$0.00" : "0";
+    
+    if (isCurrency) {
+      // Format as currency
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(num);
+    }
+    
+    // For non-currency values
+    if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
+    if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
+    if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+    if (num % 1 !== 0) return num.toFixed(2);
+    return num.toString();
   };
 
   return (
@@ -68,37 +129,12 @@ export default function CardWalletOverview({ onSelectWallet }) {
           <div className="w-full flex flex-row justify-between items-center bg-gray-100 rounded-t-lg py-3 px-4">
             <div className="text-sm font-semibold text-blueGray-700 flex-1 hidden md:block">Token</div>
             <div className="text-sm font-semibold text-blueGray-700 flex-1 text-center hidden md:block">Market Price</div>
-            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-right hidden md:block">USD Equivalent</div>
+            <div className="text-sm font-semibold text-blueGray-700 flex-1 text-right hidden md:block">Balance (USD)</div>
           </div>
 
           {Object.keys(tokenNames).map((token) => {
             const wallet = wallets.find(w => w.abbr === token) || {};
-            const formatNumber = (value) => {
-              // If value is undefined or null, return a default string
-              if (value === undefined || value === null) return "0";
-              
-              // Check if the value can be converted to a number
-              const num = Number(value);
-              
-              // If the value isn't a valid number, return the original value as is
-              if (isNaN(num)) return value.toString();
-              
-              // For billion values (≥1e9)
-              if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
-              
-              // For million values (≥1e6)
-              if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
-              
-              // For thousand values (≥1e3)
-              if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
-              
-              // For numbers with decimal places
-              if (num % 1 !== 0) return num.toFixed(2);
-              
-              // For integers
-              return num.toString();
-            };
-
+            const balanceData = balances[token] || { balance: "0", usdValue: "0" };
             const isSelected = selectedWallet?.abbr === token;
             const textColorClass = isSelected ? "text-black" : "";
             const textWhiteColouredClass = isSelected ? "text-black" : "text-white";
@@ -106,8 +142,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
             return (
               <div
                 key={token}
-                className={`rounded-my overflow-hidden
-                }`}
+                className={`rounded-my overflow-hidden`}
               >
                 <a
                   href={`/wallet/${token}`}
@@ -141,7 +176,9 @@ export default function CardWalletOverview({ onSelectWallet }) {
                             {tokenNames[token]}
                           </span>
                           <div className="flex items-center md:hidden w-full">
-                            <span className={`text-sm ${textColorClass}`}> ${formatNumber(wallet.marketPrice) || "0.00"}</span>
+                            <span className={`text-sm ${textColorClass}`}>
+                              {formatNumber(wallet.marketPrice, true) || "$0.00"}
+                            </span>
                             <span className={`text-sm ml-2 ${
                               isSelected ? "text-black" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
                             }`}>
@@ -153,7 +190,9 @@ export default function CardWalletOverview({ onSelectWallet }) {
                     </div>
                     <div className={`w-full md:w-1/3 px-6 h-full flex items-center justify-center hidden md:flex ${textColorClass}`}>
                       <div>
-                        <span className={`text-sm ${textColorClass}`}>${formatNumber(wallet.marketPrice) || "0.00"}</span>
+                        <span className={`text-sm ${textColorClass}`}>
+                          {formatNumber(wallet.marketPrice, true) || "$0.00"}
+                        </span>
                         <span className={`text-sm ml-2 ${
                           isSelected ? "text-black" : parseFloat(wallet.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"
                         }`}>
@@ -163,8 +202,12 @@ export default function CardWalletOverview({ onSelectWallet }) {
                     </div>
                     <div className={`w-full md:w-1/3 px-6 py-3 text-sm text-right ${textColorClass}`}>
                       <div>
-                        <span className={`text-lg font-semibold ${textWhiteColouredClass}`}>{formatNumber(wallet.equivalenceValue) || "0"}</span>
-                        <span className={`text-sm block ${textColorClass}`}>{formatNumber(wallet.equivalenceValueAmount) + '.0' || "$0"}</span>
+                        <span className={`text-lg font-semibold ${textWhiteColouredClass}`}>
+                          {formatNumber(balanceData.balance)}
+                        </span>
+                        <span className={`text-sm block ${textColorClass}`}>
+                          {formatNumber(balanceData.usdValue, true)}
+                        </span>
                       </div>
                     </div>
                   </div>
