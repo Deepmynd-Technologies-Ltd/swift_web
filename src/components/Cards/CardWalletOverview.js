@@ -263,7 +263,7 @@ export default function CardWalletOverview({ onSelectWallet }) {
                           {formatNumber(actualBalance) || "0"}
                         </span>
                         <span className={`text-sm block ${textColorClass}`}>
-                          ${formatNumber(usdEquivalent.toFixed(2))+".0" || "0.00"}
+                          ${formatNumber(usdEquivalent.toFixed(2)) || "0.00"}
                         </span>
                       </div>
                     </div>

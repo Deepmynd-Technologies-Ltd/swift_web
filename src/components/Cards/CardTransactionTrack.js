@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import SendModal from "./modals/SendModal";
@@ -10,9 +10,10 @@ import SwapModal from "./modals/SwapModal";
 import P2PModal from "./modals/P2PModal";
 import Modal from "./modals/WalletsModal";
 import Loading from "react-loading";
+import localforage from "localforage";
 
 const CardLineChart = ({ wallet, isMobile = false }) => {
-  const [walletBalance, setWalletBalance] = useState(0); // Initialize to 0
+  const [walletBalance, setWalletBalance] = useState(0);
   const [walletAddress, setWalletAddress] = useState("");
   const [walletPrivateKey, setWalletPrivateKey] = useState("");
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
@@ -31,17 +32,15 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
   const [toAmount, setToAmount] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loadingBalances, setLoadingBalances] = useState(false);
 
-  // Add state for chart data
+  // Chart related states
   const [activePeriod, setActivePeriod] = useState("1D");
   const [svgPath, setSvgPath] = useState("");
-  const [priceData, setPriceData] = useState(0); // Initialize to 0
+  const [priceData, setPriceData] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [marketData, setMarketData] = useState(null); // Initialize to null
-
-  // Get transactions from Redux store
-  const transactions = useSelector((state) => state.transactions?.transactions || []);
+  const [marketData, setMarketData] = useState(null);
 
   const tokenNames = {
     BNB: "BNB BEP20",
@@ -74,7 +73,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
   
   const periods = ["1H", "1D", "1W", "1M", "1Y", "2Y", "ALL"];
 
-  // Implementation of missing functions
+  // Modal control functions
   const closeSendModal = () => {
     setIsSendModalOpen(false);
     setRecipientAddress("");
@@ -107,7 +106,6 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
   };
 
   const handleSendToken = () => {
-    // Validate inputs
     if (!recipientAddress) {
       setErrorMessage("Please enter a recipient address");
       return;
@@ -123,31 +121,73 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
       return;
     }
     
-    // Close send modal and open confirmation modal
     setIsSendModalOpen(false);
     setIsConfirmationOpen(true);
   };
 
-  // Missing selectedWallet function/variable
-  const selectedWallet = wallet;
+  // Fetch wallet data from localforage (consistent with CardWalletOverview)
+  const fetchWalletData = useCallback(async () => {
+    if (!wallet?.abbr) return;
+    
+    setLoadingBalances(true);
+    try {
+      let walletData = await localforage.getItem("encryptedWallet");
+      
+      if (!walletData) {
+        walletData = await localforage.getItem("walletDetails");
+      }
+      
+      if (!walletData) {
+        console.error("No wallet data found in localforage");
+        return;
+      }
+
+      let walletItems = [];
+      
+      if (walletData.walletAddresses && Array.isArray(walletData.walletAddresses)) {
+        if (walletData.walletAddresses[0] && Array.isArray(walletData.walletAddresses[0].data)) {
+          walletItems = walletData.walletAddresses[0].data;
+        } else {
+          walletItems = walletData.walletAddresses;
+        }
+      } else if (Array.isArray(walletData)) {
+        walletItems = walletData;
+      }
+
+      const walletItem = walletItems.find(item => 
+        item.symbols?.toUpperCase() === wallet.abbr
+      );
+
+      if (walletItem) {
+        setWalletAddress(walletItem.address);
+        setWalletPrivateKey(walletItem.private_key || "");
+        
+        // Fetch balance for this wallet
+        const response = await fetch(
+          `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${wallet.abbr.toLowerCase()}&address=${walletItem.address}`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setWalletBalance(parseFloat(data.data) || 0);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching wallet data:", error);
+    } finally {
+      setLoadingBalances(false);
+    }
+  }, [wallet]);
 
   useEffect(() => {
-    if (tokenName) {
-      const walletDetails = JSON.parse(localStorage.getItem("walletDetails"));
-      if (walletDetails && walletDetails.walletAddresses && Array.isArray(walletDetails.walletAddresses)) {
-        const activeWallet = walletDetails.walletAddresses.find((wallet) => wallet.name === tokenName);
-        if (activeWallet) {
-          setWalletAddress(activeWallet.address);
-          setWalletPrivateKey(activeWallet.private_key);
-          fetchWalletBalance(activeWallet.address); // Fixed: passed address instead of balance
-        }
-      } else {
-        console.error("No wallet details found in localStorage");
-      }
+    if (wallet?.abbr) {
+      fetchWalletData();
     }
-  }, [tokenName]);
-  
-  // Add effect for chart data
+  }, [wallet, fetchWalletData]);
+
+  // Chart data fetching
   useEffect(() => {
     let mounted = true;
 
@@ -176,7 +216,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
 
     fetchData();
 
-    const intervalId = setInterval(fetchData, 60000); // Fetch data every 60 seconds
+    const intervalId = setInterval(fetchData, 60000);
 
     return () => {
       mounted = false;
@@ -184,21 +224,6 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     };
   }, [wallet, activePeriod]);
 
-  const fetchWalletBalance = async (address) => {
-    try {
-      const response = await fetch(`https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${wallet?.abbr.toLowerCase() || 'btc'}&address=${address}`);
-      const data = await response.json();
-      if (data.success) {
-        setWalletBalance(data.data);
-      } else {
-        console.error("Error fetching wallet balance:", data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching wallet balance:", error);
-    }
-  };
-  
-  // Functions for chart data
   const fetchMarketData = async () => {
     try {
       const response = await axios.get('https://swift-api-g7a3.onrender.com/api/wallet/');
@@ -292,31 +317,59 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
 
   const currentCoinData = getCurrentCoinData();
 
+  // Format number function consistent with CardWalletOverview
+  const formatNumber = (value) => {
+    if (value === undefined || value === null) return "0";
+    
+    const num = Number(value);
+    
+    if (isNaN(num)) return value.toString();
+    
+    if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
+    if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
+    if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+    if (num % 1 !== 0) return num.toFixed(2);
+    return num.toString();
+  };
+
+  const calculateUSDEquivalent = (balance, marketPrice) => {
+    const numBalance = parseFloat(balance) || 0;
+    const numPrice = parseFloat(marketPrice) || 0;
+    return numBalance * numPrice;
+  };
+
+  const usdEquivalent = calculateUSDEquivalent(walletBalance, wallet?.marketPrice);
+
   return (
-    <div className="mt-4 text-aeonik text-white"><p className="font-bold text-xl">Token</p>
+    <div className="mt-4 text-aeonik text-white">
+      <p className="font-bold text-xl">Token</p>
       <div className={`relative mt-4 flex flex-col min-w-0 break-words w-full ${!isMobile && 'mb-6'} md:shadow-lg rounded bg-black`}>
         <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
           <div className="items-center">
-            {!selectedWallet ? (
+            {!wallet ? (
               <div className="text-center text-gray-500 mt-4">
-                Getting Wallets...
+                <Loading type="spin" color="#27C499" height={30} width={30} />
               </div>
             ) : (
               <>
-                <img src={tokenImages[selectedWallet.abbr]} alt={selectedWallet.abbr} className="w-12 h-12 mx-auto" />
+                <img 
+                  src={tokenImages[wallet.abbr]} 
+                  alt={wallet.abbr} 
+                  className="w-12 h-12 mx-auto" 
+                />
                 <h2 className="text-3xl text-center font-bold mb-1">
-                  {currentCoinData ? currentCoinData.usd.toFixed(2) : '0.00'} {selectedWallet.abbr}
+                  {formatNumber(walletBalance)} {wallet.abbr}
                 </h2>
                 <p className="text-xs text-center mb-4 text-blueGray-500">
-                  {selectedWallet.equivalenceValueAmount || '0.00'}
+                  ${formatNumber(usdEquivalent.toFixed(2))}
                 </p>
                 <p className="text-base font-bold font-medium mt-8 hidden md:block">
-                  Current {selectedWallet?.title} Price
+                  Current {wallet?.title} Price
                 </p>
                 <p className="text-xs text-blueGray-500 hidden md:block">
-                  {selectedWallet?.equivalenceValue || '0.00'} {selectedWallet?.abbr}{" "}
-                  <span className={`${currentCoinData && currentCoinData.usd_24h_change > 0 ? "text-green" : "text-red-500"} ml-4`}>
-                    {currentCoinData ? currentCoinData.usd_24h_change.toFixed(2) : '0.00'}%
+                  ${wallet?.marketPrice ? formatNumber(wallet.marketPrice) : '0.00'} {" "}
+                  <span className={`${parseFloat(wallet?.marketPricePercentage) >= 0 ? "text-green" : "text-red-500"} ml-4`}>
+                    {wallet?.marketPricePercentage ? formatNumber(wallet.marketPricePercentage) : '0.00'}%
                   </span>
                 </p>
               </>
@@ -367,7 +420,6 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
                     </clipPath>
                   </defs>
                 </svg>
-
               )}
             </div>
             <div className="flex flex-wrap w-full justify-between gap-2 mt-4 overflow-x-auto">
@@ -408,7 +460,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
             </div>
             <div className="flex-1 group flex justify-center items-end">
               <a href="#" onClick={(e) => {e.preventDefault(); setIsBuySellModalOpen(true);}} className="flex items-end justify-center text-center mx-auto px-4 pt-2 w-full text-gray-400 group-hover:text-indigo-500">
-                <span className="block px-1 pt-1 pb-1">
+                <span className="block px-1 pt-1 pb-10000000000000, overshot 101">
                   <i className="fas fa-bAs text-2xl pt-1 mb-1 block text-center group-hover:text-lightBlue-500"></i>
                   <span className="block text-xs font-semibold pb-2 text-lightBlue-500 whitespace-nowrap">Buy & Sell</span>
                 </span>
@@ -417,6 +469,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
           </div>
         </div>
       </div>
+
       {/* Modals */}
       <SendModal
         isOpen={isSendModalOpen}
@@ -427,7 +480,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
         setAmount={setAmount}
         walletBalance={walletBalance}
         selectedWalletState={selectedWalletState}
-        selectedWallet={selectedWallet}
+        selectedWallet={wallet}
         isDropdownOpen={isDropdownOpen}
         setIsDropdownOpen={setIsDropdownOpen}
         tokenNames={tokenNames}
@@ -443,14 +496,14 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
         setIsSendModalOpen={setIsSendModalOpen}
         recipientAddress={recipientAddress}
         amount={amount}
-        selectedWallet={selectedWallet}
+        selectedWallet={wallet}
       />
 
       <ReceiveModal
         isOpen={isReceiveModalOpen}
         onClose={closeReceiveModal}
         walletAddress={walletAddress}
-        selectedWallet={selectedWallet}
+        selectedWallet={wallet}
       />
 
       <ScanModal
@@ -463,7 +516,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
       <BuySellModal
         isOpen={isBuySellModalOpen}
         onClose={closeBuySellModal}
-        selectedWallet={selectedWallet}
+        selectedWallet={wallet}
       />
 
       <SwapModal
@@ -486,6 +539,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     </div>
   );
 };
+
 
 const CardTransactionTrack = () => {
   const transactions = useSelector((state) => state.transactions?.transactions || []);
