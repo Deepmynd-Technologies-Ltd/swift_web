@@ -575,21 +575,13 @@ const CardTransactionTrack = () => {
     error: state.transactions?.error || null
   }));
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-48">
-        <Loading type="spin" color="#27C499" height={50} width={50} />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col justify-center items-center h-48 text-red-500">
-        <p>Error loading transactions: {error}</p>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="flex flex-col justify-center items-center h-48 text-red-500">
+  //       <p>Error loading transactions: {error}</p>
+  //     </div>
+  //   );
+  // }
 
 
   return (
