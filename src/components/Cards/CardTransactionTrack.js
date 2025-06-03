@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import SendModal from "./modals/SendModal";
 import ConfirmationModal from "./modals/ConfirmationModal";
 import ReceiveModal from "./modals/ReceiveModal";
@@ -11,6 +11,7 @@ import P2PModal from "./modals/P2PModal";
 import Modal from "./modals/WalletsModal";
 import Loading from "react-loading";
 import localforage from "localforage";
+import { fetchTransactions } from "../../transactionSlice";
 
 const CardLineChart = ({ wallet, isMobile = false }) => {
   const [walletBalance, setWalletBalance] = useState(0);
@@ -181,11 +182,32 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     }
   }, [wallet]);
 
+
   useEffect(() => {
     if (wallet?.abbr) {
       fetchWalletData();
     }
   }, [wallet, fetchWalletData]);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (wallet?.abbr && walletAddress) {
+      // Fetch transactions when wallet or address changes
+      dispatch(fetchTransactions(wallet.abbr.toLowerCase(), walletAddress));
+    }
+  }, [wallet, walletAddress, dispatch]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (wallet?.abbr && walletAddress) {
+        dispatch(fetchTransactions(wallet.abbr.toLowerCase(), walletAddress));
+      }
+    }, 30000); // Every 30 seconds
+  
+    return () => clearInterval(interval);
+  }, [wallet, walletAddress, dispatch]);
+  
 
   // Chart data fetching
   useEffect(() => {
@@ -337,6 +359,7 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
     const numPrice = parseFloat(marketPrice) || 0;
     return numBalance * numPrice;
   };
+  
 
   const usdEquivalent = calculateUSDEquivalent(walletBalance, wallet?.marketPrice);
 
@@ -546,7 +569,28 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
 
 
 const CardTransactionTrack = () => {
-  const transactions = useSelector((state) => state.transactions?.transactions || []);
+  const { transactions, loading, error } = useSelector((state) => ({
+    transactions: state.transactions?.transactions || [],
+    loading: state.transactions?.loading || false,
+    error: state.transactions?.error || null
+  }));
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-48">
+        <Loading type="spin" color="#27C499" height={50} width={50} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center h-48 text-red-500">
+        <p>Error loading transactions: {error}</p>
+      </div>
+    );
+  }
+
 
   return (
     <div className="block w-full text-aeonik overflow-x-auto">
