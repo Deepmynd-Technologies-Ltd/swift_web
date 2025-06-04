@@ -568,111 +568,276 @@ const CardLineChart = ({ wallet, isMobile = false }) => {
 };
 
 
-const CardTransactionTrack = () => {
-  const { transactions, loading, error } = useSelector((state) => ({
-    transactions: state.transactions?.transactions || [],
-    loading: state.transactions?.loading || false,
-    error: state.transactions?.error || null
-  }));
+// Helper function to get icon based on transaction type and symbol
+const getTransactionIcon = (type, symbol) => {
+  const typeIcons = {
+    sent: require("../../assets/img/send_icon.png"),
+    received: require("../../assets/img/receive_icon.png"),
+    swap: require("../../assets/img/swap_icon.png"),
+    buy: require("../../assets/img/business_icon.png"),
+    sell: require("../../assets/img/dollar_icon.png")
+  };
+  
+  const symbolIcons = {
+    usdt: require("../../assets/img/usdt_icon.png"),
+    bnb: require("../../assets/img/bnb_icon.png"),
+    eth: require("../../assets/img/eth_icon.png"),
+    doge: require("../../assets/img/doge_icon.png"),
+    sol: require("../../assets/img/sol_icon.png"),
+    btc: require("../../assets/img/btc_icon.png"),
+  };
 
-  // if (error) {
-  //   return (
-  //     <div className="flex flex-col justify-center items-center h-48 text-red-500">
-  //       <p>Error loading transactions: {error}</p>
-  //     </div>
-  //   );
-  // }
+  return typeIcons[type.toLowerCase()] || symbolIcons[symbol.toLowerCase()] || typeIcons.sent;
+};
 
+const useTransactions = (symbol, address) => {
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Format transaction data consistently
+  const formatTransaction = (tx, symbol) => ({
+    id: tx.hash || `${symbol}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    hash: tx.hash,
+    type: tx.transaction_type || 'sent',
+    typeImage: getTransactionIcon(tx.transaction_type, symbol),
+    symbol: symbol.toUpperCase(),
+    amount: tx.amount,
+    value: tx.value || 0,
+    timestamp: tx.timestamp,
+    date: new Date(tx.timestamp).toLocaleDateString(),
+    description: tx.description || 
+      `${tx.transaction_type === 'sent' ? 'Sent' : 
+        tx.transaction_type === 'received' ? 'Received' : 
+        tx.transaction_type === 'swap' ? 'Swap' :
+        tx.transaction_type === 'buy' ? 'Buy' :
+        tx.transaction_type === 'sell' ? 'Sell' : 
+        'Transaction'} ${symbol.toUpperCase()}`,
+    status: tx.status || 'completed',
+    fromAddress: tx.from_address,
+    toAddress: tx.to_address
+  });
+
+  // Fetch transactions from API and cache in localforage
+  const fetchTransactions = useCallback(async () => {
+    if (!symbol || !address) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // First try to load from cache
+      const cacheKey = `transactions_${symbol}_${address}`;
+      const cachedTransactions = await localforage.getItem(cacheKey);
+      
+      if (cachedTransactions) {
+        setTransactions(cachedTransactions);
+      }
+      
+      // Then fetch fresh data
+      const response = await axios.get(
+        `https://swift-api-g7a3.onrender.com/api/wallet/get_transaction/`,
+        { params: { symbol: symbol.toLowerCase(), address } }
+      );
+
+      if (response.data.success) {
+        const formattedTransactions = response.data.data
+          .map(tx => formatTransaction(tx, symbol))
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        // Save to cache
+        await localforage.setItem(cacheKey, formattedTransactions);
+        setTransactions(formattedTransactions);
+      } else {
+        throw new Error(response.data.message || 'Failed to fetch transactions');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error("Error fetching transactions:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [symbol, address]);
+
+  // Add a new transaction (for in-app actions like buy/sell/swap)
+  const addNewTransaction = useCallback(async (transactionData) => {
+    const newTransaction = formatTransaction({
+      ...transactionData,
+      transaction_type: transactionData.type,
+      from_address: transactionData.fromAddress,
+      to_address: transactionData.toAddress
+    }, transactionData.symbol || symbol);
+    
+    setTransactions(prev => {
+      const updated = [newTransaction, ...prev];
+      // Update cache
+      const cacheKey = `transactions_${symbol}_${address}`;
+      localforage.setItem(cacheKey, updated);
+      return updated;
+    });
+  }, [symbol, address]);
+
+  // Update transaction status
+  const updateTransactionStatus = useCallback(async (hash, status) => {
+    setTransactions(prev => {
+      const updated = prev.map(tx => 
+        tx.hash === hash ? { ...tx, status } : tx
+      );
+      // Update cache
+      const cacheKey = `transactions_${symbol}_${address}`;
+      localforage.setItem(cacheKey, updated);
+      return updated;
+    });
+  }, [symbol, address]);
+
+  // Clear transactions
+  const clearTransactions = useCallback(async () => {
+    setTransactions([]);
+    const cacheKey = `transactions_${symbol}_${address}`;
+    await localforage.removeItem(cacheKey);
+  }, [symbol, address]);
+
+  return {
+    transactions,
+    loading,
+    error,
+    fetchTransactions,
+    addNewTransaction,
+    updateTransactionStatus,
+    clearTransactions
+  };
+};
+
+const CardTransactionTrack = ({ wallet }) => {
+  const { 
+    transactions, 
+    loading, 
+    error,
+    fetchTransactions
+  } = useTransactions(wallet?.abbr, wallet?.address);
+
+  // Set up auto-refresh every minute
+  useEffect(() => {
+    if (wallet?.abbr && wallet?.address) {
+      fetchTransactions();
+      
+      const interval = setInterval(() => {
+        fetchTransactions();
+      }, 60000); // Every minute
+
+      return () => clearInterval(interval);
+    }
+  }, [wallet, fetchTransactions]);
+
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center h-48 text-red-500">
+        <p>Error loading transactions: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="block w-full text-aeonik overflow-x-auto">
       <div className="relative w-full px-4 max-w-full flex-grow flex-1 hidden md:block">
         <h3 className="font-semibold text-sm text-white">Transactions</h3>
       </div>
-      <div className="h-2  hidden md:block mx-4 my-2 border border-solid border-blueGray-100" />
-      <div className="space-y-4">
-        {transactions && transactions.length > 0 ? (
-          transactions.map((transaction, index) => (
-            <div
-              key={index}
-              className="bg-black my-1 rounded-my p-2 shadow-md"
-              style={{ height: "70px", width: "100%", marginTop: "5px" }}
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <img
-                    src={transaction.typeImage}
-                    alt={transaction.type}
-                    className="w-8 h-8 rounded-full mr-4"
-                    style={{ objectFit: "cover" }}
-                  />
-                  <div>
-                    <span className="text-sm font-semibold text-blueGray-700">{transaction.type}</span>
-                    <span className="block text-xs text-blueGray-500">
-                      {transaction.description}
-                    </span>
+      <div className="h-2 hidden md:block mx-4 my-2 border border-solid border-blueGray-100" />
+      
+      {loading ? (
+        <div className="flex justify-center items-center h-48">
+          <Loading type="spin" color="#27C499" height={30} width={30} />
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {transactions.length > 0 ? (
+            transactions.map((transaction) => (
+              <div
+                key={transaction.id}
+                className="bg-black my-1 rounded-my p-2 shadow-md"
+                style={{ height: "70px", width: "100%", marginTop: "5px" }}
+              >
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <img
+                      src={transaction.typeImage}
+                      alt={transaction.type}
+                      className="w-8 h-8 rounded-full mr-4"
+                      style={{ objectFit: "cover" }}
+                    />
+                    <div>
+                      <span className="text-sm font-semibold text-blueGray-700 capitalize">
+                        {transaction.type}
+                      </span>
+                      <span className="block text-xs text-blueGray-500">
+                        {transaction.description}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-bold text-blueGray-700">
-                    ₦{transaction.amount}
+                  <div className="text-right">
+                    <div className={`text-sm font-bold ${
+                      transaction.type === 'received' ? 'text-green-500' : 'text-blueGray-700'
+                    }`}>
+                      {transaction.amount} {transaction.symbol}
+                    </div>
+                    <div className="text-xs text-blueGray-500">{transaction.date}</div>
                   </div>
-                  <div className="text-xs text-blueGray-500">{transaction.date}</div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="flex flex-col justify-center items-center h-48">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-18 w-8 mt-8 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 2H15L21 8V22H3V2H9Z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 2V8H15V2"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M7 13H17M7 17H13"
+                />
+              </svg>
+              <p className="text-white">You have not made any transactions yet</p>
             </div>
-          ))
-        ) : (
-          <div className="flex flex-col justify-center items-center h-48">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-18 w-8 mt-8 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 2H15L21 8V22H3V2H9Z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 2V8H15V2"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M7 13H17M7 17H13"
-              />
-            </svg>
-            <p className="text-white">You have not make any transactions yet</p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
+
 
 // Combined card and transactions for mobile view
 const MobileWalletView = ({ wallet }) => {
   return (
     <div className="flex flex-col gap-4">
       <CardLineChart wallet={wallet} isMobile={true} />
-      <CardTransactionTrack />
+      <CardTransactionTrack wallet={wallet} />
     </div>
   );
 };
 
 const CombinedComponent = ({ wallet }) => {
-  const [isModalOpen, setIsModalOpen] = useState(!!wallet); // Open modal if wallet is provided
+  const [isModalOpen, setIsModalOpen] = useState(!!wallet);
 
   useEffect(() => {
-    setIsModalOpen(!!wallet); // Open modal when wallet changes
+    setIsModalOpen(!!wallet);
   }, [wallet]);
 
   return (
@@ -680,7 +845,7 @@ const CombinedComponent = ({ wallet }) => {
       {/* Desktop view */}
       <div className="hidden lg:block">
         <CardLineChart wallet={wallet} />
-        <CardTransactionTrack />
+        <CardTransactionTrack wallet={wallet} />
       </div>
 
       {/* Mobile view */}
@@ -697,4 +862,3 @@ const CombinedComponent = ({ wallet }) => {
 };
 
 export default CombinedComponent;
-
