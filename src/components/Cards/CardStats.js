@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import SendModal from "./modals/SendModal";
 import ConfirmationModal from "./modals/ConfirmationModal";
 import ReceiveModal from "./modals/ReceiveModal";
@@ -11,7 +11,7 @@ import localforage from "localforage";
 export default function CardStats({ isHidden, selectedWallet }) {
   const [hidden] = useState(isHidden);
   const [walletBalance, setWalletBalance] = useState("");
-  const [portfolioBalance, setPortfolioBalance] = useState(0); // New state for total portfolio balance
+  const [portfolioBalance, setPortfolioBalance] = useState(0);
   const [walletAddress, setWalletAddress] = useState("");
   const [walletPrivateKey, setWalletPrivateKey] = useState("");
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
@@ -31,6 +31,8 @@ export default function CardStats({ isHidden, selectedWallet }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingWallet, setLoadingWallet] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const refreshIntervalRef = useRef(null);
 
   const tokenNames = {
     BNB: "BNB BEP20",
@@ -39,104 +41,142 @@ export default function CardStats({ isHidden, selectedWallet }) {
     ETH: "Ethereum",
     SOL: "Solana",
     USDT: "USDT BEP20",
-};
+  };
 
   const tokenName = selectedWallet ? tokenNames[selectedWallet.abbr] : null;
 
-  // Fetch wallet balances function - updated to calculate total portfolio balance
   const fetchWalletBalances = useCallback(async (wallets) => {
-      try {
-          if (!wallets) {
-              console.error('No wallets provided');
-              return {};
-          }
-          
-          const balances = {};
-          const walletsArray = Array.isArray(wallets) ? wallets : [wallets];
-          let totalBalance = 0;
-          
-          // First, fetch all coin prices in USD from the single endpoint
-          let prices = {};
-          try {
-              const priceResponse = await fetch(
-                  'https://swift-api-g7a3.onrender.com/api/wallet/'
-              );
-              
-              if (!priceResponse.ok) {
-                  throw new Error('Failed to fetch coin prices');
-              }
-              
-              const priceData = await priceResponse.json();
-              
-              // Map the API response to our expected symbols
-              prices = {
-                  bnb: priceData.binancecoin?.usd || 0,
-                  btc: priceData.bitcoin?.usd || 0,
-                  doge: priceData.dogecoin?.usd || 0,
-                  eth: priceData.ethereum?.usd || 0,
-                  sol: priceData.solana?.usd || 0,
-                  usdt: priceData.tether?.usd || 1, // Default to 1 if not found
-              };
-          } catch (priceError) {
-              console.error("Error fetching prices:", priceError);
-              // Fallback prices in case API fails
-              prices = {
-                  bnb: 0,
-                  btc: 0,
-                  doge: 0,
-                  eth: 0,
-                  sol: 0,
-                  usdt: 1,
-              };
-          }
-          
-          // Then fetch all wallet balances
-          await Promise.all(walletsArray.map(async (wallet) => {
-              try {
-                  if (!wallet?.symbols || !wallet?.address) {
-                      console.warn('Invalid wallet format:', wallet);
-                      return;
-                  }
-                  
-                  const symbolLower = wallet.symbols.toLowerCase();
-                  const response = await fetch(
-                      `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${symbolLower}&address=${wallet.address}`
-                  );
-                  
-                  if (!response.ok) {
-                      throw new Error(`Failed to fetch balance for ${wallet.symbols}`);
-                  }
-                  
-                  const data = await response.json();
-                  if (data.success) {
-                      const balance = parseFloat(data.data) || 0;
-                      balances[wallet.address] = data.data;
-                      
-                      // Convert balance to USD using the price data
-                      const usdValue = balance * (prices[symbolLower] || 0);
-                      totalBalance += usdValue;
-                      
-                      // If this is the currently selected wallet, update the wallet balance
-                      if (wallet.address === walletAddress || (selectedWallet && wallet.symbols === selectedWallet.abbr)) {
-                          setWalletBalance(data.data);
-                      }
-                  }
-              } catch (err) {
-                  console.error(`Error fetching balance for wallet:`, wallet, err);
-              }
-          }));
-          
-          // Update the total portfolio balance (sum of all coins in USD)
-          setPortfolioBalance(totalBalance.toFixed(2));
-          
-          return balances;
-      } catch (error) {
-          console.error("Error fetching balances:", error);
-          throw error;
+    setIsRefreshing(true);
+    try {
+      if (!wallets) {
+        console.error('No wallets provided');
+        return {};
       }
+      
+      const balances = {};
+      const walletsArray = Array.isArray(wallets) ? wallets : [wallets];
+      let totalBalance = 0;
+      
+      let prices = {};
+      try {
+        const priceResponse = await fetch(
+          'https://swift-api-g7a3.onrender.com/api/wallet/'
+        );
+        
+        if (!priceResponse.ok) {
+          throw new Error('Failed to fetch coin prices');
+        }
+        
+        const priceData = await priceResponse.json();
+        
+        prices = {
+          bnb: priceData.binancecoin?.usd || 0,
+          btc: priceData.bitcoin?.usd || 0,
+          doge: priceData.dogecoin?.usd || 0,
+          eth: priceData.ethereum?.usd || 0,
+          sol: priceData.solana?.usd || 0,
+          usdt: priceData.tether?.usd || 1,
+        };
+      } catch (priceError) {
+        console.error("Error fetching prices:", priceError);
+        prices = {
+          bnb: 0,
+          btc: 0,
+          doge: 0,
+          eth: 0,
+          sol: 0,
+          usdt: 1,
+        };
+      }
+      
+      await Promise.all(walletsArray.map(async (wallet) => {
+        try {
+          if (!wallet?.symbols || !wallet?.address) {
+            console.warn('Invalid wallet format:', wallet);
+            return;
+          }
+          
+          const symbolLower = wallet.symbols.toLowerCase();
+          const response = await fetch(
+            `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${symbolLower}&address=${wallet.address}`
+          );
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch balance for ${wallet.symbols}`);
+          }
+          
+          const data = await response.json();
+          if (data.success) {
+            const balance = parseFloat(data.data) || 0;
+            balances[wallet.address] = data.data;
+            
+            const usdValue = balance * (prices[symbolLower] || 0);
+            totalBalance += usdValue;
+            
+            if (wallet.address === walletAddress || (selectedWallet && wallet.symbols === selectedWallet.abbr)) {
+              setWalletBalance(data.data);
+            }
+          }
+        } catch (err) {
+          console.error(`Error fetching balance for wallet:`, wallet, err);
+        }
+      }));
+      
+      setPortfolioBalance(prev => {
+        return totalBalance > 0 ? totalBalance.toFixed(2) : prev;
+      });
+      
+      return balances;
+    } catch (error) {
+      console.error("Error fetching balances:", error);
+      throw error;
+    } finally {
+      setIsRefreshing(false);
+    }
   }, [walletAddress, selectedWallet]);
 
-  // Check storage for debugging
+  useEffect(() => {
+    const setupRefreshInterval = () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+      
+      refreshIntervalRef.current = setInterval(async () => {
+        try {
+          const walletData = await localforage.getItem("encryptedWallet") || 
+                           await localforage.getItem("walletDetails");
+          
+          if (walletData) {
+            let walletItems = [];
+            if (walletData.walletAddresses && Array.isArray(walletData.walletAddresses)) {
+              if (walletData.walletAddresses[0] && Array.isArray(walletData.walletAddresses[0].data)) {
+                walletItems = walletData.walletAddresses[0].data;
+              } else {
+                walletItems = walletData.walletAddresses;
+              }
+            } else if (Array.isArray(walletData)) {
+              walletItems = walletData;
+            }
+            
+            if (walletItems.length > 0) {
+              await fetchWalletBalances(walletItems);
+            }
+          }
+        } catch (error) {
+          console.error("Error during refresh:", error);
+        }
+      }, 30000);
+    };
+
+    setupRefreshInterval();
+    
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
+  }, [fetchWalletBalances]);
+
   useEffect(() => {
     async function checkStorage() {
       const pinData = await localforage.getItem('walletPin');
@@ -147,7 +187,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
     checkStorage();
   }, []);
 
-  // Fetch wallet details when tokenName changes - updated to fetch all wallets
   useEffect(() => {
     async function fetchWalletDetails() {
       if (!tokenName) return;
@@ -156,7 +195,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
       setErrorMessage("");
       
       try {
-        // Try encryptedWallet first, then fallback to walletDetails
         let walletData = await localforage.getItem("encryptedWallet");
         
         if (!walletData) {
@@ -169,11 +207,9 @@ export default function CardStats({ isHidden, selectedWallet }) {
           return;
         }
 
-        // This is the key fix: properly access the nested wallet data
         let walletItems = [];
         
         if (walletData.walletAddresses && Array.isArray(walletData.walletAddresses)) {
-          // Check if there's a data array inside the first element of walletAddresses
           if (walletData.walletAddresses[0] && Array.isArray(walletData.walletAddresses[0].data)) {
             walletItems = walletData.walletAddresses[0].data;
           } else {
@@ -187,7 +223,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
           return;
         }
         
-        // Find the wallet by name or symbol (case-insensitive)
         const activeWallet = walletItems.find(wallet => {
           const walletSymbol = wallet.symbols?.toUpperCase();
           const selectedSymbol = selectedWallet?.abbr?.toUpperCase();
@@ -204,14 +239,12 @@ export default function CardStats({ isHidden, selectedWallet }) {
           setWalletAddress(activeWallet.address);
           setWalletPrivateKey(activeWallet.private_key);
           
-          // Fetch the balance for this specific wallet
           const symbol = activeWallet.symbols || selectedWallet?.abbr?.toLowerCase();
           await fetchWalletBalance(activeWallet.address, symbol);
         } else {
           setErrorMessage(`Could not find wallet for ${tokenName}`);
         }
         
-        // Fetch balances for all wallets to calculate portfolio total
         await fetchWalletBalances(walletItems);
       } catch (error) {
         setErrorMessage("Error loading wallet data");
@@ -292,11 +325,15 @@ export default function CardStats({ isHidden, selectedWallet }) {
       <div className="flex-auto p-4 w-full">
         <div className="flex flex-col lg:flex-row lg:justify-between gap-4 w-full">
           
-          {/* Wallet Balance Box - Updated to show portfolio balance */}
           <div
-            className="bg-black rounded-my shadow-lg p-4 w-full lg:w-auto flex flex-col items-center mx-auto"
+            className="bg-black rounded-my shadow-lg p-4 w-full lg:w-auto flex flex-col items-center mx-auto relative"
             style={{ maxHeight: "120px", maxWidth: "220px", minWidth: "220px" }}
           >
+            {isRefreshing && (
+              <div className="absolute top-2 right-2">
+                <i className="fas fa-sync-alt fa-spin text-xs text-gray-400"></i>
+              </div>
+            )}
             <div className="mt-2 text-center lg:text-left w-full">
               <p className="font-semibold text-2xl lg:text-3xl text-white">
                 {hidden ? "••••••••" : `$${portfolioBalance || 0}`}
@@ -308,10 +345,8 @@ export default function CardStats({ isHidden, selectedWallet }) {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="bg-black rounded-my shadow-lg p-4 w-full lg:w-2/3 min-h-[150px] mx-auto md:mx-0">
             <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 flex w-full justify-between items-center" style={{ padding: "2px 7%"}}>
-              {/* Top Actions */}
               {[
                 { label: "Send", icon: "fa-send", color: "text-red-500", onClick: () => setIsSendModalOpen(true) },
                 { label: "Receive", icon: "fa-receive", color: "text-green", onClick: () => setIsReceiveModalOpen(true) },
@@ -327,7 +362,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
               ))}
             </div>
   
-            {/* Bottom Actions */}
             <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 gap-4 mt-4 flex w-full justify-between items-center" style={{ padding: "2px 7%"}}>
               {[
                 { label: "Swap", icon: "fa-swap", color: "text-orange-500", onClick: () => setIsSwapModalOpen(true) },
@@ -347,7 +381,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
         </div>
       </div>
 
-      {/* Modals */}
       {isSendModalOpen && (
         <SendModal
           isOpen={isSendModalOpen}
