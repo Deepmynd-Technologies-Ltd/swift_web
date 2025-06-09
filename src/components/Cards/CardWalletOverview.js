@@ -273,11 +273,6 @@ export default function CardWalletOverview({ onSelectWallet }) {
   return (
     <div className="relative flex flex-col min-w-0 break-words w-full md:w-2/3 mb-6 rounded mx-auto bg-gradient-to-r from-blue-500 to-green-500">
       <div className="block w-full overflow-x-auto">
-        {loading || isRefreshing || loadingBalances ? (
-          <div className="flex justify-center items-center py-4">
-            <Loading type="spinningBubbles" color="#27C499" height={50} width={50} />
-          </div>
-        ) : null}
         <div className="flex flex-col space-y-4">
           <div className="w-full flex flex-row justify-between items-center bg-gray-100 rounded-t-lg py-3 px-4">
             <div className="text-sm font-semibold text-blueGray-700 flex-1 hidden md:block">Token</div>
