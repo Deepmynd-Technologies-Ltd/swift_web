@@ -39,61 +39,92 @@ export default function CardStats({ isHidden, selectedWallet }) {
     ETH: "Ethereum",
     SOL: "Solana",
     USDT: "USDT BEP20",
-  };
+};
 
-  const tokenName = selectedWallet ? tokenNames[selectedWallet.abbr] : null;
+const tokenName = selectedWallet ? tokenNames[selectedWallet.abbr] : null;
 
-  // Fetch wallet balances function - updated to calculate total portfolio balance
-  const fetchWalletBalances = useCallback(async (wallets) => {
+// Fetch wallet balances function - updated to calculate total portfolio balance
+const fetchWalletBalances = useCallback(async (wallets) => {
     try {
-      if (!wallets) {
-        console.error('No wallets provided');
-        return {};
-      }
-      
-      const balances = {};
-      const walletsArray = Array.isArray(wallets) ? wallets : [wallets];
-      let totalBalance = 0;
-      
-      await Promise.all(walletsArray.map(async (wallet) => {
-        try {
-          if (!wallet?.symbols || !wallet?.address) {
-            console.warn('Invalid wallet format:', wallet);
-            return;
-          }
-          
-          const response = await fetch(
-            `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${wallet.symbols.toLowerCase()}&address=${wallet.address}`
-          );
-          
-          if (!response.ok) {
-            throw new Error(`Failed to fetch balance for ${wallet.symbols}`);
-          }
-          
-          const data = await response.json();
-          if (data.success) {
-            balances[wallet.address] = data.data;
-            totalBalance += parseFloat(data.data) || 0;
-            
-            // If this is the currently selected wallet, update the wallet balance
-            if (wallet.address === walletAddress || (selectedWallet && wallet.symbols === selectedWallet.abbr)) {
-              setWalletBalance(data.data);
-            }
-          }
-        } catch (err) {
-          console.error(`Error fetching balance for wallet:`, wallet, err);
+        if (!wallets) {
+            console.error('No wallets provided');
+            return {};
         }
-      }));
-      
-      // Update the total portfolio balance
-      setPortfolioBalance(totalBalance.toFixed(2));
-      
-      return balances;
+        
+        const balances = {};
+        const walletsArray = Array.isArray(wallets) ? wallets : [wallets];
+        let totalBalance = 0;
+        
+        // First, fetch all coin prices in USD
+        const priceResponses = await Promise.all(
+            Object.keys(tokenNames).map(async (coin) => {
+                try {
+                    const response = await fetch(
+                        `https://swift-api-g7a3.onrender.com/api/wallet/get_price?symbol=${coin.toLowerCase()}`
+                    );
+                    if (!response.ok) {
+                        console.error(`Failed to fetch price for ${coin}`);
+                        return { coin, price: 0 };
+                    }
+                    const data = await response.json();
+                    return { coin, price: data.success ? parseFloat(data.price) : 0 };
+                } catch (error) {
+                    console.error(`Error fetching price for ${coin}:`, error);
+                    return { coin, price: 0 };
+                }
+            })
+        );
+        
+        const prices = priceResponses.reduce((acc, { coin, price }) => {
+            acc[coin.toLowerCase()] = price;
+            return acc;
+        }, {});
+        
+        // Then fetch all wallet balances
+        await Promise.all(walletsArray.map(async (wallet) => {
+            try {
+                if (!wallet?.symbols || !wallet?.address) {
+                    console.warn('Invalid wallet format:', wallet);
+                    return;
+                }
+                
+                const symbolLower = wallet.symbols.toLowerCase();
+                const response = await fetch(
+                    `https://swift-api-g7a3.onrender.com/api/wallet/get_balance/?symbol=${symbolLower}&address=${wallet.address}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch balance for ${wallet.symbols}`);
+                }
+                
+                const data = await response.json();
+                if (data.success) {
+                    const balance = parseFloat(data.data) || 0;
+                    balances[wallet.address] = data.data;
+                    
+                    // Convert balance to USD using the price data
+                    const usdValue = balance * (prices[symbolLower] || 0);
+                    totalBalance += usdValue;
+                    
+                    // If this is the currently selected wallet, update the wallet balance
+                    if (wallet.address === walletAddress || (selectedWallet && wallet.symbols === selectedWallet.abbr)) {
+                        setWalletBalance(data.data);
+                    }
+                }
+            } catch (err) {
+                console.error(`Error fetching balance for wallet:`, wallet, err);
+            }
+        }));
+        
+        // Update the total portfolio balance (sum of all coins in USD)
+        setPortfolioBalance(totalBalance.toFixed(2));
+        
+        return balances;
     } catch (error) {
-      console.error("Error fetching balances:", error);
-      throw error;
+        console.error("Error fetching balances:", error);
+        throw error;
     }
-  }, [walletAddress, selectedWallet]);
+}, [walletAddress, selectedWallet]);
 
   // Check storage for debugging
   useEffect(() => {
