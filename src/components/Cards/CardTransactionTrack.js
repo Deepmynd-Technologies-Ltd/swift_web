@@ -661,9 +661,11 @@ const CardTransactionTrack = () => {
 // Combined card and transactions for mobile view
 const MobileWalletView = ({ wallet }) => {
   return (
-    <div className="flex flex-col gap-4" style={{maxHeight: "90vh"}}>
+    <div className="flex flex-col gap-4">
       <CardLineChart wallet={wallet} isMobile={true} />
-      <CardTransactionTrack />
+      <div className="no-scrollbar" style={{maxHeight: "300px"}}>
+        <CardTransactionTrack/>
+      </div>
     </div>
   );
 };
@@ -680,7 +682,9 @@ const CombinedComponent = ({ wallet }) => {
       {/* Desktop view */}
       <div className="hidden lg:block">
         <CardLineChart wallet={wallet} />
-        <CardTransactionTrack />
+        <div className="no-scrollbar" style={{maxHeight: "300px"}}>
+          <CardTransactionTrack/>
+        </div>
       </div>
 
       {/* Mobile view */}
