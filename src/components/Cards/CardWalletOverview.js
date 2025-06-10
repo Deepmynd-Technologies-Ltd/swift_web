@@ -122,14 +122,24 @@ export default function CardWalletOverview({ onSelectWallet }) {
       });
 
       const formattedData = await Promise.all(walletPromises);
-      
+    
       // Save to localforage
       await localforage.setItem('walletData', formattedData);
       setWallets(formattedData);
       
-      // Set default selected wallet if none is selected and we're on desktop
-      if (!selectedWallet && window.innerWidth > 768 && formattedData.length > 0) {
-        setSelectedWallet(formattedData[0]);
+      // Set default selected wallet if none is selected
+      if (formattedData.length > 0) {
+        // First try to find BNB wallet
+        const defaultWallet = formattedData.find(wallet => wallet.symbol === 'bnb');
+        
+        // If BNB wallet exists and no wallet is selected, set it as default
+        if (defaultWallet && !selectedWallet) {
+          setSelectedWallet(defaultWallet);
+        } 
+        // If no wallet is selected at all (including no BNB), select the first wallet
+        else if (!selectedWallet) {
+          setSelectedWallet(formattedData[0]);
+        }
       }
       
       return formattedData;
