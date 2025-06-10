@@ -589,7 +589,7 @@ const CardTransactionTrack = () => {
       <div className="relative w-full px-4 max-w-full flex-grow flex-1 hidden md:block">
         <h3 className="font-semibold text-sm text-white">Transactions</h3>
       </div>
-      <div className="h-2  hidden md:block mx-4 my-2 border border-solid border-blueGray-100" />
+      {/* <div className="h-2  hidden md:block mx-4 my-2 border border-solid border-blueGray-100" /> */}
       <div className="space-y-4">
         {transactions && transactions.length > 0 ? (
           transactions.map((transaction, index) => (
@@ -661,7 +661,7 @@ const CardTransactionTrack = () => {
 // Combined card and transactions for mobile view
 const MobileWalletView = ({ wallet }) => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" style={{maxHeight: "90vh"}}>
       <CardLineChart wallet={wallet} isMobile={true} />
       <CardTransactionTrack />
     </div>

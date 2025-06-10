@@ -329,11 +329,6 @@ export default function CardStats({ isHidden, selectedWallet }) {
             className="bg-black rounded-my shadow-lg p-4 w-full lg:w-auto flex flex-col items-center mx-auto relative"
             style={{ maxHeight: "120px", maxWidth: "220px", minWidth: "220px" }}
           >
-            {isRefreshing && (
-              <div className="absolute top-2 right-2">
-                <i className="fas fa-sync-alt fa-spin text-xs text-gray-400"></i>
-              </div>
-            )}
             <div className="mt-2 text-center lg:text-left w-full">
               <p className="font-semibold text-2xl lg:text-3xl text-white">
                 {hidden ? "••••••••" : `$${portfolioBalance || 0}`}
