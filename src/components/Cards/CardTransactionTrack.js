@@ -680,9 +680,9 @@ const CombinedComponent = ({ wallet }) => {
   return (
     <>
       {/* Desktop view */}
-      <div className="hidden lg:block overflow-hidden" style={{maxHeight: "900px"}}>
+      <div className="hidden lg:block overflow-hidden">
         <CardLineChart wallet={wallet} />
-        <div className="flex-1 overflow-y-auto no-scrollbar">
+        <div className="flex-1 overflow-y-auto no-scrollbar"  style={{maxHeight: "700px"}}>
           <CardTransactionTrack/>
         </div>
       </div>
